@@ -1,0 +1,24 @@
+﻿<Window x:Class="Bakalaris.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Bakalaris"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="500" Width="984.711">
+    <Grid Margin="0,0,2,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="517*"/>
+            <ColumnDefinition Width="273*"/>
+        </Grid.ColumnDefinitions>
+        <Button x:Name="Home" Content="Home" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="150" Height="100"/>
+        <Button x:Name="Zmeny" Content="Zmeny" HorizontalAlignment="Left" Margin="10,129,0,0" VerticalAlignment="Top" Width="150" Height="100"/>
+        <Button x:Name="Statistika" Content="Statistika" HorizontalAlignment="Left" Margin="10,244,0,0" VerticalAlignment="Top" Width="150" Height="100"/>
+        <Button x:Name="Vyhladat" Content="Vyhladat" HorizontalAlignment="Left" Margin="10,359,0,0" VerticalAlignment="Top" Width="150" Height="100"/>
+        <DataGrid x:Name="dataGrid" Height="449" Margin="179,10,211,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+        <Button x:Name="Zmenit" Content="Zmenit" HorizontalAlignment="Left" Margin="178,67,0,0" VerticalAlignment="Top" Click="Zmenit_Click" Width="100" Height="75" Grid.Column="1"/>
+        <Button x:Name="Zmazat" Content="Zmazat" HorizontalAlignment="Left" Margin="178,201,0,0" VerticalAlignment="Top" Click="Zmazat_Click" Width="100" Height="75" Grid.Column="1"/>
+        <Button x:Name="Pridat" Content="Pridat" HorizontalAlignment="Left" Margin="178,343,0,0" VerticalAlignment="Top" Click="Pridat_Click" Width="100" Height="75" Grid.Column="1"/>
+
+    </Grid>
+</Window>
