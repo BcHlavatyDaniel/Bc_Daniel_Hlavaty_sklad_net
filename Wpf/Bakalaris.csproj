@@ -103,5 +103,15 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="ImageResources\databaza.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="ImageResources\Pridat.png" />
+    <Resource Include="ImageResources\profily.png" />
+    <Resource Include="ImageResources\Zmazat.png" />
+    <Resource Include="ImageResources\Zmeny.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

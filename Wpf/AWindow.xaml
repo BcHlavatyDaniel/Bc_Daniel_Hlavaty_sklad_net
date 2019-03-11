@@ -7,15 +7,43 @@
         mc:Ignorable="d"
         Title="AWindow" Height="450" Width="800">
     <Grid>
-        <TextBox x:Name="FirstName" HorizontalAlignment="Left" Height="23" Margin="194,26,0,0" TextWrapping="Wrap" Text="Prve meno" VerticalAlignment="Top" Width="392"/>
-        <TextBox x:Name="SecondName" HorizontalAlignment="Left" Height="23" Margin="194,69,0,0" TextWrapping="Wrap" Text="Druhe meno" VerticalAlignment="Top" Width="392"/>
-        <TextBox x:Name="Stat" HorizontalAlignment="Left" Height="23" Margin="194,111,0,0" TextWrapping="Wrap" Text="Vlastnost" VerticalAlignment="Top" Width="392"/>
-        <RadioButton x:Name="Skladom" Content="Skladom" HorizontalAlignment="Left" Margin="338,153,0,0" VerticalAlignment="Top"/>
-        <RadioButton x:Name="Typ1" Content="Typ1" HorizontalAlignment="Left" Margin="194,198,0,0" VerticalAlignment="Top"/>
-        <RadioButton x:Name="Typ2" Content="Typ2" HorizontalAlignment="Left" Margin="338,198,0,0" VerticalAlignment="Top"/>
-        <RadioButton x:Name="Typ3" Content="Typ3" HorizontalAlignment="Left" Margin="501,198,0,0" VerticalAlignment="Top"/>
-        <DatePicker x:Name="DateArrival" HorizontalAlignment="Left" Margin="194,241,0,0" VerticalAlignment="Top" Width="140"/>
-        <DatePicker x:Name="DateLeave" HorizontalAlignment="Left" Margin="436,241,0,0" VerticalAlignment="Top" Width="150"/>
-        <Button x:Name="Pridat" Content="Pridat" HorizontalAlignment="Left" Margin="211,308,0,0" VerticalAlignment="Top" Click="Add_Click" Width="356" Height="65"/>
+        <Border Name="TypeBorder1" BorderThickness="1" Margin="180,220,540,160">
+            <RadioButton x:Name="Typ1" Content="Typ1" HorizontalAlignment="Center" Margin="2,5,-1,4" VerticalAlignment="Center"/>
+        </Border>
+        <Border Name="TypeBorder2" BorderThickness="1" Margin="360, 220, 360, 160">
+            <RadioButton x:Name="Typ2" Content="Typ2" HorizontalAlignment="Center" Margin="2,5,-1,4" VerticalAlignment="Center"/>
+        </Border>
+        <Border Name="TypeBorder3" BorderThickness="1" Margin="540, 220, 180, 160">
+            <RadioButton x:Name="Typ3" Content="Typ3" HorizontalAlignment="Center" Margin="2,5,-1,4" VerticalAlignment="Center"/>
+        </Border>
+        <Border Name="DateArrivalBorder" BorderThickness="1" Margin="180,280,460,90">
+            <DatePicker x:Name="DateArrival" HorizontalAlignment="Center" Margin="2,5,-1,4" VerticalAlignment="Center" Width="140"/>
+        </Border>
+        <Border Name="DateLeaveBorder" BorderThickness="1" Margin="460, 280, 180, 90">
+            <DatePicker x:Name="DateLeave" HorizontalAlignment="Center" Margin="2,5,-1,4" VerticalAlignment="Center" Width="140"/>
+        </Border>
+
+        <Button x:Name="Pridat" Content="Pridat" HorizontalAlignment="Left" Margin="194,334,0,0" VerticalAlignment="Top" Click="Add_Click" Width="392" Height="65"/>
+        <CheckBox x:Name="Skladom" Content="Skladom" HorizontalAlignment="Left" Margin="362,204,0,0" VerticalAlignment="Top"/>
+        
+        <Border Name="FirstNameCmbBorder" BorderThickness="1" Margin="180,35,180,340">
+            <ComboBox x:Name="FirstNameCmb" HorizontalAlignment="Center" VerticalAlignment="Center" Width="394" Height="22" Margin="2,5,-1,4"/>
+        </Border>
+        
+        <Border Name="SecondNameCmbBorder" BorderThickness="1" Margin="180,95,180,280">
+            <ComboBox x:Name="SecondNameCmb" HorizontalAlignment="Center" Margin="2,5,-1,4" VerticalAlignment="Center" Height="22" Width="394"/>
+        </Border>
+
+        <Border Name="StatBorder" BorderThickness="1" Margin="180,155,180, 220">
+            <TextBox x:Name="Stat" HorizontalAlignment="Center" Height="22" Margin="2,5,-1,4" TextWrapping="Wrap" Text="Vlastnost" VerticalAlignment="Center" Width="394"/>
+        </Border>
+
+        <TextBlock x:Name="FirstNameWarnBlock" HorizontalAlignment="Left" Margin="194,19,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="392"/>
+        <TextBlock x:Name="SecondNameWarnBlock" HorizontalAlignment="Left" Margin="194,84,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="392"/>
+        <TextBlock x:Name="StatWarnBlock" HorizontalAlignment="Left" Margin="194,144,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="392"/>
+        <TextBlock x:Name="TypeWarnBlock" HorizontalAlignment="Left" Margin="339,262,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="107"/>
+        <TextBlock x:Name="DateArrivalWarnBlock" HorizontalAlignment="Left" Margin="180,262,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="140"/>
+        <TextBlock x:Name="DateLeaveWarnBlock" HorizontalAlignment="Left" Margin="460,262,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="150"/>
+        <Button x:Name="buttonBack" Content="Spat" Click="Back_Click" HorizontalAlignment="Left" Margin="29,45,0,0" VerticalAlignment="Top" Width="76" Height="46"/>
     </Grid>
 </Window>

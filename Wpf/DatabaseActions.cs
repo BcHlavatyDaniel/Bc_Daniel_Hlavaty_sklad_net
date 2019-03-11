@@ -101,6 +101,35 @@ namespace Bakalaris
             }
         }
 
+        public DataSet LoadSearchedData(string name, string sName)
+        {
+            MySqlConnection mSql = new MySqlConnection(connMainStr);
+            mSql.Open();
+            DataSet data;
+
+            MySqlCommand cmd = mSql.CreateCommand();
+
+            if (name == "")
+            {
+                cmd.CommandText = "SELECT * FROM main WHERE SecondName = @sName";
+                cmd.Parameters.AddWithValue("@sName", sName);
+            } else if (sName == "")
+            {
+                cmd.CommandText = "SELECT * FROM main WHERE FirstName = @name";
+                cmd.Parameters.AddWithValue("@name", name);
+            } else
+            {
+                cmd.CommandText = "SELECT * FROM main WHERE FirstName = @name AND SecondName = @sName";
+                cmd.Parameters.AddWithValue("@sName", sName);
+                cmd.Parameters.AddWithValue("@name", name);
+            }
+
+            MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+            data = new DataSet();
+            adapter.Fill(data);
+            return data;
+        }
+
         public DataSet LoadData()
         {
             MySqlConnection mSql = new MySqlConnection(connMainStr);
@@ -126,5 +155,6 @@ namespace Bakalaris
 
             return data;
         }
+
     }
 }

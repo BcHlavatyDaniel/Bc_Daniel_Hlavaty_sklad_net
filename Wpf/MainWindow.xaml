@@ -5,20 +5,43 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Bakalaris"
         mc:Ignorable="d"
-        Title="MainWindow" Height="500" Width="984.711">
-    <Grid Margin="0,0,2,0">
+        Title="MainWindow" Height="500" Width="1100">
+    <Grid Margin="204,0,2,-4">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="517*"/>
             <ColumnDefinition Width="273*"/>
         </Grid.ColumnDefinitions>
-        <Button x:Name="Home" Content="Home" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="150" Height="100"/>
-        <Button x:Name="Zmeny" Content="Zmeny" HorizontalAlignment="Left" Margin="10,129,0,0" VerticalAlignment="Top" Width="150" Height="100"/>
-        <Button x:Name="Statistika" Content="Statistika" HorizontalAlignment="Left" Margin="10,244,0,0" VerticalAlignment="Top" Width="150" Height="100"/>
-        <Button x:Name="Vyhladat" Content="Vyhladat" HorizontalAlignment="Left" Margin="10,359,0,0" VerticalAlignment="Top" Width="150" Height="100"/>
-        <DataGrid x:Name="dataGrid" Height="449" Margin="179,10,211,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
-        <Button x:Name="Zmenit" Content="Zmenit" HorizontalAlignment="Left" Margin="178,67,0,0" VerticalAlignment="Top" Click="Zmenit_Click" Width="100" Height="75" Grid.Column="1"/>
-        <Button x:Name="Zmazat" Content="Zmazat" HorizontalAlignment="Left" Margin="178,201,0,0" VerticalAlignment="Top" Click="Zmazat_Click" Width="100" Height="75" Grid.Column="1"/>
-        <Button x:Name="Pridat" Content="Pridat" HorizontalAlignment="Left" Margin="178,343,0,0" VerticalAlignment="Top" Click="Pridat_Click" Width="100" Height="75" Grid.Column="1"/>
-
+        <DataGrid x:Name="dataGrid" Height="394" HorizontalAlignment="Left" Margin="10, 10,0,0" VerticalAlignment="Bottom" Grid.ColumnSpan="2">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Otvor">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Name="Profilebtn" Content="Otvor" Click="Open_Profile"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Button x:Name="Zmenit" HorizontalAlignment="Left" Margin="141,154,0,0" VerticalAlignment="Top" Click="Zmenit_Click" Width="100" Height="75" Grid.Column="1">
+            <Image x:Name="image3" HorizontalAlignment="Center" Height="50" Width="100" VerticalAlignment="Center" Source="ImageResources/Zmeny.png"/>
+        </Button>
+        <Button x:Name="Zmazat" HorizontalAlignment="Left" Margin="141,260,0,0" VerticalAlignment="Top" Click="Zmazat_Click" Width="100" Height="75" Grid.Column="1">
+            <Image x:Name="image4" HorizontalAlignment="Center" Height="50" Width="100" VerticalAlignment="Center" Source="ImageResources/Zmazat.png"/>
+        </Button>
+        <Button x:Name="Pridat" HorizontalAlignment="Left" Margin="141,361,0,0" VerticalAlignment="Top" Click="Pridat_Click" Width="100" Height="75" Grid.Column="1">
+            <Image x:Name="image5" HorizontalAlignment="Center" Height="50" Width="100" VerticalAlignment="Center" Source="ImageResources/Pridat.png"/>
+        </Button>
+        <Button x:Name="Hladat" Content="Hladat" HorizontalAlignment="Left" Margin="35,27,0,0" Click ="Hladat_Click" VerticalAlignment="Top" Width="75" Grid.Column="1"/>
+        <ComboBox x:Name="FirstNameSearchCmb" HorizontalAlignment="Left" Margin="10,27,0,0" VerticalAlignment="Top" Width="188"/>
+        <ComboBox x:Name="SecondnameSearchCmb" HorizontalAlignment="Left" Margin="221,27,0,0" VerticalAlignment="Top" Width="168"/>
+        <Button x:Name="Unset" Content="Unset" Click="Unset_Click" HorizontalAlignment="Left" Margin="427,27,0,0" VerticalAlignment="Top" Width="75"/>
+        <Grid HorizontalAlignment="Left" Height="471" Margin="-200,0,0,0" VerticalAlignment="Top" Width="205" Background="#FF3D63E2">
+            <Button x:Name="Profily" HorizontalAlignment="Left" Margin="21,295,0,0" VerticalAlignment="Top" Width="150" Height="100">
+                <Image x:Name="image1" HorizontalAlignment="Left" Height="55" VerticalAlignment="Top" Width="125" Source="ImageResources/profily.png"/>
+            </Button>
+            <Button x:Name="Home" HorizontalAlignment="Left" Margin="21,53,0,0" VerticalAlignment="Top" Width="150" Height="100">
+                <Image x:Name="image" HorizontalAlignment="Left" Height="55" VerticalAlignment="Top" Width="125" Source="ImageResources/databaza.png"/>
+            </Button>
+        </Grid>
     </Grid>
 </Window>
