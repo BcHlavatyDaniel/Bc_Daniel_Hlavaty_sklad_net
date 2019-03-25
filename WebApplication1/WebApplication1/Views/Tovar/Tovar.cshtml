@@ -1,0 +1,57 @@
+﻿@model IEnumerable<WebApplication1.Models.TovarTable>
+
+@{
+    ViewData["Title"] = "Tovar";
+}
+
+<h1>Tovar</h1>
+
+
+<div class="text-center">
+    <h1 class="display-4">Polozky</h1>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+    <link href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script> 
+
+    <div class="container">
+
+        <div id="content">
+            <table id="tovartable" class="table table-hover talbe-bordered">
+                <tr>
+                    <th>Foto</th>
+                    <th>Nazov</th>
+                </tr>
+                @foreach(var item in Model)
+                {
+                <tr>
+                    <td rowspan="5"> <img src="@item.foto" /> </td>
+                    <td>@Html.DisplayFor(modelItem => item.nazov) </td>
+                </tr>
+                <tr>
+                    <th>Velkost</th>
+                </tr>
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.velkost) </td>
+                </tr>
+                <tr>
+                    <th>Cena</th>
+                </tr>
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.cena)</td>
+                </tr>
+                }
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    var table;
+    $(document).ready(function () {
+        table = $("#tovartable").DataTable();
+    });
+</script>
