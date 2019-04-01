@@ -36,22 +36,42 @@ namespace materialApp
             mDbActions = new DbActions();
             DataSet data = mDbActions.LoadData();
             LoadGrid(data);
- 
-            DataTable dataTable = data.Tables[0];
-
             FirstNameSearchCmb.Items.Add("");
             SecondnameSearchCmb.Items.Add("");
-
-            foreach(DataRow row in dataTable.Rows)
+            DataTable dataTable = data.Tables[0];
+            foreach (DataRow row in dataTable.Rows)
             {
                 if (!FirstNameSearchCmb.Items.Contains(row["first_name"].ToString()))
                     FirstNameSearchCmb.Items.Add(row["first_name"].ToString());
                 if (!SecondnameSearchCmb.Items.Contains(row["second_name"].ToString()))
                     SecondnameSearchCmb.Items.Add(row["second_name"].ToString());
             }
-
-           // dataGrid.Columns[1].Visibility = Visibility.Collapsed;
+            // dataGrid.Columns[1].Visibility = Visibility.Collapsed;
         }
+        /* TO DO
+        private void UpdateCmbItems(DataSet data)
+        {
+            DataTable dataTable = data.Tables[0];
+
+            for (int i = FirstNameSearchCmb.Items.Count; i > 1; i--)
+            {
+                FirstNameSearchCmb.Items.RemoveAt(i-1);
+            }
+
+            for (int i = SecondnameSearchCmb.Items.Count; i > 1; i--)
+            {
+                SecondnameSearchCmb.Items.RemoveAt(i-1);
+            }
+            
+
+            foreach (DataRow row in dataTable.Rows)
+            {
+                if (!FirstNameSearchCmb.Items.Contains(row["first_name"].ToString()))
+                    FirstNameSearchCmb.Items.Add(row["first_name"].ToString());
+                if (!SecondnameSearchCmb.Items.Contains(row["second_name"].ToString()))
+                    SecondnameSearchCmb.Items.Add(row["second_name"].ToString());
+            }
+        }*/
 
         private void Users_Open(object sender, RoutedEventArgs e)
         {
@@ -94,10 +114,15 @@ namespace materialApp
                 sName = SecondnameSearchCmb.SelectedItem.ToString();
             }
 
-            if (name == "" && sName == "") return;
+            if (name == "" && sName == "")
+            {
+                LoadGrid(mDbActions.LoadData());
+                return;
+            }
 
-            LoadGrid(mDbActions.LoadSearchedNamesData(name, sName));
-            //TO DO UPDATE SEARCH COMBOBOX
+            DataSet data = mDbActions.LoadSearchedNamesData(name, sName);
+            LoadGrid(data);
+           // UpdateCmbItems(data); TO DO
         }
 
         private void LoadGrid(DataSet gridData)

@@ -11,7 +11,7 @@
         TextElement.FontSize="13"
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
-        Title="Item_details" Height="450" Width="800">
+        Title="Item_details" Height="450" Width="1000">
     <Grid>
         <Button x:Name="BtnBack" HorizontalAlignment="Left" Margin="20,20,0,0" VerticalAlignment="Top" Click="Back" Width="100" Height="75">
             &lt;&lt; spat
@@ -21,40 +21,62 @@
             Ulozit
         </Button>
 
-        <TextBox x:Name="text_first_name" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="200, 20 ,150,0" Text="Prve Meno">
-        </TextBox>
+        <DockPanel  Margin="150, 20 ,150,0">
+            <Label Content="_Prve meno:" Target="{Binding ElementName=text_first_name}"/>
+            <TextBox x:Name="text_first_name" HorizontalAlignment="Left" VerticalAlignment="Top">
+            </TextBox>
+        </DockPanel>
+
+        <DockPanel  Margin="570, 20 , 150 ,0">
+            <Label Content="_Druhe meno:" Target="{Binding ElementName=text_second_name}"/>
+            <TextBox x:Name="text_second_name" HorizontalAlignment="Left" VerticalAlignment="Top">
+            </TextBox>
+        </DockPanel>
+
+        <DockPanel  Margin="150, 60 ,150,0">
+            <Label Content="_Velkost:" Target="{Binding ElementName=text_size}"/>
+            <TextBox x:Name="text_size" HorizontalAlignment="Left" VerticalAlignment="Top">
+            </TextBox>
+        </DockPanel>
+
+        <DockPanel Margin="570, 60 , 200,0">
+            <Label Content="_Cena:" Target="{Binding ElementName=text_price}"/>
+            <TextBox x:Name="text_price" HorizontalAlignment="Left" VerticalAlignment="Top">
+            </TextBox>
+        </DockPanel>
+
+        <DockPanel  Margin="150, 100 ,150,0">
+            <Label Content="_Datum prichodu:" Target="{Binding ElementName=text_created_at}"/>
+            <TextBox x:Name="text_created_at" HorizontalAlignment="Left" VerticalAlignment="Top">
+            </TextBox>
+            <DatePicker x:Name="picker_created_at" HorizontalAlignment="Left"  VerticalAlignment="Top" Width="100"/>
+        </DockPanel>
+
+        <DockPanel Margin="570, 100 , 0 ,0 ">
+            <Label Content="_Datum predaja:" Target="{Binding ElementName=text_sold_at}"/>
+            <TextBox x:Name="text_sold_at" HorizontalAlignment="Left" VerticalAlignment="Top">
+            </TextBox>
+            <DatePicker x:Name="picker_sold_at" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100"/>
+        </DockPanel>
+
+        <DockPanel Margin="150, 140 ,150,0">
+            <Label Content="_Datum zaplatenia:" Target="{Binding ElementName=text_paid_at}"/>
+            <TextBox x:Name="text_paid_at" HorizontalAlignment="Left" VerticalAlignment="Top">
+            </TextBox>
+            <DatePicker x:Name="picker_paid_at" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100"/>
+        </DockPanel>
+
+        <DockPanel Margin="570, 140 ,200,0">
+            <Label Content="_Datum vratenia:" Target="{Binding ElementName=text_returned_at}"/>
+            <TextBox x:Name="text_returned_at" HorizontalAlignment="Left" VerticalAlignment="Top">
+            </TextBox>
+            <DatePicker x:Name="picker_returned_at" HorizontalAlignment="Left"  VerticalAlignment="Top" Width="100"/>
+        </DockPanel>
 
         <TextBox x:Name="text_edit_err" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0, 150 ,0,0">
         </TextBox>
 
-        <TextBox x:Name="text_second_name" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="200, 20 ,200,0" Text="Druhe Meno">
-        </TextBox>
-
-        <TextBox x:Name="text_size" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="200, 60 ,150,0" Text="Velkost">
-        </TextBox>
-
-        <TextBox x:Name="text_price" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="200, 60 , 200,0" Text="Cena">
-        </TextBox>
-
-        <TextBox x:Name="text_created_at" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="200, 100 ,150,0" Text="Vytvoreny v">
-        </TextBox>
-
-        <DatePicker x:Name="picker_created_at" HorizontalAlignment="Left" Margin="200, 100 ,150,0" VerticalAlignment="Top" Width="100"/>
-        
-        <TextBox x:Name="text_sold_at" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="200, 100 ,200,0" Text="Predany v">
-        </TextBox>
-
-        <DatePicker x:Name="picker_sold_at" HorizontalAlignment="Right" Margin="200, 100 ,200,0" VerticalAlignment="Top" Width="100"/>
-        
-        <TextBox x:Name="text_paid_at" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="200, 140 ,150,0" Text="Zaplateny v">
-        </TextBox>
-
-        <DatePicker x:Name="picker_paid_at" HorizontalAlignment="Left" Margin="200, 140 ,150,0" VerticalAlignment="Top" Width="100"/>
-        
-        <TextBox x:Name="text_returned_at" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="200, 140 ,200,0" Text="Vrateny v">
-        </TextBox>
-
-        <DatePicker x:Name="picker_returned_at" HorizontalAlignment="Right" Margin="200, 140 ,200,0" VerticalAlignment="Top" Width="100"/>
+        <materialDesign:PackIcon x:Name="icon_edit_err" Height="24" Width="24" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0, 120, 0, 0"/>
 
         <Button x:Name="BtnAddPhotoPath" HorizontalAlignment="Right" Margin="0,250, 200,0" VerticalAlignment="Top" Click="AddPhotoPath" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
                  Width="75" Height="75" ToolTip="MaterialDesignFloatingActionMiniLightButton">

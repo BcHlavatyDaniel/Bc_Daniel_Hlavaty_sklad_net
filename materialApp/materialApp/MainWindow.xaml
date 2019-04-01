@@ -16,8 +16,8 @@
             Uzivatelia
         </Button>
 
-        <ComboBox x:Name="FirstNameSearchCmb" SelectionChanged="Name_Search" HorizontalAlignment="Left" Margin="420, 20 ,0,0" VerticalAlignment="Top" Width="80"/>
-        <ComboBox x:Name="SecondnameSearchCmb" SelectionChanged ="Name_Search" HorizontalAlignment="Left" Margin="520, 20,0,0" VerticalAlignment="Top" Width="80"/>
+        <ComboBox x:Name="FirstNameSearchCmb" SelectionChanged="Name_Search" HorizontalAlignment="Left" Margin="360, 20 ,0,0" VerticalAlignment="Top" Width="80"/>
+        <ComboBox x:Name="SecondnameSearchCmb" SelectionChanged ="Name_Search" HorizontalAlignment="Left" Margin="460, 20,0,0" VerticalAlignment="Top" Width="80"/>
 
         <DataGrid x:Name="dataGrid" HorizontalAlignment="Left" Margin="190 , 50 ,20,0" VerticalAlignment="Top" Grid.ColumnSpan="2">
             <DataGrid.Columns>
