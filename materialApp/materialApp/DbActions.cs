@@ -11,11 +11,15 @@ namespace materialApp
     class DbActions
     {
         private string connMainStr;
+        
 
         public DbActions()
         {
             connMainStr = "Server=127.0.0.1; port = 3306; Database=wpfdata;Uid=root;Convert Zero Datetime=True";
         }
+        /// <summary>
+        ///         USER
+        /// </summary>
 
         public DataSet LoadData()
         {
@@ -31,7 +35,7 @@ namespace materialApp
                 data = new DataSet();
                 adapter.Fill(data);
             }
-            catch(Exception)
+            catch (Exception)
             {
                 throw;
             }
@@ -52,7 +56,7 @@ namespace materialApp
             {
                 MySqlCommand cmd = mSql.CreateCommand();
                 cmd.CommandText = "UPDATE user SET first_name = @f_name, second_name = @s_name, address = @address, telephone = @tel WHERE year = @keyy AND _numbers = @keyn";
-                cmd.Parameters.AddWithValue("@s_name",userStruct.s_name);
+                cmd.Parameters.AddWithValue("@s_name", userStruct.s_name);
                 cmd.Parameters.AddWithValue("@f_name", userStruct.f_name);
                 cmd.Parameters.AddWithValue("@address", userStruct.address);
                 cmd.Parameters.AddWithValue("@tel", userStruct.tel);
@@ -60,7 +64,7 @@ namespace materialApp
                 cmd.Parameters.AddWithValue("@keyn", userStruct.keyn);
                 cmd.ExecuteNonQuery();
             }
-            catch(Exception)
+            catch (Exception)
             {
                 throw;
             }
@@ -68,8 +72,221 @@ namespace materialApp
             {
                 if (mSql.State == ConnectionState.Open) mSql.Close();
             }
-            //return error/sucess
+
         }
+
+        public DataSet LoadSearchedNamesData(EditUserStruct userStruct)
+        {
+            MySqlConnection mSql = new MySqlConnection(connMainStr);
+            mSql.Open();
+            DataSet data;
+            int counter = 0;
+            try
+            {
+                MySqlCommand cmd = mSql.CreateCommand();
+                cmd.CommandText = "Select * from user WHERE ";
+                if (userStruct.f_name != "")
+                {
+                    counter++;
+                    cmd.CommandText += "first_name = @fname ";
+                    cmd.Parameters.AddWithValue("@fname", userStruct.f_name);
+                }
+                if (userStruct.s_name != "")
+                {
+                    if (counter != 0) cmd.CommandText += "AND ";
+                    cmd.CommandText += "second_name = @sname ";
+                    cmd.Parameters.AddWithValue("@sname", userStruct.s_name);
+                    counter++;
+                }
+                if (userStruct.address != "")
+                {
+                    if (counter != 0) cmd.CommandText += "AND ";
+                    cmd.CommandText += "address = @address ";
+                    cmd.Parameters.AddWithValue("@address", userStruct.address);
+                    counter++;
+                }
+                if (userStruct.tel != "")
+                {
+                    if (counter != 0) cmd.CommandText += "AND ";
+                    cmd.CommandText += "telephone = @phone ";
+                    cmd.Parameters.AddWithValue("@phone", userStruct.tel);
+                    counter++;
+                }
+                if (userStruct.keyy != "")
+                {
+                    if (counter != 0) cmd.CommandText += "AND ";
+                    cmd.CommandText += "year = @year AND _numbers = @numbers";
+                    cmd.Parameters.AddWithValue("@year", userStruct.keyy);
+                    cmd.Parameters.AddWithValue("@numbers", userStruct.keyn);
+                    counter++;
+                }
+
+                MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                data = new DataSet();
+                adapter.Fill(data);
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                if (mSql.State == ConnectionState.Open) mSql.Close();
+            }
+
+            return data;
+        }
+
+        ///<summary>
+        ///         ITEM
+        ///</summary>
+
+        public DataSet LoadAllItems()
+        {
+            MySqlConnection mSql = new MySqlConnection(connMainStr);
+            mSql.Open();
+            DataSet data;
+
+            try
+            {
+                MySqlCommand cmd = mSql.CreateCommand();
+                cmd.CommandText = "Select * from item";
+                MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                data = new DataSet();
+                adapter.Fill(data);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+
+            }
+
+            return data;
+        }
+
+
+
+        public DataSet LoadSearchedItems(EditUserStruct userStruct)
+        {
+
+            MySqlConnection mSql = new MySqlConnection(connMainStr);
+            mSql.Open();
+            DataSet data = new DataSet();
+            int count = 0;
+            try
+            {
+                MySqlCommand cmd = mSql.CreateCommand();
+
+                if (userStruct.keyy != "")
+                {
+                    //vrati vsetky itemy kde key a keyn == databazovym
+                    cmd.CommandText = "Select * from item WHERE user_year = @keyy AND user_numbers = @keyn";
+                    cmd.Parameters.AddWithValue("@keyy", userStruct.keyy);
+                    cmd.Parameters.AddWithValue("@keyn", userStruct.keyn);
+                    count++;
+                }
+                else
+                {
+                   ;
+                    MySqlCommand uCmd = mSql.CreateCommand();
+                    uCmd.CommandText = "Select * from user WHERE ";
+                    if (userStruct.s_name != "" && userStruct.f_name != "") //TO DO Ak je zly vyber
+                    {
+                        uCmd.CommandText += "first_name = @fname AND second_name = @sname";
+                        uCmd.Parameters.AddWithValue("@fname", userStruct.f_name);
+                        uCmd.Parameters.AddWithValue("@sname", userStruct.s_name);
+                    }
+                    else if (userStruct.s_name != "")
+                    {
+                        uCmd.CommandText += "second_name = @sname";
+                        uCmd.Parameters.AddWithValue("@sname", userStruct.s_name);
+                    }
+                    else
+                    {
+                        uCmd.CommandText += "first_name = @fname";
+                        uCmd.Parameters.AddWithValue("@fname", userStruct.f_name);
+                    }
+
+                    MySqlDataAdapter myadapter = new MySqlDataAdapter(uCmd);
+                    DataSet userD = new DataSet();
+                    myadapter.Fill(userD);
+                    List<string> validIds = new List<string>();
+                    string id;
+
+                    foreach (DataRow row in userD.Tables[0].Rows)
+                    {
+                        if (userStruct.s_name != "" && userStruct.f_name != "")
+                        {
+                            if (row["first_name"].ToString() == userStruct.f_name && row["second_name"].ToString() == userStruct.s_name)
+                            {
+                                id = row["year"] + "-" + row["_numbers"];
+                                if (!validIds.Contains(id)) validIds.Add(id);
+                            }
+                        }
+                        else if (userStruct.s_name != "")
+                        {
+                            if (row["second_name"].ToString() == userStruct.s_name)
+                            {
+                                id = row["year"] + "-" + row["_numbers"];
+                                if (!validIds.Contains(id)) validIds.Add(id);
+                            }
+                        }
+                        else
+                        {
+                            if (row["first_name"].ToString() == userStruct.f_name)
+                            {
+                                id = row["year"] + "-" + row["_numbers"];
+                                if (!validIds.Contains(id)) validIds.Add(id);
+                            }
+                        }
+                    }
+
+                    if (validIds.Count() == 0)
+                    {
+                        validIds.Add(userStruct.f_name + "-" + userStruct.s_name);
+                    }
+                         
+
+                    cmd.CommandText = "Select * from item WHERE ";
+                    count = 0;
+                    foreach (string str in validIds)
+                    {
+                        if (count != 0)
+                        {
+                            cmd.CommandText += "OR ";
+                        }
+                        cmd.CommandText += "(user_year = @year AND user_numbers = @numbers)";
+                        cmd.Parameters.AddWithValue("@year", str.Substring(0, 2));
+                        cmd.Parameters.AddWithValue("@numbers", str.Substring(3, 3));
+                        count++;
+                    }
+                }
+
+                if (count != 0)
+                {
+                    MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                    data = new DataSet();
+                    adapter.Fill(data);
+                }
+                
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                if (mSql.State == ConnectionState.Open) mSql.Close();
+            }
+
+            return data;
+        }
+
 
         public void AddItem(EditItemStruct itemStruct)
         {
@@ -204,36 +421,6 @@ namespace materialApp
             return data;
         }
 
-        public DataSet LoadSearchedNamesData(string name, string sName)
-        {
-            MySqlConnection mSql = new MySqlConnection(connMainStr);
-            mSql.Open();
-            DataSet data;
-
-            MySqlCommand cmd = mSql.CreateCommand();
-
-            if(name == "")
-            {
-                cmd.CommandText = "SELECT * from user WHERE second_name = @name";
-                cmd.Parameters.AddWithValue("@name", sName);
-            } 
-            else if(sName == "")
-            {
-                cmd.CommandText = "SELECT * from user WHERE first_name = @name";
-                cmd.Parameters.AddWithValue("@name", name);
-            }
-            else
-            {
-                cmd.CommandText = "SELECT * from user WHERE first_name = @name AND second_name = @sName";
-                cmd.Parameters.AddWithValue("@name", name);
-                cmd.Parameters.AddWithValue("@sName", sName);
-            }
-
-            MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
-            data = new DataSet();
-            adapter.Fill(data);
-
-            return data;
-        }
+ 
     }
 }

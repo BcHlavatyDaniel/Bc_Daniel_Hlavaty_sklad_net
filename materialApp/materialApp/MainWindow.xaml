@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:materialApp"
         mc:Ignorable="d"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -11,16 +12,109 @@
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
         Title="MahWindow" Height="450" Width="1000">
+    <Window.Resources>
+        <Storyboard x:Key="OpenMenu" SpeedRatio="10">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)" Storyboard.TargetName="rectangle">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0:5" Value="43.5"/>
+            </DoubleAnimationUsingKeyFrames>
+            
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)" Storyboard.TargetName="rectangle1">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0:5" Value="-43.5"/>
+            </DoubleAnimationUsingKeyFrames>
+
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="rectangle2">
+                <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0:5" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="HamMenu">
+                <EasingDoubleKeyFrame KeyTime="0" Value="70"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0:5" Value="150"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="CloseMenu" SpeedRatio="10">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)" Storyboard.TargetName="rectangle">
+                <EasingDoubleKeyFrame KeyTime="0" Value="43.5"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0:5" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)" Storyboard.TargetName="rectangle1">
+                <EasingDoubleKeyFrame KeyTime="0" Value="-43.5"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0:5" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="rectangle2">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0:5" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="HamMenu">
+                <EasingDoubleKeyFrame KeyTime="0" Value="150"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0:5" Value="70"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </Window.Resources>
     <Grid>
-        <Button x:Name="BtnUsers" HorizontalAlignment="Left" Margin="20,20,0,0" VerticalAlignment="Top" Click="Users_Open" Width="150" Height="75">
-            Uzivatelia
-        </Button>
+        <Grid x:Name="HamMenu" HorizontalAlignment="Left" Width="70" Background="#082606">
+            <StackPanel>
+                <Grid Height="70" Background="White"/>
+            </StackPanel>
+            <Button x:Name="ButtonMenu" HorizontalAlignment="Right" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="{x:Null}" Width="70" Height="70" Click="Open_Hamburger">
+                <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Rectangle x:Name="rectangle" Width="30" Height="5" Margin="0 0 0 0" Fill="Black" HorizontalAlignment="Center" VerticalAlignment="Top" RenderTransformOrigin="-0,0.5">
+                        <Rectangle.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform/>
+                                <SkewTransform/>
+                                <RotateTransform/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+                        </Rectangle.RenderTransform>
+                    </Rectangle>
+                    <Rectangle x:Name="rectangle1" Width="30" Height="5" Margin="0 20 0 0 " Fill="Black" HorizontalAlignment="Center" VerticalAlignment="Top" RenderTransformOrigin="-0,0.5">
+                        <Rectangle.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform/>
+                                <SkewTransform/>
+                                <RotateTransform/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+                        </Rectangle.RenderTransform>
+                    </Rectangle>
+                    <Rectangle x:Name="rectangle2" Width="30" Height="5" Margin="0 10 0 0" Fill="Black" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                </Grid>
+            </Button>
+            <Button x:Name="BtnUsers" HorizontalAlignment="Left" Click="Users_Open" Margin="0,70,0,0" VerticalAlignment="Top" Width="150" Height="70">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Person" Height="25" Width="25" Margin="10"/>
+                    <TextBox VerticalAlignment="Center" Margin="20,10" Text="Osoby"></TextBox>
+                </StackPanel>
+            </Button>
+            <Button x:Name="BtnItems" HorizontalAlignment="Left" Click="Items_Open" Margin="0,140,0,0" VerticalAlignment="Top" Width="150" Height="70">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Archive" Height="25" Width="25" Margin="10"/>
+                    <TextBox VerticalAlignment="Center" Margin="20,10" Text="Tovar"></TextBox>
+                </StackPanel>
+            </Button>
+            <Button x:Name="BtnLogs" HorizontalAlignment="Left" Margin="0, 210,0,0" VerticalAlignment="Top" Width="150" Height="70">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Assignment" Height="25" Width="25" Margin="10"/>
+                    <TextBox VerticalAlignment="Center" Margin="20,10" Text="Logy"></TextBox>
+                </StackPanel>
+            </Button>
+        </Grid>
+     <!--   <Grid HorizontalAlignment="Left" Width="200" x:Name="Hamburger" Background="#082606"></Grid> -->
+        <Grid x:Name="usersGrid" HorizontalAlignment="Left" Margin="100,0,0,0">
+            <ComboBox x:Name="FirstNameSearchCmb" SelectionChanged="Search" HorizontalAlignment="Left" Margin="170, 20 ,0,0" VerticalAlignment="Top" Width="80"/>
+            <ComboBox x:Name="SecondnameSearchCmb" SelectionChanged ="Search" HorizontalAlignment="Left" Margin="260, 20,0,0" VerticalAlignment="Top" Width="80"/>
+            <ComboBox x:Name="Year_numbersSearchCmb" SelectionChanged="Search" HorizontalAlignment="Left" Margin="100, 20,0,0" VerticalAlignment="Top" Width="60"/>
+            <ComboBox x:Name="AddressSearchCmb" SelectionChanged="Search" HorizontalAlignment="Left" Margin="350, 20, 0,0" VerticalAlignment="Top" Width="200"/>
+            <ComboBox x:Name="PhoneSearchCmb" SelectionChanged="Search" HorizontalAlignment="Left" Margin="570, 20, 0,0" VerticalAlignment="Top" Width="70"/>
 
-        <ComboBox x:Name="FirstNameSearchCmb" SelectionChanged="Name_Search" HorizontalAlignment="Left" Margin="360, 20 ,0,0" VerticalAlignment="Top" Width="80"/>
-        <ComboBox x:Name="SecondnameSearchCmb" SelectionChanged ="Name_Search" HorizontalAlignment="Left" Margin="460, 20,0,0" VerticalAlignment="Top" Width="80"/>
-
-        <DataGrid x:Name="dataGrid" HorizontalAlignment="Left" Margin="190 , 50 ,20,0" VerticalAlignment="Top" Grid.ColumnSpan="2">
-            <DataGrid.Columns>
+            <DataGrid x:Name="dataGrid" MouseDoubleClick="Profile_Open" HorizontalAlignment="Left" IsReadOnly="True" Margin="90 , 50 ,20,0" VerticalAlignment="Top" Grid.ColumnSpan="2">
+                <!-- <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Detail">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -28,7 +122,25 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>
+            </DataGrid.Columns> -->
+            </DataGrid>
+        </Grid>
+        <Grid x:Name="itemsGrid" HorizontalAlignment="Left" Margin="100,0,0,0">
+            <ComboBox x:Name="FirstNameItemCmb" SelectionChanged="SearchItems" HorizontalAlignment="Left" Margin="170,20,0,0" VerticalAlignment="Top" Width="80"/>
+            <ComboBox x:Name="SecondNameItemCmb" SelectionChanged="SearchItems" HorizontalAlignment="Left" Margin="260,20,0,0" VerticalAlignment="Top" Width="80"/>
+            <ComboBox x:Name="Year_numbersItemCmb" SelectionChanged="SearchItems" HorizontalAlignment="Left" Margin="100,20,0,0" VerticalAlignment="Top" Width="60"/>
+
+            <DataGrid x:Name="itemsDataGrid" HorizontalAlignment="Left" IsReadOnly="True" Margin="90,50,20,0" VerticalAlignment="Top" Grid.ColumnSpan="2">
+              <!--  <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Detail">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Name="btnProfile" Content="Detail" Click="Profile_Open"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns> -->
+            </DataGrid>
+        </Grid>
     </Grid>
 </Window>

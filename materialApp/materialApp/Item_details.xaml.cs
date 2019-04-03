@@ -180,7 +180,6 @@ namespace materialApp
             } else
             {
                 BtnSave.Visibility = Visibility.Hidden;
-                BtnSave.Visibility = Visibility.Hidden;
                 picker_created_at.Visibility = Visibility.Collapsed;
                 picker_paid_at.Visibility = Visibility.Collapsed;
                 picker_returned_at.Visibility = Visibility.Collapsed;
