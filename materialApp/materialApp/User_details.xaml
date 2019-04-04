@@ -105,14 +105,14 @@
                         <DataGridTemplateColumn Header="Detail">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Name="btnProfile" Content="Detail" Click="Item_Description_Open"/>
+                                    <Button Name="btnProfile" Content="Popis" Click="Item_Description_Open"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
                     <DataGrid.RowDetailsTemplate>
                         <DataTemplate>
-                            <TextBox x:Name="Description"></TextBox>
+                            <TextBox x:Name="Descrip"></TextBox>
                         </DataTemplate>
                     </DataGrid.RowDetailsTemplate>
                 </DataGrid>

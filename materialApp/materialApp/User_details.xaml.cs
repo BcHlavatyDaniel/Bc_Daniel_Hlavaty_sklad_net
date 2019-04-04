@@ -25,9 +25,9 @@ namespace materialApp
     {
         DbActions mDbActions;
         DataRowView mDatRow;
-        DataRowView mModalDatRow;
-        string mModalId;
-        string mModalPhotoPath;
+        //DataRowView mModalDatRow;
+        //string mModalId;
+        //string mModalPhotoPath;
         string year_key;
         string number_key;
         string photo_path = "";
@@ -159,31 +159,30 @@ namespace materialApp
             //add data from database
            
             int index = dataGrid.SelectedIndex;
-            DataGridRow gridRow = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromIndex(index);
-            DataRowView datView = (DataRowView)dataGrid.SelectedItem;
-           
-            //
+      //      DataGridRow wataFak = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromIndex(index);
+            DataGridRow gridRow = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromItem(dataGrid.SelectedItem);
+            DataRowView rowView = (DataRowView)dataGrid.SelectedItem;
+            //  DataRowView datView = (DataRowView)dataGrid.SelectedItem;
 
+            string id = rowView.Row.ItemArray[0].ToString();
             if (mVisibleList.Contains(index))
             {
                 gridRow.DetailsVisibility = Visibility.Collapsed;
+                DataGridDetailsPresenter presenter = FindVisualChild<DataGridDetailsPresenter>(gridRow);
+                presenter.ApplyTemplate();
+                var textbox = presenter.ContentTemplate.FindName("Descrip", presenter) as TextBox;
+                mDbActions.ItemDescription(id, true, textbox.Text);
                 mVisibleList.Remove(index);
             }
             else
             {
-                gridRow.DetailsVisibility = Visibility.Visible;
+                string desc = mDbActions.ItemDescription(id, false, "");
                 mVisibleList.Add(index);
-
-                DataGridDetailsPresenter presenter = FindVisualChild < DataGridDetailsPresenter > (gridRow);
-                DataTemplate template = presenter.ContentTemplate;
-               // ContentPresenter co = (ContentPresenter)dataGrid.Columns[0].GetCellContent(gridRow);
-               // DataGridCellsPanel description = FindVisualChild<DataGridCellsPanel>(gridRow);
-                //TextBlock description = FindVisualChild<TextBlock>(co);
-               // if (description == null)
-              //  {
-             //       return;
-             //   }
-            //    description.Text = "BLABLA";
+                DataGridDetailsPresenter presenter = FindVisualChild<DataGridDetailsPresenter>(gridRow);
+                presenter.ApplyTemplate();
+                var textbox = presenter.ContentTemplate.FindName("Descrip", presenter) as TextBox;
+                textbox.Text = desc;
+                gridRow.DetailsVisibility = Visibility.Visible;
             }
             
         }
@@ -203,6 +202,7 @@ namespace materialApp
             DateTime soldTime;
             string stav = "";
             gridData.Tables[0].Columns.Add("stav", typeof(string));
+          //  List<string> descriptions = new List<string>();
 
             foreach(DataRow row in gridData.Tables[0].Rows)
             {
@@ -210,9 +210,7 @@ namespace materialApp
                 DateTime.TryParse(row["returned_at"].ToString(), out retTime);
                 DateTime.TryParse(row["paid_at"].ToString(), out paidTime);
                 DateTime.TryParse(row["sold_at"].ToString(), out soldTime);
-
-                //take desc from every database row, fill with desc of the gridrow
-
+             //   descriptions.Add(row["description"].ToString());
 
                 if ("1/1/0001 12:00:00 AM" != row["paid_at"].ToString())
                 {
@@ -236,17 +234,28 @@ namespace materialApp
                 row["stav"] = stav;
             }
 
-            
-
             gridData.Tables[0].Columns.Remove("created_at");
             gridData.Tables[0].Columns.Remove("returned_at");
             gridData.Tables[0].Columns.Remove("sold_at");
             gridData.Tables[0].Columns.Remove("paid_at");
 
+            gridData.Tables[0].Columns.Remove("description");
+
             dataGrid.ItemsSource = gridData.Tables[0].DefaultView;
+     //       dataGrid.ApplyTemplate();
+
+      //      string descValue = "";
+            
+          /*  for (int i = 0; i < gridData.Tables[0].Rows.Count; i++)
+            {
+                descValue = descriptions.ElementAt(i);
+                DataGridRow dRow = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromIndex(i);
+                DataGridDetailsPresenter presenter = FindVisualChild<DataGridDetailsPresenter>(dRow);
+                presenter.ApplyTemplate();
+                var textbox = presenter.ContentTemplate.FindName("Descrip", presenter) as TextBox;
+            }
+            */
             dataGrid.CanUserAddRows = false;
-
-
         }
         /// <summary>
         ///         COMMON

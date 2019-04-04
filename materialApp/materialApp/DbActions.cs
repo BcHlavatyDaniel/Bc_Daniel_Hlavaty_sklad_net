@@ -142,6 +142,56 @@ namespace materialApp
         ///         ITEM
         ///</summary>
         ///
+        public string ItemDescription(string id, bool val, string desc)
+        {
+            MySqlConnection mSql = new MySqlConnection(connMainStr);
+            mSql.Open();
+
+            string ret = "";
+            if (val) //save
+            {
+                try
+                {
+                    MySqlCommand cmd = mSql.CreateCommand();
+                    cmd.CommandText = "UPDATE item SET description = @desc WHERE id = @id";
+                    cmd.Parameters.AddWithValue("@desc", desc);
+                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.ExecuteNonQuery();
+                }
+                catch(Exception)
+                {
+                    throw;
+                }
+                finally
+                {
+                    if (mSql.State == ConnectionState.Open) mSql.Close();
+                }
+            }
+            else //get
+            {
+                
+                try
+                {
+                    DataSet data = new DataSet();
+                    MySqlCommand cmd = mSql.CreateCommand();
+                    cmd.CommandText = "Select * from item where id = @id";
+                    cmd.Parameters.AddWithValue("@id", id);
+                    MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                    adapter.Fill(data);
+                    ret = data.Tables[0].Rows[0]["description"].ToString();
+                }
+                catch(Exception)
+                {
+                    throw;
+                }
+                finally
+                {
+                    if (mSql.State == ConnectionState.Open) mSql.Close();
+                }
+            }
+            return ret;
+        }
+
         public int GetNumberOfItemsForUser(string year, string numbers)
         {
             MySqlConnection mSql = new MySqlConnection(connMainStr);
