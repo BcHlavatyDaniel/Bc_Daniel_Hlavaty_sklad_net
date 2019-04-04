@@ -71,76 +71,6 @@ namespace materialApp
             ChangeSaveVisibility(true);
         }
 
-        private void Add(object sender, RoutedEventArgs e)
-        {
-            bool err = false;
-            icon_add_err.Visibility = Visibility.Visible;
-
-            if (text_description.Text == "")
-            {
-                err = true;
-                text_add_err.Foreground = Brushes.Red;
-                icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
-                text_add_err.Text = "Dopln popis!";
-            }
-            if (text_size.Text == "")
-            {
-                err = true;
-                text_add_err.Foreground = Brushes.Red;
-                icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
-                text_add_err.Text = "Dopln velkost!";
-            }
-            
-            if (text_price.Text == "")
-            {
-                err = true;
-                text_add_err.Foreground = Brushes.Red;
-                icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
-                text_add_err.Text = "Dopln cenu!";
-            }
-
-            double num;
-            if (!double.TryParse(text_price.Text, out num))
-            {
-                text_add_err.Text = "Cena musi byt cislo";
-                icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
-                text_add_err.Foreground = Brushes.Red;
-                err = true;
-            }
-
-            if (!double.TryParse(text_size.Text, out num))
-            {
-                text_add_err.Text = "Velkost musi byt cislo";
-                icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
-                text_add_err.Foreground = Brushes.Red;
-                err = true;
-            }
-
-            if (err) return;
-
-            EditItemStruct itemStruct = new EditItemStruct
-            {
-                keyy = year_key,
-                keyn = number_key,
-                description = text_description.Text,
-                price = text_price.Text,
-                size = text_size.Text,
-                photo = photo_path
-            };
-
-            mDbActions.AddItem(itemStruct);
-            DataSet data = mDbActions.LoadUserData(year_key, number_key);
-            LoadGrid(data);
-            text_add_err.Text = "Uspesne pridane.";
-            text_add_err.Foreground = Brushes.Green;
-            icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Done;
-            photo_path = "";
-            image1.Source = null;
-            text_size.Text = "";
-            text_price.Text = "";
-            text_description.Text = "";
-        }
-
         private void AddPhotoPath(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
@@ -363,16 +293,101 @@ namespace materialApp
         private void Item_Details_Open(object sender, RoutedEventArgs e)
         {
             DataRowView datView = (DataRowView)dataGrid.SelectedItem;
-            ModalInit(datView);
+            //ModalInit(datView);
 
-            /* Item_details mItemDWindow = new Item_details(mDatRow ,datView.Row.ItemArray[0].ToString(), text_first_name.Text, text_second_name.Text);
+             Item_details mItemDWindow = new Item_details(mDatRow ,datView.Row.ItemArray[0].ToString(), text_first_name.Text, text_second_name.Text);
              mItemDWindow.Owner = this;
              mItemDWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-             mItemDWindow.ShowDialog();*/
+             mItemDWindow.ShowDialog();
             //mItemDWindow.Show();
             //this.Close();
         }
 
+        private void ModalItemAddInit(object sender, RoutedEventArgs e)
+        {
+            DialogHost.IsOpen = true;
+        }
+
+
+        private void ModalBack(object sender, RoutedEventArgs e)
+        {
+            DialogHost.IsOpen = false;
+        }
+
+        private void Add(object sender, RoutedEventArgs e)
+        {
+            bool err = false;
+            icon_add_err.Visibility = Visibility.Visible;
+
+            if (text_description.Text == "")
+            {
+                err = true;
+                text_add_err.Foreground = Brushes.Red;
+                icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
+                text_add_err.Text = "Dopln popis!";
+            }
+            if (text_size.Text == "")
+            {
+                err = true;
+                text_add_err.Foreground = Brushes.Red;
+                icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
+                text_add_err.Text = "Dopln velkost!";
+            }
+
+            if (text_price.Text == "")
+            {
+                err = true;
+                text_add_err.Foreground = Brushes.Red;
+                icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
+                text_add_err.Text = "Dopln cenu!";
+            }
+
+            double num;
+            if (!double.TryParse(text_price.Text, out num))
+            {
+                text_add_err.Text = "Cena musi byt cislo";
+                icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
+                text_add_err.Foreground = Brushes.Red;
+                err = true;
+            }
+
+            if (!double.TryParse(text_size.Text, out num))
+            {
+                text_add_err.Text = "Velkost musi byt cislo";
+                icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
+                text_add_err.Foreground = Brushes.Red;
+                err = true;
+            }
+
+            if (err) return;
+
+            EditItemStruct itemStruct = new EditItemStruct
+            {
+                keyy = year_key,
+                keyn = number_key,
+                description = text_description.Text,
+                price = text_price.Text,
+                size = text_size.Text,
+                photo = photo_path
+            };
+
+            mDbActions.AddItem(itemStruct);
+            DataSet data = mDbActions.LoadUserData(year_key, number_key);
+            LoadGrid(data);
+            text_add_err.Text = "Uspesne pridane.";
+            text_add_err.Foreground = Brushes.Green;
+            icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Done;
+            photo_path = "";
+            image1.Source = null;
+            text_size.Text = "";
+            text_price.Text = "";
+            text_description.Text = "";
+        }
+
+        /// <summary>
+        ///     ModalItemEdit -> removed, right now in new window
+        /// </summary>
+        /*
         private void ModalInit(DataRowView datView)
         {
             ChangeModalEditVisibility(false);
@@ -403,12 +418,7 @@ namespace materialApp
             if ("1/1/0001 12:00:00 AM" == row["paid_at"].ToString()) Modal_text_paid_at.Text = "-----";
             else Modal_text_paid_at.Text = row["paid_at"].ToString();
         }
-        
-
-        private void ModalBack(object sender, RoutedEventArgs e)
-        {
-            DialogHost.IsOpen = false;
-        }
+       
 
         private void ModalSave(object sender, RoutedEventArgs e)
         {
@@ -534,11 +544,11 @@ namespace materialApp
                 Modal_text_returned_at.IsEnabled = false;
                 Modal_text_sold_at.IsEnabled = false;
             }
-        }
+        }*/
     }
 
-    
-}
+
+    }
 
 /*
    private void Back(object sender, RoutedEventArgs e)

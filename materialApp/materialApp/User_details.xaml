@@ -19,87 +19,47 @@
                     <Button x:Name="ModalBtnBack" HorizontalAlignment="Left" Margin="20,20,0,0" VerticalAlignment="Top" Click="ModalBack" Width="100" Height="75">
                         &lt;&lt; spat
                     </Button>
-
-                    <Button x:Name="ModalBtnSave" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Top" Click="ModalSave" Width="100" Height="75">
-                        Ulozit
+                    
+                    <Button x:Name="ModalBtnSave" HorizontalAlignment="Right" Margin="0,20,20,0" VerticalAlignment="Top" Click="Add" Width="100" Height="75">
+                        Uloz
                     </Button>
 
-                    <DockPanel  Margin="150, 20 ,150,0">
-                        <Label Content="_Prve meno:" Target="{Binding ElementName=text_first_name}"/>
-                        <TextBox x:Name="Modal_text_first_name" HorizontalAlignment="Left" VerticalAlignment="Top">
-                        </TextBox>
-                    </DockPanel>
-
-                    <DockPanel  Margin="570, 20 , 150 ,0">
-                        <Label Content="_Druhe meno:" Target="{Binding ElementName=text_second_name}"/>
-                        <TextBox x:Name="Modal_text_second_name" HorizontalAlignment="Left" VerticalAlignment="Top">
-                        </TextBox>
-                    </DockPanel>
-
-                    <DockPanel  Margin="150, 60 ,150,0">
-                        <Label Content="_Velkost:" Target="{Binding ElementName=text_size}"/>
-                        <TextBox x:Name="Modal_text_size" HorizontalAlignment="Left" VerticalAlignment="Top">
-                        </TextBox>
-                    </DockPanel>
-
-                    <DockPanel Margin="570, 60 , 200,0">
-                        <Label Content="_Cena:" Target="{Binding ElementName=text_price}"/>
-                        <TextBox x:Name="Modal_text_price" HorizontalAlignment="Left" VerticalAlignment="Top">
-                        </TextBox>
-                    </DockPanel>
-
-                    <DockPanel  Margin="150, 100 ,150,0">
-                        <Label Content="_Datum prichodu:" Target="{Binding ElementName=text_created_at}"/>
-                        <TextBox x:Name="Modal_text_created_at" HorizontalAlignment="Left" VerticalAlignment="Top">
-                        </TextBox>
-                        <DatePicker x:Name="Modal_picker_created_at" HorizontalAlignment="Left"  VerticalAlignment="Top" Width="100"/>
-                    </DockPanel>
-
-                    <DockPanel Margin="570, 100 , 0 ,0 ">
-                        <Label Content="_Datum predaja:" Target="{Binding ElementName=text_sold_at}"/>
-                        <TextBox x:Name="Modal_text_sold_at" HorizontalAlignment="Left" VerticalAlignment="Top">
-                        </TextBox>
-                        <DatePicker x:Name="Modal_picker_sold_at" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100"/>
-                    </DockPanel>
-
-                    <DockPanel Margin="150, 140 ,150,0">
-                        <Label Content="_Datum zaplatenia:" Target="{Binding ElementName=text_paid_at}"/>
-                        <TextBox x:Name="Modal_text_paid_at" HorizontalAlignment="Left" VerticalAlignment="Top">
-                        </TextBox>
-                        <DatePicker x:Name="Modal_picker_paid_at" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100"/>
-                    </DockPanel>
-
-                    <DockPanel Margin="570, 140 ,200,0">
-                        <Label Content="_Datum vratenia:" Target="{Binding ElementName=text_returned_at}"/>
-                        <TextBox x:Name="Modal_text_returned_at" HorizontalAlignment="Left" VerticalAlignment="Top">
-                        </TextBox>
-                        <DatePicker x:Name="Modal_picker_returned_at" HorizontalAlignment="Left"  VerticalAlignment="Top" Width="100"/>
-                    </DockPanel>
-
-                    <TextBox x:Name="Modal_text_edit_err" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0, 150 ,0,0">
-                    </TextBox>
-
-                    <materialDesign:PackIcon x:Name="Modal_icon_edit_err" Height="24" Width="24" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0, 120, 0, 0"/>
-
-                    <Button x:Name="ModalBtnAddPhotoPath" HorizontalAlignment="Right" Margin="0,250, 200,0" VerticalAlignment="Top" Click="ModalAddPhotoPath" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
-                 Width="75" Height="75" ToolTip="MaterialDesignFloatingActionMiniLightButton">
+                    <Button x:Name="BtnAddPhotoPath" HorizontalAlignment="Left" Margin="50,250, 0,0" VerticalAlignment="Top" Click="AddPhotoPath" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
+                    Width="75" Height="75" ToolTip="MaterialDesignFloatingActionMiniLightButton">
                         <materialDesign:PackIcon Kind="Add" Height="24" Width="24" />
                     </Button>
 
-                    <Image x:Name="Modal_image1" HorizontalAlignment="Center" Height="150" VerticalAlignment="Top" Width="150" Margin="0,200, 0,0"/>
+                    <DockPanel  Margin="150, 40 ,150,0">
+                        <Label Content="_Popis:" Target="{Binding ElementName=text_description}"/>
+                        <TextBox x:Name="text_description" HorizontalAlignment="Center" VerticalAlignment="Top" Width="100">
+                        </TextBox>
+                    </DockPanel>
 
-                    <TextBox x:Name="Modal_text_description" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="150, 100 ,150, 20" Text="Popis">
-                    </TextBox>
+                    <DockPanel  Margin="150, 80 ,150,0">
+                        <Label Content="_Velkost:" Target="{Binding ElementName=text_size}"/>
+                        <TextBox x:Name="text_size" HorizontalAlignment="Center" VerticalAlignment="Top" Width="100">
+                        </TextBox>
+                    </DockPanel>
 
-                    <Button x:Name="ModalBtnEdit" HorizontalAlignment="Right" Margin="0,20,20,0" VerticalAlignment="Top" Click="ModalEdit" Width="100" Height="75">
-                        Upravit
-                    </Button>
+                    <DockPanel  Margin="150, 120 ,150,0">
+                        <Label Content="_Cena:" Target="{Binding ElementName=text_price}"/>
+                        <TextBox x:Name="text_price" HorizontalAlignment="Center" VerticalAlignment="Top" Width="100">
+                        </TextBox>
+                    </DockPanel>
+
+                    <Image x:Name="image1" HorizontalAlignment="Right" Height="150" Width="150" VerticalAlignment="Top" Margin="0, 250, 50, 0"/>
+
+                    <materialDesign:PackIcon x:Name="icon_add_err" Height="24" Width="24" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0, 170,0, 0"/>
+
+                    <TextBox x:Name="text_add_err" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,190,0,0"></TextBox>
+                    
                 </Grid>
             </materialDesign:DialogHost.DialogContent>
             <Grid>
          <!--       <Button Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}" Content="Show Dialog" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="50,0,0,0"></Button> -->
-                <Button x:Name="BtnAdd" HorizontalAlignment="Center" Margin="0,200,0,0" VerticalAlignment="Top" Click="Add" Width="100" Height="75">
-                    Ulozit
+                <Button x:Name="BtnAdd" HorizontalAlignment="Center" Margin="0,200,0,0" VerticalAlignment="Top" Click="ModalItemAddInit" Width="100" Height="75">
+                    <!-- Click="Add" -->
+                    Pridaj
                 </Button>
                 
                 <Button x:Name="BtnSave" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Top" Click="Save" Width="100" Height="75">
@@ -109,33 +69,6 @@
                 <Button x:Name="BtnEdit" HorizontalAlignment="Right" Margin="0,20,20,0" VerticalAlignment="Top" Click="Edit" Width="100" Height="75">
                     Upravit
                 </Button>
-
-                <Button x:Name="BtnAddPhotoPath" HorizontalAlignment="Right" Margin="0,200, 275,0" VerticalAlignment="Top" Click="AddPhotoPath" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
-                 Width="75" Height="75" ToolTip="MaterialDesignFloatingActionMiniLightButton">
-                    <materialDesign:PackIcon Kind="Add" Height="24" Width="24" />
-
-                </Button>
-
-                <Image x:Name="image1" HorizontalAlignment="Right" Height="150" Width="150" VerticalAlignment="Top" Margin="0, 165, 50, 0"/>
-
-
-                <DockPanel  Margin="150, 180 ,150,0">
-                    <Label Content="_Popis:" Target="{Binding ElementName=text_description}"/>
-                    <TextBox x:Name="text_description" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100">
-                    </TextBox>
-                </DockPanel>
-
-                <DockPanel  Margin="150, 220 ,150,0">
-                    <Label Content="_Velkost:" Target="{Binding ElementName=text_size}"/>
-                    <TextBox x:Name="text_size" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100">
-                    </TextBox>
-                </DockPanel>
-
-                <DockPanel  Margin="150, 260 ,150,0">
-                    <Label Content="_Cena:" Target="{Binding ElementName=text_price}"/>
-                    <TextBox x:Name="text_price" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100">
-                    </TextBox>
-                </DockPanel>
 
                 <DockPanel Margin="150, 20 ,150,0">
                     <Label Content="_Meno" Target="{Binding ElementName=text_first_name}"/>
@@ -165,10 +98,6 @@
                 </TextBox>
 
                 <materialDesign:PackIcon x:Name="icon_edit_err" Height="24" Width="24" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0, 100, 0, 0"/>
-
-                <materialDesign:PackIcon x:Name="icon_add_err" Height="24" Width="24" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0, 280,0, 0"/>
-
-                <TextBox x:Name="text_add_err" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,300,0,0"></TextBox>
 
                 <DataGrid x:Name="dataGrid" HorizontalAlignment="center" Margin="0 , 340 ,0,0" MouseDoubleClick="Item_Details_Open" IsReadOnly="False" VerticalAlignment="Top" Grid.ColumnSpan="2">
                     <!-- MouseDoubleClick="Item_Details_Open" -->

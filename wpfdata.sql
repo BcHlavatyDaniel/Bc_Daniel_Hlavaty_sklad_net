@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hostiteľ: 127.0.0.1
--- Čas generovania: Po 01.Apr 2019, 16:26
+-- Čas generovania: Št 04.Apr 2019, 10:54
 -- Verzia serveru: 10.1.28-MariaDB
 -- Verzia PHP: 7.1.10
 
@@ -39,25 +39,32 @@ CREATE TABLE `item` (
   `created_at` date NOT NULL,
   `returned_at` date NOT NULL,
   `sold_at` date NOT NULL,
-  `paid_at` date NOT NULL
+  `paid_at` date NOT NULL,
+  `is_Stored` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Sťahujem dáta pre tabuľku `item`
 --
 
-INSERT INTO `item` (`id`, `user_year`, `user_numbers`, `description`, `size`, `price`, `photo`, `created_at`, `returned_at`, `sold_at`, `paid_at`) VALUES
-(3, 19, 102, 'popis som popis', 25.2, 150.5, 'C:\\\\Users\\\\Daniel\\\\Desktop\\\\unavailable.png', '2019-03-31', '0000-00-00', '0000-00-00', '0000-00-00'),
-(4, 19, 102, 'lyze', 30, 170, 'C:\\\\Users\\\\Daniel\\\\Desktop\\\\unavailable.png', '2019-03-31', '0000-00-00', '0000-00-00', '0000-00-00'),
-(5, 19, 102, 'Auto', 10000, 150000.5, 'C:\\\\Users\\\\Daniel\\\\Desktop\\\\unavailable.png', '2019-03-31', '0000-00-00', '0000-00-00', '0000-00-00'),
-(6, 19, 105, 'popis som popis', 25.2, 150.5, 'C:\\\\Users\\\\Daniel\\\\Desktop\\\\unavailable.png', '2019-03-31', '0000-00-00', '2019-04-10', '2019-04-22'),
-(7, 19, 105, 'stol', 2, 10, 'C:\\Users\\Daniel\\Desktop\\available.jpg', '2019-03-31', '2019-04-02', '2019-04-10', '2019-04-09'),
-(8, 19, 107, 'popis som popis', 25.2, 150.5, 'C:\\Users\\Daniel\\Desktop\\5123n4V63EL._SX425_.jpg', '2019-03-31', '0000-00-00', '0000-00-00', '0000-00-00'),
-(9, 19, 107, 'pizza', 25, 1.5, 'C:\\\\Users\\\\Daniel\\\\Desktop\\\\unavailable.png', '2019-03-31', '2019-04-09', '0000-00-00', '0000-00-00'),
-(10, 19, 105, 'Popis', 154, 78, 'C:\\\\Users\\\\Daniel\\\\Desktop\\\\unavailable.png', '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00'),
-(11, 19, 105, 'Venecky', 25, 150, 'C:\\\\Users\\\\Daniel\\\\Desktop\\\\unavailable.png', '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00'),
-(12, 19, 105, 'item', 150, 250, 'C:\\Users\\Daniel\\Desktop\\available.jpg', '2019-04-01', '0000-00-00', '0000-00-00', '0000-00-00'),
-(13, 19, 105, 'dalsiItem', 852, 101010, 'C:\\Users\\Daniel\\Desktop\\5123n4V63EL._SX425_.jpg', '2019-04-01', '0000-00-00', '0000-00-00', '0000-00-00');
+INSERT INTO `item` (`id`, `user_year`, `user_numbers`, `description`, `size`, `price`, `photo`, `created_at`, `returned_at`, `sold_at`, `paid_at`, `is_Stored`) VALUES
+(3, 19, 102, 'popis som popis', 25.2, 150.5, 'C:\\Users\\Daniel\\Desktop\\death.jpg', '2019-03-31', '0000-00-00', '2019-04-18', '0000-00-00', 1),
+(4, 19, 102, 'lyze', 30, 170, 'C:\\\\Users\\\\Daniel\\\\Desktop\\\\unavailable.png', '2019-03-31', '0000-00-00', '0000-00-00', '0000-00-00', 1),
+(5, 19, 102, 'Auto', 10000, 150000.5, 'C:\\\\Users\\\\Daniel\\\\Desktop\\\\unavailable.png', '2019-03-31', '0000-00-00', '0000-00-00', '0000-00-00', 0),
+(6, 19, 105, 'popis som popis', 25.2, 150.5, 'C:\\\\Users\\\\Daniel\\\\Desktop\\\\unavailable.png', '2019-03-31', '0000-00-00', '2019-04-10', '2019-04-22', 1),
+(7, 19, 105, 'stol', 2, 10, 'C:\\Users\\Daniel\\Desktop\\available.jpg', '2019-03-31', '2019-04-02', '2019-04-10', '2019-04-09', 1),
+(8, 19, 107, 'popis som popis', 25.2, 150.5, 'C:\\Users\\Daniel\\Desktop\\5123n4V63EL._SX425_.jpg', '2019-03-31', '0000-00-00', '0000-00-00', '0000-00-00', 0),
+(9, 19, 107, 'pizza', 25, 1.5, 'C:\\\\Users\\\\Daniel\\\\Desktop\\\\unavailable.png', '2019-03-31', '2019-04-09', '0000-00-00', '0000-00-00', 0),
+(10, 19, 105, 'Popis', 154, 78, 'C:\\\\Users\\\\Daniel\\\\Desktop\\\\unavailable.png', '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', 1),
+(11, 19, 105, 'Venecky', 25, 150, 'C:\\\\Users\\\\Daniel\\\\Desktop\\\\unavailable.png', '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', 0),
+(12, 19, 105, 'item', 150, 250, 'C:\\Users\\Daniel\\Desktop\\available.jpg', '2019-04-01', '0000-00-00', '0000-00-00', '0000-00-00', 1),
+(13, 19, 105, 'dalsiItem', 852, 101010, 'C:\\Users\\Daniel\\Desktop\\5123n4V63EL._SX425_.jpg', '2019-04-01', '0000-00-00', '0000-00-00', '0000-00-00', 0),
+(14, 19, 105, 'nohy', 121, 0.1, 'C:\\Users\\Daniel\\Desktop\\available.jpg', '2019-04-01', '0000-00-00', '2019-04-03', '0000-00-00', 1),
+(15, 19, 105, 'Palovpredmet', 190, 100, 'C:\\Users\\Daniel\\Desktop\\unavailable.png', '2019-04-01', '0000-00-00', '0000-00-00', '0000-00-00', 0),
+(16, 19, 102, 'FkinKatana', 152.2, 99.99, 'C:\\Users\\Daniel\\Desktop\\5123n4V63EL._SX425_.jpg', '2019-04-02', '0000-00-00', '2019-04-10', '2019-04-10', 0),
+(17, 19, 105, 'Michaliem', 45, 12, 'C:\\Users\\Daniel\\Desktop\\5123n4V63EL._SX425_.jpg', '2019-04-02', '0000-00-00', '0000-00-00', '0000-00-00', 1),
+(18, 19, 105, 'KubovTovar', 1, 9.99, 'C:\\Users\\Daniel\\Desktop\\available.jpg', '2019-04-02', '0000-00-00', '0000-00-00', '0000-00-00', 0),
+(19, 19, 105, 'Text', 99, 1, '', '2019-04-04', '0000-00-00', '0000-00-00', '0000-00-00', 0);
 
 -- --------------------------------------------------------
 
@@ -81,7 +88,7 @@ CREATE TABLE `user` (
 
 INSERT INTO `user` (`year`, `_numbers`, `first_name`, `second_name`, `address`, `telephone`, `created_at`) VALUES
 (19, 102, 'Daniel', 'Hlavaty', 'Dubova 3 Sala 927 01', 918654714, '2019-03-31'),
-(19, 105, 'Martin', 'Zeleny', 'Bratislava Ulica 14 927', 9966658, '2019-03-31'),
+(19, 105, 'Martin', 'Zeleny', 'Bratislava Ulica 14 927', 996665888, '2019-03-31'),
 (19, 107, 'Palo', 'Cerveny', 'Bratislavska 15 Bratislava 45785', 905124587, '2019-03-31');
 
 --
@@ -109,7 +116,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT pre tabuľku `item`
 --
 ALTER TABLE `item`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- Obmedzenie pre exportované tabuľky
