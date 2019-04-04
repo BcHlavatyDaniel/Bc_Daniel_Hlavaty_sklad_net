@@ -141,6 +141,34 @@ namespace materialApp
         ///<summary>
         ///         ITEM
         ///</summary>
+        ///
+        public int GetNumberOfItemsForUser(string year, string numbers)
+        {
+            MySqlConnection mSql = new MySqlConnection(connMainStr);
+            mSql.Open();
+            DataSet data;
+
+            try
+            {
+                MySqlCommand cmd = mSql.CreateCommand();
+                cmd.CommandText = "Select * from item where user_year = @year and user_numbers =@numbers";
+                cmd.Parameters.AddWithValue("@year", year);
+                cmd.Parameters.AddWithValue("@numbers", numbers);
+                MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                data = new DataSet();
+                adapter.Fill(data);
+            }
+            catch(Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                if (mSql.State == ConnectionState.Open) mSql.Close();
+            }
+            //TO DO pocitam len tie ktore su na sklade, ci vsetky?
+            return data.Tables[0].Rows.Count;
+        }
 
         public DataSet LoadAllItems()
         {
@@ -162,7 +190,7 @@ namespace materialApp
             }
             finally
             {
-
+                if (mSql.State == ConnectionState.Open) mSql.Close();
             }
 
             return data;

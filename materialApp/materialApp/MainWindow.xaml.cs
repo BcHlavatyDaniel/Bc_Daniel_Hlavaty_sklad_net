@@ -254,10 +254,12 @@ namespace materialApp
         {
             dataGrid.ItemsSource = null;
             gridData.Tables[0].Columns.Add("rok-id", typeof(string));
-            gridData.Tables[0].Columns.Remove("created_at");
+            gridData.Tables[0].Columns.Add("pocet tovaru", typeof(int));
+            gridData.Tables[0].Columns.Remove("created_at"); // TO DO +kolko ma tovaru
             foreach(DataRow row in gridData.Tables[0].Rows)
             {
                 row["rok-id"] = row["year"] + "-" + row["_numbers"];
+                row["pocet tovaru"] = mDbActions.GetNumberOfItemsForUser(row["year"].ToString(), row["_numbers"].ToString());
             }
             gridData.Tables[0].Columns.Remove("year");
             gridData.Tables[0].Columns.Remove("_numbers");
