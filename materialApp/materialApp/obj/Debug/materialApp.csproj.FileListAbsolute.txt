@@ -9,12 +9,14 @@ C:\Users\Daniel\source\repos\materialApp\materialApp\bin\Debug\Google.Protobuf.x
 C:\Users\Daniel\source\repos\materialApp\materialApp\bin\Debug\MaterialDesignThemes.Wpf.pdb
 C:\Users\Daniel\source\repos\materialApp\materialApp\bin\Debug\MaterialDesignThemes.Wpf.xml
 C:\Users\Daniel\source\repos\materialApp\materialApp\bin\Debug\MySql.Data.xml
+C:\Users\Daniel\source\repos\materialApp\materialApp\obj\Debug\Item_details.g.cs
 C:\Users\Daniel\source\repos\materialApp\materialApp\obj\Debug\MainWindow.g.cs
 C:\Users\Daniel\source\repos\materialApp\materialApp\obj\Debug\User_details.g.cs
 C:\Users\Daniel\source\repos\materialApp\materialApp\obj\Debug\App.g.cs
 C:\Users\Daniel\source\repos\materialApp\materialApp\obj\Debug\materialApp_MarkupCompile.cache
 C:\Users\Daniel\source\repos\materialApp\materialApp\obj\Debug\materialApp_MarkupCompile.lref
 C:\Users\Daniel\source\repos\materialApp\materialApp\obj\Debug\App.baml
+C:\Users\Daniel\source\repos\materialApp\materialApp\obj\Debug\Item_details.baml
 C:\Users\Daniel\source\repos\materialApp\materialApp\obj\Debug\MainWindow.baml
 C:\Users\Daniel\source\repos\materialApp\materialApp\obj\Debug\User_details.baml
 C:\Users\Daniel\source\repos\materialApp\materialApp\obj\Debug\materialApp.g.resources
@@ -24,6 +26,3 @@ C:\Users\Daniel\source\repos\materialApp\materialApp\obj\Debug\materialApp.cspro
 C:\Users\Daniel\source\repos\materialApp\materialApp\obj\Debug\materialApp.csproj.CopyComplete
 C:\Users\Daniel\source\repos\materialApp\materialApp\obj\Debug\materialApp.exe
 C:\Users\Daniel\source\repos\materialApp\materialApp\obj\Debug\materialApp.pdb
-C:\Users\Daniel\source\repos\materialApp\materialApp\obj\Debug\materialApp.csprojAssemblyReference.cache
-C:\Users\Daniel\source\repos\materialApp\materialApp\obj\Debug\Item_details.g.cs
-C:\Users\Daniel\source\repos\materialApp\materialApp\obj\Debug\Item_details.baml

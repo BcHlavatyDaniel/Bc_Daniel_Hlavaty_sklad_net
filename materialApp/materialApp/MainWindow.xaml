@@ -11,6 +11,7 @@
         TextElement.FontSize="13"
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
+        ResizeMode="NoResize"
         Title="MahWindow" Height="450" Width="1000">
     <Window.Resources>
         <Storyboard x:Key="OpenMenu" SpeedRatio="10">
@@ -56,8 +57,8 @@
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
     </Window.Resources>
-    <Grid>
-        <Grid x:Name="HamMenu" HorizontalAlignment="Left" Width="70" Background="#082606">
+    <Grid Background="WhiteSmoke">
+        <Grid x:Name="HamMenu" HorizontalAlignment="Left" Width="70" Background="#01579B">
             <StackPanel>
                 <Grid Height="70" Background="White"/>
             </StackPanel>
@@ -106,14 +107,35 @@
             </Button>
         </Grid>
      <!--   <Grid HorizontalAlignment="Left" Width="200" x:Name="Hamburger" Background="#082606"></Grid> -->
-        <Grid x:Name="usersGrid" HorizontalAlignment="Left" Margin="100,0,0,0">
+        <Grid x:Name="usersGrid" HorizontalAlignment="Left"  Margin="100,0,0,0">
             <ComboBox x:Name="FirstNameSearchCmb" SelectionChanged="Search" HorizontalAlignment="Left" Margin="170, 20 ,0,0" VerticalAlignment="Top" Width="80"/>
             <ComboBox x:Name="SecondnameSearchCmb" SelectionChanged ="Search" HorizontalAlignment="Left" Margin="260, 20,0,0" VerticalAlignment="Top" Width="80"/>
             <ComboBox x:Name="Year_numbersSearchCmb" SelectionChanged="Search" HorizontalAlignment="Left" Margin="100, 20,0,0" VerticalAlignment="Top" Width="60"/>
             <ComboBox x:Name="AddressSearchCmb" SelectionChanged="Search" HorizontalAlignment="Left" Margin="350, 20, 0,0" VerticalAlignment="Top" Width="200"/>
             <ComboBox x:Name="PhoneSearchCmb" SelectionChanged="Search" HorizontalAlignment="Left" Margin="570, 20, 0,0" VerticalAlignment="Top" Width="70"/>
 
-            <DataGrid x:Name="dataGrid" MouseDoubleClick="Profile_Open" HorizontalAlignment="Left" IsReadOnly="True" Margin="90 , 50 ,20,0" VerticalAlignment="Top" Grid.ColumnSpan="2">
+            <DataGrid x:Name="dataGrid" Background="#E1F5FE" MouseDoubleClick="Profile_Open" HorizontalAlignment="Left" IsReadOnly="True" Margin="90 , 50 ,20,0" VerticalAlignment="Top" Grid.ColumnSpan="2">
+                <DataGrid.Resources>
+                    <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
+                        <Setter Property="Background" Value="#81D4FA" />
+                    </Style>
+                    <Style BasedOn="{StaticResource {x:Type DataGridCell}}" TargetType="{x:Type DataGridCell}">
+                        <Style.Triggers>
+                            <Trigger Property="DataGridCell.IsSelected" Value="True">
+                                <Setter Property="Background" Value="#dbedfc"/>
+                                <Setter Property="BorderBrush" Value="#01579B"></Setter>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style> 
+                </DataGrid.Resources>
+                <DataGrid.CellStyle>
+                    <Style BasedOn="{StaticResource {x:Type DataGridCell}}" TargetType="{x:Type DataGridCell}">
+                        <Setter Property="BorderThickness" Value="0.3"></Setter>
+                        <Setter Property="BorderBrush" Value="#01579B"></Setter>
+                        <Setter Property="Background" Value="#dbedfc"></Setter>
+                    </Style>
+                </DataGrid.CellStyle>
+                
                 <!-- <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Detail">
                     <DataGridTemplateColumn.CellTemplate>
@@ -129,17 +151,41 @@
             <ComboBox x:Name="FirstNameItemCmb" SelectionChanged="SearchItems" HorizontalAlignment="Left" Margin="170,20,0,0" VerticalAlignment="Top" Width="80"/>
             <ComboBox x:Name="SecondNameItemCmb" SelectionChanged="SearchItems" HorizontalAlignment="Left" Margin="260,20,0,0" VerticalAlignment="Top" Width="80"/>
             <ComboBox x:Name="Year_numbersItemCmb" SelectionChanged="SearchItems" HorizontalAlignment="Left" Margin="100,20,0,0" VerticalAlignment="Top" Width="60"/>
-
-            <DataGrid x:Name="itemsDataGrid" HorizontalAlignment="Left" IsReadOnly="True" Margin="90,50,20,0" VerticalAlignment="Top" Grid.ColumnSpan="2">
-              <!--  <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Detail">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Name="btnProfile" Content="Detail" Click="Profile_Open"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns> -->
+            <DataGrid x:Name="itemsDataGrid" HorizontalAlignment="Left"  Background="#E1F5FE" IsReadOnly="True" Margin="90,50,20,0" VerticalAlignment="Top" Grid.ColumnSpan="2">
+                <DataGrid.Resources>
+                    <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
+                        <Setter Property="Background" Value="#81D4FA" />
+                    </Style>
+                    <Style BasedOn="{StaticResource {x:Type DataGridCell}}" TargetType="{x:Type DataGridCell}">
+                        <Style.Triggers>
+                            <Trigger Property="DataGridCell.IsSelected" Value="True">
+                                <Setter Property="Background" Value="#dbedfc"/>
+                                <Setter Property="BorderBrush" Value="#01579B"></Setter>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.Resources>
+                <DataGrid.CellStyle>
+                    <Style BasedOn="{StaticResource {x:Type DataGridCell}}" TargetType="{x:Type DataGridCell}">
+                        <Setter Property="BorderThickness" Value="0.3"></Setter>
+                        <Setter Property="BorderBrush" Value="#01579B"></Setter>
+                        <Setter Property="Background" Value="#dbedfc"></Setter>
+                    </Style>
+                </DataGrid.CellStyle>
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Popis">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Name="btnDesc" Content="Popis" Click="Open_Description"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+                <DataGrid.RowDetailsTemplate>
+                    <DataTemplate>
+                        <TextBox x:Name="Descrip" Height="30" TextAlignment="Center"></TextBox>
+                    </DataTemplate>
+                </DataGrid.RowDetailsTemplate>
             </DataGrid>
         </Grid>
     </Grid>

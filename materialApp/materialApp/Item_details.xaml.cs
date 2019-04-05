@@ -93,6 +93,7 @@ namespace materialApp
         {
             ChangeSaveVisibility(true);
             icon_edit_err.Visibility = Visibility.Hidden;
+            BtnEdit.Visibility = Visibility.Hidden;
         }
 
         private void Save(object sender, RoutedEventArgs e)
@@ -148,6 +149,7 @@ namespace materialApp
             text_edit_err.Text = "Uspesne zmenene";
             text_edit_err.Foreground = Brushes.Green;
             icon_edit_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Done;
+            BtnEdit.Visibility = Visibility.Visible;
             picker_created_at.SelectedDate = null;
             picker_paid_at.SelectedDate = null;
             picker_returned_at.SelectedDate = null;

@@ -10,6 +10,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -26,6 +27,7 @@ namespace materialApp
     {
         DbActions mDbActions;
         bool hamClosed = true;
+        List<int> mVisibleList = new List<int>();
 
         public MainWindow()
         {
@@ -101,7 +103,6 @@ namespace materialApp
 
         private void Users_Open(object sender, RoutedEventArgs e)
         {
-            //LoadGrid(mDbActions.LoadData());
             itemsGrid.Visibility = Visibility.Collapsed;
             usersGrid.Visibility = Visibility.Visible;
         }
@@ -115,11 +116,9 @@ namespace materialApp
         private void Profile_Open(object sender, RoutedEventArgs e)
         {
             User_details mUserDWindow = new User_details((DataRowView)dataGrid.SelectedItem);
-            //mUserDWindow.Show();
             mUserDWindow.Owner = this;
             mUserDWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             mUserDWindow.ShowDialog();
-            //this.Close();
         }
 
         private void Open_Hamburger(object sender, RoutedEventArgs e)
@@ -139,17 +138,6 @@ namespace materialApp
 
         private void Search(object sender, SelectionChangedEventArgs e)
         {
-       /*     DependencyObject dpobj = sender as DependencyObject;
-            string caller = dpobj.GetValue(FrameworkElement.NameProperty) as string;
-            if (caller == "FirstNameSearchCmb")         
-            {
-
-            }
-            else
-            {
-
-            }
-         */   
             string name = "";
             string sName = "";
             string keyy = "";
@@ -207,6 +195,35 @@ namespace materialApp
            // UpdateCmbItems(data); TO DO
         }
 
+        private void Open_Description(object sender, RoutedEventArgs e) //DUPLICATE daff aside
+        {
+            
+            int index = itemsDataGrid.SelectedIndex;
+            DataGridRow gridRow = (DataGridRow)itemsDataGrid.ItemContainerGenerator.ContainerFromItem(itemsDataGrid.SelectedItem);
+            DataRowView rowView = (DataRowView)itemsDataGrid.SelectedItem;
+
+            string id = rowView.Row.ItemArray[3].ToString();
+            if (mVisibleList.Contains(index))
+            {
+                gridRow.DetailsVisibility = Visibility.Collapsed;
+                DataGridDetailsPresenter presenter = FindVisualChild<DataGridDetailsPresenter>(gridRow);
+                presenter.ApplyTemplate();
+                var textbox = presenter.ContentTemplate.FindName("Descrip", presenter) as TextBox;
+                mDbActions.ItemDescription(id, true, textbox.Text);
+                mVisibleList.Remove(index);
+            }
+            else
+            {
+                string desc = mDbActions.ItemDescription(id, false, "");
+                mVisibleList.Add(index);
+                DataGridDetailsPresenter presenter = FindVisualChild<DataGridDetailsPresenter>(gridRow);
+                presenter.ApplyTemplate();
+                var textbox = presenter.ContentTemplate.FindName("Descrip", presenter) as TextBox;
+                textbox.Text = desc;
+                gridRow.DetailsVisibility = Visibility.Visible;
+            }
+        }
+
         private void SearchItems(object sender, RoutedEventArgs e)
         {
             string name = "";
@@ -255,7 +272,7 @@ namespace materialApp
             dataGrid.ItemsSource = null;
             gridData.Tables[0].Columns.Add("rok-id", typeof(string));
             gridData.Tables[0].Columns.Add("pocet tovaru", typeof(int));
-            gridData.Tables[0].Columns.Remove("created_at"); // TO DO +kolko ma tovaru
+            gridData.Tables[0].Columns.Remove("created_at"); 
             foreach(DataRow row in gridData.Tables[0].Rows)
             {
                 row["rok-id"] = row["year"] + "-" + row["_numbers"];
@@ -315,6 +332,7 @@ namespace materialApp
             allItems.Tables[0].Columns.Remove("user_year");
             allItems.Tables[0].Columns.Remove("user_numbers");
             allItems.Tables[0].Columns.Remove("is_Stored");
+            allItems.Tables[0].Columns.Remove("description");
             allItems.Tables[0].Columns.Remove("photo");
             allItems.Tables[0].Columns["rok-id"].SetOrdinal(0);
             allItems.Tables[0].Columns["prve meno"].SetOrdinal(1);
@@ -322,5 +340,33 @@ namespace materialApp
             itemsDataGrid.ItemsSource = allItems.Tables[0].DefaultView;
             itemsDataGrid.CanUserAddRows = false;
         }
+
+        ///<summary>
+        ///     COMMON
+        ///</summary>
+        ///
+
+
+        public static T FindVisualChild<T>(DependencyObject depObj) where T : DependencyObject
+        {
+            if (depObj != null)
+            {
+                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+                {
+                    DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
+                    if (child != null && child is T)
+                    {
+                        return (T)child;
+                    }
+
+                    T childItem = FindVisualChild<T>(child);
+                    if (childItem != null) return childItem;
+                }
+            }
+            return null;
+        }
+
+
     }
 }
+
