@@ -151,7 +151,7 @@
             <ComboBox x:Name="FirstNameItemCmb" SelectionChanged="SearchItems" HorizontalAlignment="Left" Margin="170,20,0,0" VerticalAlignment="Top" Width="80"/>
             <ComboBox x:Name="SecondNameItemCmb" SelectionChanged="SearchItems" HorizontalAlignment="Left" Margin="260,20,0,0" VerticalAlignment="Top" Width="80"/>
             <ComboBox x:Name="Year_numbersItemCmb" SelectionChanged="SearchItems" HorizontalAlignment="Left" Margin="100,20,0,0" VerticalAlignment="Top" Width="60"/>
-            <DataGrid x:Name="itemsDataGrid" HorizontalAlignment="Left"  Background="#E1F5FE" IsReadOnly="True" Margin="90,50,20,0" VerticalAlignment="Top" Grid.ColumnSpan="2">
+            <DataGrid x:Name="itemsDataGrid" HorizontalAlignment="Left" RowDetailsVisibilityMode="Collapsed" Background="#E1F5FE" IsReadOnly="True" Margin="90,50,20,0" VerticalAlignment="Top" Grid.ColumnSpan="2">
                 <DataGrid.Resources>
                     <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
                         <Setter Property="Background" Value="#81D4FA" />
@@ -181,9 +181,9 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                 </DataGrid.Columns>
-                <DataGrid.RowDetailsTemplate>
-                    <DataTemplate>
-                        <TextBox x:Name="Descrip" Height="30" TextAlignment="Center"></TextBox>
+                <DataGrid.RowDetailsTemplate >
+                    <DataTemplate >
+                        <TextBox  x:Name="Descrip" Height="30" TextAlignment="Center"></TextBox>
                     </DataTemplate>
                 </DataGrid.RowDetailsTemplate>
             </DataGrid>

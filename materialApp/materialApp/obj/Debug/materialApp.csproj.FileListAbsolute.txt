@@ -26,3 +26,4 @@ C:\Users\Daniel\source\repos\materialApp\materialApp\obj\Debug\materialApp.cspro
 C:\Users\Daniel\source\repos\materialApp\materialApp\obj\Debug\materialApp.csproj.CopyComplete
 C:\Users\Daniel\source\repos\materialApp\materialApp\obj\Debug\materialApp.exe
 C:\Users\Daniel\source\repos\materialApp\materialApp\obj\Debug\materialApp.pdb
+C:\Users\Daniel\source\repos\materialApp\materialApp\obj\Debug\materialApp.csprojAssemblyReference.cache
