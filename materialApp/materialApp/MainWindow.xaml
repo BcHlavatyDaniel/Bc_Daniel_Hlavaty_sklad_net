@@ -107,14 +107,15 @@
             </Button>
         </Grid>
      <!--   <Grid HorizontalAlignment="Left" Width="200" x:Name="Hamburger" Background="#082606"></Grid> -->
-        <Grid x:Name="usersGrid" HorizontalAlignment="Left"  Margin="100,0,0,0">
-            <ComboBox x:Name="FirstNameSearchCmb" SelectionChanged="Search" HorizontalAlignment="Left" Margin="170, 20 ,0,0" VerticalAlignment="Top" Width="80"/>
-            <ComboBox x:Name="SecondnameSearchCmb" SelectionChanged ="Search" HorizontalAlignment="Left" Margin="260, 20,0,0" VerticalAlignment="Top" Width="80"/>
-            <ComboBox x:Name="Year_numbersSearchCmb" SelectionChanged="Search" HorizontalAlignment="Left" Margin="100, 20,0,0" VerticalAlignment="Top" Width="60"/>
-            <ComboBox x:Name="AddressSearchCmb" SelectionChanged="Search" HorizontalAlignment="Left" Margin="350, 20, 0,0" VerticalAlignment="Top" Width="200"/>
-            <ComboBox x:Name="PhoneSearchCmb" SelectionChanged="Search" HorizontalAlignment="Left" Margin="570, 20, 0,0" VerticalAlignment="Top" Width="70"/>
-
-            <DataGrid x:Name="dataGrid" Background="#E1F5FE" MouseDoubleClick="Profile_Open" HorizontalAlignment="Left" IsReadOnly="True" Margin="90 , 50 ,20,0" VerticalAlignment="Top" Grid.ColumnSpan="2">
+        <Grid x:Name="usersGrid" HorizontalAlignment="Left"  Margin="190,0,0,0">
+            <DockPanel>
+                <ComboBox x:Name="Year_numbersSearchCmb" SelectionChanged="Search" HorizontalAlignment="Left" Margin="0, 20,0,0" VerticalAlignment="Top" Width="60"/>
+                <ComboBox x:Name="FirstNameSearchCmb" SelectionChanged="Search" HorizontalAlignment="Left" Margin="0, 20 ,0,0" VerticalAlignment="Top" Width="80"/>
+                <ComboBox x:Name="SecondnameSearchCmb" SelectionChanged ="Search" HorizontalAlignment="Left" Margin="0, 20,0,0" VerticalAlignment="Top" Width="80"/>
+                <ComboBox x:Name="AddressSearchCmb" SelectionChanged="Search" HorizontalAlignment="Left" Margin="0, 20, 0,0" VerticalAlignment="Top" Width="200"/>
+                <ComboBox x:Name="PhoneSearchCmb" SelectionChanged="Search" HorizontalAlignment="Left" Margin="0, 20, 0,0" VerticalAlignment="Top" Width="70"/>
+            </DockPanel>
+            <DataGrid x:Name="dataGrid" Loaded="Datagrid_Cmb_Update" Background="#E1F5FE" CanUserReorderColumns="False" MouseDoubleClick="Profile_Open" HorizontalAlignment="Left" IsReadOnly="True" Margin="0 , 50 ,20,0" VerticalAlignment="Top" Grid.ColumnSpan="2">
                 <DataGrid.Resources>
                     <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
                         <Setter Property="Background" Value="#81D4FA" />
@@ -135,7 +136,6 @@
                         <Setter Property="Background" Value="#dbedfc"></Setter>
                     </Style>
                 </DataGrid.CellStyle>
-                
                 <!-- <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Detail">
                     <DataGridTemplateColumn.CellTemplate>
@@ -147,11 +147,13 @@
             </DataGrid.Columns> -->
             </DataGrid>
         </Grid>
-        <Grid x:Name="itemsGrid" HorizontalAlignment="Left" Margin="100,0,0,0">
-            <ComboBox x:Name="FirstNameItemCmb" SelectionChanged="SearchItems" HorizontalAlignment="Left" Margin="170,20,0,0" VerticalAlignment="Top" Width="80"/>
-            <ComboBox x:Name="SecondNameItemCmb" SelectionChanged="SearchItems" HorizontalAlignment="Left" Margin="260,20,0,0" VerticalAlignment="Top" Width="80"/>
-            <ComboBox x:Name="Year_numbersItemCmb" SelectionChanged="SearchItems" HorizontalAlignment="Left" Margin="100,20,0,0" VerticalAlignment="Top" Width="60"/>
-            <DataGrid x:Name="itemsDataGrid" HorizontalAlignment="Left" RowDetailsVisibilityMode="Collapsed" Background="#E1F5FE" IsReadOnly="True" Margin="90,50,20,0" VerticalAlignment="Top" Grid.ColumnSpan="2">
+        <Grid x:Name="itemsGrid" HorizontalAlignment="Left" Margin="190,0,0,0">
+            <DockPanel>
+                <ComboBox x:Name="Year_numbersItemCmb" SelectionChanged="SearchItems" HorizontalAlignment="Left" Margin="0,20,0,0" VerticalAlignment="Top" Width="60"/>
+                <ComboBox x:Name="FirstNameItemCmb" SelectionChanged="SearchItems" HorizontalAlignment="Left" Margin="0,20,0,0" VerticalAlignment="Top" Width="80"/>
+                <ComboBox x:Name="SecondNameItemCmb" SelectionChanged="SearchItems" HorizontalAlignment="Left" Margin="0,20,0,0" VerticalAlignment="Top" Width="80"/>
+            </DockPanel>
+            <DataGrid x:Name="itemsDataGrid" CanUserReorderColumns="False" HorizontalAlignment="Left" RowDetailsVisibilityMode="Collapsed" Background="#E1F5FE" IsReadOnly="True" Margin="0,50,20,0" VerticalAlignment="Top" Grid.ColumnSpan="2">
                 <DataGrid.Resources>
                     <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
                         <Setter Property="Background" Value="#81D4FA" />

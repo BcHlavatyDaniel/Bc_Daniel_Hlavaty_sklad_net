@@ -11,6 +11,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Controls.Primitives;
+using System.ComponentModel;
+using System.Windows.Threading;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -111,6 +113,9 @@ namespace materialApp
         {
             usersGrid.Visibility = Visibility.Collapsed;
             itemsGrid.Visibility = Visibility.Visible;
+            itemsDataGrid.Items.Refresh();
+            itemsDataGrid.UpdateLayout();
+            dataGrid_CmbPositionUpdate(itemsDataGrid, 1);
         }
 
         private void Profile_Open(object sender, RoutedEventArgs e)
@@ -192,7 +197,6 @@ namespace materialApp
 
             DataSet data = mDbActions.LoadSearchedNamesData(userStruct);
             LoadGrid(data);
-           // UpdateCmbItems(data); TO DO
         }
 
         private void Open_Description(object sender, RoutedEventArgs e) //DUPLICATE daff aside
@@ -267,6 +271,55 @@ namespace materialApp
             LoadItemsGrid(data);
         }
 
+        private void Datagrid_Cmb_Update(object sender, RoutedEventArgs e)  //TO DO ONE METHOD FOR THESE COZ OMFGGKGDKFLSAD
+        {
+            dataGrid.Items.Refresh();
+            dataGrid.UpdateLayout();
+            dataGrid_CmbPositionUpdate(dataGrid, 0);
+        }
+
+        private void dataGrid_CmbPositionUpdate(DataGrid grid, int type)
+        {
+            if(type == 0)
+            {
+                DataGridRow gridRow = (DataGridRow)grid.ItemContainerGenerator.ContainerFromIndex(0);
+                if (gridRow == null) return;
+                DataGridCell cell = GetGridCell(gridRow, 0);
+                Year_numbersSearchCmb.Width = cell.ActualWidth;
+                cell = GetGridCell(gridRow, 1);
+                FirstNameSearchCmb.Width = cell.ActualWidth;
+                cell = GetGridCell(gridRow, 2);
+                SecondnameSearchCmb.Width = cell.ActualWidth;
+                cell = GetGridCell(gridRow, 3);
+                AddressSearchCmb.Width = cell.ActualWidth;
+                cell = GetGridCell(gridRow, 4);
+                PhoneSearchCmb.Width = cell.ActualWidth;
+            } else
+            {
+                DataGridRow gridRow = (DataGridRow)grid.ItemContainerGenerator.ContainerFromIndex(0);
+                if (gridRow == null) return;
+                DataGridCell cell = GetGridCell(gridRow, 1);
+                Year_numbersItemCmb.Width = cell.ActualWidth;
+                cell = GetGridCell(gridRow, 2);
+                FirstNameItemCmb.Width = cell.ActualWidth;
+                cell = GetGridCell(gridRow, 3);
+                SecondNameItemCmb.Width = cell.ActualWidth;
+            }
+        }
+
+        public static DataGridCell GetGridCell(DataGridRow row, int column = 0)
+        {
+            if (row == null) return null;
+
+            DataGridCellsPresenter presenter = FindVisualChild<DataGridCellsPresenter>(row);
+            if (presenter == null) return null;
+
+            DataGridCell cell = (DataGridCell)presenter.ItemContainerGenerator.ContainerFromIndex(column);
+            if (cell != null) return cell;
+
+            return cell;
+        }
+
         private void LoadGrid(DataSet gridData)
         {
             dataGrid.ItemsSource = null;
@@ -281,8 +334,12 @@ namespace materialApp
             gridData.Tables[0].Columns.Remove("year");
             gridData.Tables[0].Columns.Remove("_numbers");
             gridData.Tables[0].Columns["rok-id"].SetOrdinal(0);
+            
             dataGrid.ItemsSource = gridData.Tables[0].DefaultView;
             dataGrid.CanUserAddRows = false;
+            dataGrid.Items.Refresh();
+            dataGrid.UpdateLayout();
+            dataGrid_CmbPositionUpdate(dataGrid, 0);
         }
 
         private void LoadItemsGrid(DataSet allItems)
@@ -292,7 +349,6 @@ namespace materialApp
 
             //DataSet allItems = mDbActions.LoadAllItems();
             DataSet allUsers = mDbActions.LoadData();
-            //TO DO
             itemsDataGrid.ItemsSource = null;
             allItems.Tables[0].Columns.Add("rok-id", typeof(string));
             allItems.Tables[0].Columns.Add("prve meno", typeof(string));
@@ -339,6 +395,9 @@ namespace materialApp
             allItems.Tables[0].Columns["druhe meno"].SetOrdinal(2);
             itemsDataGrid.ItemsSource = allItems.Tables[0].DefaultView;
             itemsDataGrid.CanUserAddRows = false;
+            itemsDataGrid.Items.Refresh();
+            itemsDataGrid.UpdateLayout();
+            dataGrid_CmbPositionUpdate(itemsDataGrid, 1);
         }
 
         ///<summary>

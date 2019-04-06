@@ -118,7 +118,7 @@
                     <!-- Click="Add" -->
                     Pridaj
                 </Button>
-                <DataGrid x:Name="dataGrid" HorizontalAlignment="Left" Background="#E1F5FE" Margin="300 , 180 ,0,0"  MouseDoubleClick="Item_Details_Open" IsReadOnly="True" VerticalAlignment="Top" Grid.ColumnSpan="2">
+                <DataGrid x:Name="dataGrid" HorizontalAlignment="Left" CanUserReorderColumns="False" Background="#E1F5FE" Margin="300 , 180 ,0,0"  MouseDoubleClick="Item_Details_Open" IsReadOnly="True" VerticalAlignment="Top" Grid.ColumnSpan="2">
 
                     <DataGrid.Resources>
                         <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">

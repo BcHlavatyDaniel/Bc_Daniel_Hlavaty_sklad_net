@@ -307,13 +307,13 @@ namespace materialApp
                 err = true;
             }
 
-            if (!double.TryParse(text_size.Text, out num))
+     /*       if (!double.TryParse(text_size.Text, out num))
             {
                 text_add_err.Text = "Velkost musi byt cislo";
                 icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
                 text_add_err.Foreground = Brushes.Red;
                 err = true;
-            }
+            }*/
 
             if (err) return;
 

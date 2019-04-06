@@ -110,13 +110,13 @@ namespace materialApp
             icon_edit_err.Visibility = Visibility.Visible;
 
             double num;
-            if (!double.TryParse(text_size.Text, out num))
+        /*    if (!double.TryParse(text_size.Text, out num))
             {
                 text_edit_err.Foreground = Brushes.Red;
                 text_edit_err.Text = "Velkost musi byt cislo!";
                 icon_edit_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
                 return;
-            }
+            }*/
             if (!double.TryParse(text_price.Text, out num))
             {
                 text_edit_err.Foreground = Brushes.Red;
