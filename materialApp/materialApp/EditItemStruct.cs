@@ -13,6 +13,7 @@ namespace materialApp
         public string size { get; set; }
         public string price { get; set; }
         public string photo { get; set; }
+        public string name { get; set; }
         public DateTime created_at { get; set; }
         public DateTime returned_at { get; set; }
         public DateTime sold_at { get; set; }

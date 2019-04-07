@@ -29,6 +29,7 @@ namespace materialApp
         string number_key;
         string photo_path = "";
         List<int> mVisibleList = new List<int>();
+        List<int> mButtonList;
 
         public User_details(DataRowView dataRow)
         {
@@ -154,8 +155,6 @@ namespace materialApp
 
         private void Item_Description_Open(object sender, RoutedEventArgs e)
         {
-
-           
             int index = dataGrid.SelectedIndex;
       //      DataGridRow wataFak = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromIndex(index);
             DataGridRow gridRow = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromItem(dataGrid.SelectedItem);
@@ -182,10 +181,104 @@ namespace materialApp
                 textbox.Text = desc;
                 gridRow.DetailsVisibility = Visibility.Visible;
             }
-            
         }
 
+        private void Item_Details_Open(object sender, RoutedEventArgs e)
+        {
+            DataRowView datView = (DataRowView)dataGrid.SelectedItem;
 
+            Item_details mItemDWindow = new Item_details(mDatRow, datView.Row.ItemArray[0].ToString(), text_first_name.Text, text_second_name.Text);
+            mItemDWindow.Owner = this;
+            mItemDWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            mItemDWindow.ShowDialog();
+        }
+
+        private void Item_Sell(object sender, RoutedEventArgs e)
+        {
+            //update na stav 1
+            DataGridRow gridRow = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromItem(dataGrid.SelectedItem);
+            DataRowView datView = (DataRowView)dataGrid.SelectedItem;
+            mDbActions.ItemEditTimes(datView.Row.ItemArray[0].ToString(), 0);
+            ButtonVisibilityEdit(gridRow, 2);
+        }
+
+        private void Item_Return(object sender, RoutedEventArgs e)
+        {
+            //update na stav 0
+            DataGridRow gridRow = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromItem(dataGrid.SelectedItem);
+            DataRowView datView = (DataRowView)dataGrid.SelectedItem;
+            mDbActions.ItemEditTimes(datView.Row.ItemArray[0].ToString(), 2);
+            ButtonVisibilityEdit(gridRow, 0);
+        }
+
+        private void Item_Pay(object sender, RoutedEventArgs e)
+        {
+            //update na stav 2
+            DataGridRow gridRow = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromItem(dataGrid.SelectedItem);
+            DataRowView datView = (DataRowView)dataGrid.SelectedItem;
+            mDbActions.ItemEditTimes(datView.Row.ItemArray[0].ToString(), 1);
+            ButtonVisibilityEdit(gridRow, 1);
+        }
+
+        private void MkayUpdate(object sender, RoutedEventArgs e)
+        {
+            UpdateButtons();
+        }
+
+        private void UpdateButtons()
+        {
+            dataGrid.Items.Refresh();
+            dataGrid.UpdateLayout();
+            int counter = 0;
+            foreach (var item in dataGrid.Items)
+            {
+                DataGridRow row = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromItem(item);
+                if (row != null) ButtonVisibilityEdit(row, mButtonList.ElementAt(counter));
+                counter++;
+            }
+        }
+
+        private void ButtonVisibilityEdit(DataGridRow row, int id)
+        {
+            FrameworkElement element = dataGrid.Columns[1].GetCellContent(row);
+            element.ApplyTemplate();
+            Button butSell = ((DataGridTemplateColumn)dataGrid.Columns[1]).CellTemplate.FindName("btnSell", element) as Button;
+            Button butPay = ((DataGridTemplateColumn)dataGrid.Columns[1]).CellTemplate.FindName("btnPay", element) as Button;
+            Button butRet = ((DataGridTemplateColumn)dataGrid.Columns[1]).CellTemplate.FindName("btnReturn", element) as Button;
+            Button butEdit = ((DataGridTemplateColumn)dataGrid.Columns[1]).CellTemplate.FindName("btnEditGrid", element) as Button;
+            TextBox text = ((DataGridTemplateColumn)dataGrid.Columns[1]).CellTemplate.FindName("text_Paid", element) as TextBox;
+
+            if (id == 0) //TO DO scale width accordingly
+            { //50 /50 //skladom, da sa predat
+                butSell.Width = 120;
+                butEdit.Width = 120;
+                butSell.Visibility = Visibility.Visible;
+                butPay.Visibility = Visibility.Collapsed;
+                butRet.Visibility = Visibility.Collapsed;
+                text.Visibility = Visibility.Collapsed;
+            }
+            else if (id == 2)//predane nezaplatene
+            { //33/33/33 //
+                butSell.Visibility = Visibility.Collapsed;
+                butPay.Visibility = Visibility.Visible;
+                butRet.Visibility = Visibility.Visible;
+                butPay.Width = 80;
+                butRet.Width = 80;
+                butEdit.Width = 80;
+                text.Visibility = Visibility.Collapsed;
+            }
+            else 
+            { //33/33/33 
+                butSell.Visibility = Visibility.Collapsed;
+                butPay.Visibility = Visibility.Collapsed;
+                butRet.Visibility = Visibility.Visible;
+                text.Visibility = Visibility.Visible;
+                butRet.Width = 80;
+                text.Width = 80;
+                butEdit.Width = 80;
+            }
+            dataGrid.Columns[1].Width = 265;
+        }
 
         private void LoadGrid(DataSet gridData)
         {
@@ -198,60 +291,43 @@ namespace materialApp
             DateTime retTime;
             DateTime paidTime;
             DateTime soldTime;
-            string stav = "";
-            gridData.Tables[0].Columns.Add("stav", typeof(string));
+            DateTime createdTime;
+            //   gridData.Tables[0].Columns.Add("stav", typeof(string));
+            mButtonList = new List<int>();
 
-            foreach(DataRow row in gridData.Tables[0].Rows)
+            foreach (DataRow row in gridData.Tables[0].Rows)
             {
-                stav = "";
                 DateTime.TryParse(row["returned_at"].ToString(), out retTime);
                 DateTime.TryParse(row["paid_at"].ToString(), out paidTime);
                 DateTime.TryParse(row["sold_at"].ToString(), out soldTime);
+                DateTime.TryParse(row["created_at"].ToString(), out createdTime);
 
-                if ("1/1/0001 12:00:00 AM" != row["paid_at"].ToString())
+                if (createdTime < retTime)
                 {
-                    stav += "Zaplatene ";
+                    createdTime = retTime;
                 }
 
-                if ("1/1/0001 12:00:00 AM" != row["sold_at"].ToString())
+                if (createdTime > soldTime ) //ak je skladom, nepredany nezaplateny ! inak minimalne predany
                 {
-                    stav += "Predane ";
-                }
-                else
+                    mButtonList.Add(0); //0 skladom da sa predat
+                } else if (createdTime > paidTime)
                 {
-                    stav += "Skladom ";
-                }
-
-                if ("1/1/0001 12:00:00 AM" != row["returned_at"].ToString())
+                    mButtonList.Add(2); //predane nezaplatene
+                } else
                 {
-                    stav += "Vratene ";
+                    mButtonList.Add(1); //predane, uz len zaplatit
                 }
-
-                row["stav"] = stav;
+           //     row["stav"] = stav;
             }
 
+            gridData.Tables[0].Columns.Remove("description");
+            dataGrid.CanUserAddRows = false;
             gridData.Tables[0].Columns.Remove("created_at");
             gridData.Tables[0].Columns.Remove("returned_at");
             gridData.Tables[0].Columns.Remove("sold_at");
             gridData.Tables[0].Columns.Remove("paid_at");
-
-            gridData.Tables[0].Columns.Remove("description");
-
             dataGrid.ItemsSource = gridData.Tables[0].DefaultView;
-     //       dataGrid.ApplyTemplate();
-
-      //      string descValue = "";
-            
-          /*  for (int i = 0; i < gridData.Tables[0].Rows.Count; i++)
-            {
-                descValue = descriptions.ElementAt(i);
-                DataGridRow dRow = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromIndex(i);
-                DataGridDetailsPresenter presenter = FindVisualChild<DataGridDetailsPresenter>(dRow);
-                presenter.ApplyTemplate();
-                var textbox = presenter.ContentTemplate.FindName("Descrip", presenter) as TextBox;
-            }
-            */
-            dataGrid.CanUserAddRows = false;
+            UpdateButtons();
         }
 
         ///<summary>
@@ -275,6 +351,14 @@ namespace materialApp
             bool err = false;
             icon_add_err.Visibility = Visibility.Visible;
 
+            if (text_name.Text == "")
+            {
+                err = true;
+                text_add_err.Foreground = Brushes.Red;
+                icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
+                text_add_err.Text = "Doplna nazov!";
+            }
+
             if (text_description.Text == "")
             {
                 err = true;
@@ -282,6 +366,7 @@ namespace materialApp
                 icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
                 text_add_err.Text = "Dopln popis!";
             }
+
             if (text_size.Text == "")
             {
                 err = true;
@@ -307,20 +392,13 @@ namespace materialApp
                 err = true;
             }
 
-     /*       if (!double.TryParse(text_size.Text, out num))
-            {
-                text_add_err.Text = "Velkost musi byt cislo";
-                icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
-                text_add_err.Foreground = Brushes.Red;
-                err = true;
-            }*/
-
             if (err) return;
 
             EditItemStruct itemStruct = new EditItemStruct
             {
                 keyy = year_key,
                 keyn = number_key,
+                name = text_name.Text,
                 description = text_description.Text,
                 price = text_price.Text,
                 size = text_size.Text,
@@ -337,6 +415,7 @@ namespace materialApp
             image1.Source = null;
             text_size.Text = "";
             text_price.Text = "";
+            text_name.Text = "";
             text_description.Text = "";
         }
 
@@ -380,16 +459,6 @@ namespace materialApp
                 }
             }
             return null;
-        }
-
-        private void Item_Details_Open(object sender, RoutedEventArgs e)
-        {
-            DataRowView datView = (DataRowView)dataGrid.SelectedItem;
-
-            Item_details mItemDWindow = new Item_details(mDatRow ,datView.Row.ItemArray[0].ToString(), text_first_name.Text, text_second_name.Text);
-            mItemDWindow.Owner = this;
-            mItemDWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            mItemDWindow.ShowDialog();
         }
      
     }

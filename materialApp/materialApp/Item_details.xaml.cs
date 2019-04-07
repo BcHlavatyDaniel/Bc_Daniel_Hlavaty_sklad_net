@@ -54,6 +54,7 @@ namespace materialApp
             text_description.Text = row["description"].ToString();
             text_price.Text = row["price"].ToString();
             text_size.Text = row["size"].ToString();
+            text_name.Text = row["name"].ToString();
             // image1.Source = new BitmapImage(new Uri(@"" + row["photo"].ToString(), UriKind.Relative));  
             image1.Source = new BitmapImage(new Uri(row["photo"].ToString(), UriKind.RelativeOrAbsolute));
             if ("1/1/0001 12:00:00 AM" == row["created_at"].ToString()) text_created_at.Text = "-----";
@@ -131,6 +132,7 @@ namespace materialApp
                 description = text_description.Text,
                 price = text_price.Text,
                 size = text_size.Text,
+                name = text_name.Text,
                 created_at = createTime,
                 sold_at = soldTime,
                 paid_at = paidTime,
@@ -174,6 +176,7 @@ namespace materialApp
                 text_price.IsEnabled = true;
                 text_size.IsEnabled = true;
                 text_description.IsEnabled = true;
+                text_name.IsEnabled = true;
                 text_paid_at.IsEnabled = true;
                 text_created_at.IsEnabled = true;
                 text_returned_at.IsEnabled = true;
@@ -193,6 +196,7 @@ namespace materialApp
                 text_price.IsEnabled = false;
                 text_size.IsEnabled = false;
                 text_description.IsEnabled = false;
+                text_name.IsEnabled = false;
                 text_paid_at.IsEnabled = false;
                 text_created_at.IsEnabled = false;
                 text_returned_at.IsEnabled = false;

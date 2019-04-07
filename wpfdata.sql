@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hostiteľ: 127.0.0.1
--- Čas generovania: Št 04.Apr 2019, 10:54
+-- Čas generovania: Po 08.Apr 2019, 01:14
 -- Verzia serveru: 10.1.28-MariaDB
 -- Verzia PHP: 7.1.10
 
@@ -30,41 +30,101 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `item` (
   `id` int(11) NOT NULL,
+  `name` varchar(500) NOT NULL,
   `user_year` int(11) NOT NULL,
   `user_numbers` int(11) NOT NULL,
   `description` text NOT NULL,
-  `size` double NOT NULL,
+  `size` text NOT NULL,
   `price` double NOT NULL,
   `photo` varchar(500) NOT NULL,
   `created_at` date NOT NULL,
   `returned_at` date NOT NULL,
   `sold_at` date NOT NULL,
-  `paid_at` date NOT NULL,
-  `is_Stored` tinyint(1) NOT NULL
+  `paid_at` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Sťahujem dáta pre tabuľku `item`
 --
 
-INSERT INTO `item` (`id`, `user_year`, `user_numbers`, `description`, `size`, `price`, `photo`, `created_at`, `returned_at`, `sold_at`, `paid_at`, `is_Stored`) VALUES
-(3, 19, 102, 'popis som popis', 25.2, 150.5, 'C:\\Users\\Daniel\\Desktop\\death.jpg', '2019-03-31', '0000-00-00', '2019-04-18', '0000-00-00', 1),
-(4, 19, 102, 'lyze', 30, 170, 'C:\\\\Users\\\\Daniel\\\\Desktop\\\\unavailable.png', '2019-03-31', '0000-00-00', '0000-00-00', '0000-00-00', 1),
-(5, 19, 102, 'Auto', 10000, 150000.5, 'C:\\\\Users\\\\Daniel\\\\Desktop\\\\unavailable.png', '2019-03-31', '0000-00-00', '0000-00-00', '0000-00-00', 0),
-(6, 19, 105, 'popis som popis', 25.2, 150.5, 'C:\\\\Users\\\\Daniel\\\\Desktop\\\\unavailable.png', '2019-03-31', '0000-00-00', '2019-04-10', '2019-04-22', 1),
-(7, 19, 105, 'stol', 2, 10, 'C:\\Users\\Daniel\\Desktop\\available.jpg', '2019-03-31', '2019-04-02', '2019-04-10', '2019-04-09', 1),
-(8, 19, 107, 'popis som popis', 25.2, 150.5, 'C:\\Users\\Daniel\\Desktop\\5123n4V63EL._SX425_.jpg', '2019-03-31', '0000-00-00', '0000-00-00', '0000-00-00', 0),
-(9, 19, 107, 'pizza', 25, 1.5, 'C:\\\\Users\\\\Daniel\\\\Desktop\\\\unavailable.png', '2019-03-31', '2019-04-09', '0000-00-00', '0000-00-00', 0),
-(10, 19, 105, 'Popis', 154, 78, 'C:\\\\Users\\\\Daniel\\\\Desktop\\\\unavailable.png', '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', 1),
-(11, 19, 105, 'Venecky', 25, 150, 'C:\\\\Users\\\\Daniel\\\\Desktop\\\\unavailable.png', '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', 0),
-(12, 19, 105, 'item', 150, 250, 'C:\\Users\\Daniel\\Desktop\\available.jpg', '2019-04-01', '0000-00-00', '0000-00-00', '0000-00-00', 1),
-(13, 19, 105, 'dalsiItem', 852, 101010, 'C:\\Users\\Daniel\\Desktop\\5123n4V63EL._SX425_.jpg', '2019-04-01', '0000-00-00', '0000-00-00', '0000-00-00', 0),
-(14, 19, 105, 'nohy', 121, 0.1, 'C:\\Users\\Daniel\\Desktop\\available.jpg', '2019-04-01', '0000-00-00', '2019-04-03', '0000-00-00', 1),
-(15, 19, 105, 'Palovpredmet', 190, 100, 'C:\\Users\\Daniel\\Desktop\\unavailable.png', '2019-04-01', '0000-00-00', '0000-00-00', '0000-00-00', 0),
-(16, 19, 102, 'FkinKatana', 152.2, 99.99, 'C:\\Users\\Daniel\\Desktop\\5123n4V63EL._SX425_.jpg', '2019-04-02', '0000-00-00', '2019-04-10', '2019-04-10', 0),
-(17, 19, 105, 'Michaliem', 45, 12, 'C:\\Users\\Daniel\\Desktop\\5123n4V63EL._SX425_.jpg', '2019-04-02', '0000-00-00', '0000-00-00', '0000-00-00', 1),
-(18, 19, 105, 'KubovTovar', 1, 9.99, 'C:\\Users\\Daniel\\Desktop\\available.jpg', '2019-04-02', '0000-00-00', '0000-00-00', '0000-00-00', 0),
-(19, 19, 105, 'Text', 99, 1, '', '2019-04-04', '0000-00-00', '0000-00-00', '0000-00-00', 0);
+INSERT INTO `item` (`id`, `name`, `user_year`, `user_numbers`, `description`, `size`, `price`, `photo`, `created_at`, `returned_at`, `sold_at`, `paid_at`) VALUES
+(23, 'Lyze', 19, 102, 'cele su posahane', 'XL', 99.99, 'C:\\Users\\Daniel\\Desktop\\available.jpg', '2019-04-07', '2019-04-08', '0000-00-00', '0000-00-00'),
+(24, 'Topankis', 19, 102, 'bagandze', '45', 59, 'C:\\Users\\Daniel\\Desktop\\unavailable.png', '2019-04-07', '2019-04-07', '2019-04-10', '2019-04-08'),
+(25, 'Klavesnica', 19, 102, 'cervena', 'XXL', 99.99, 'C:\\Users\\Daniel\\Desktop\\death.jpg', '2019-04-07', '0000-00-00', '2019-04-07', '2019-04-08'),
+(26, 'Knizka', 19, 102, 'Potrhana', '150 stranova', 13.99, 'C:\\Users\\Daniel\\Desktop\\available.jpg', '2019-04-07', '2019-04-08', '0000-00-00', '0000-00-00'),
+(34, 'ble', 19, 102, 'bleeee', '1', 1, '', '2019-04-07', '0000-00-00', '2019-04-08', '0000-00-00'),
+(35, 'Logis', 19, 102, 'Testis', 'Maximalis', 1, '', '2019-04-07', '0000-00-00', '2019-04-08', '0000-00-00'),
+(36, 'Kacicka', 19, 105, 'farebna', 'mini', 0.99, 'C:\\Users\\Daniel\\Desktop\\5123n4V63EL._SX425_.jpg', '2019-04-08', '0000-00-00', '2019-04-08', '2019-04-08');
+
+--
+-- Spúšťače `item`
+--
+DELIMITER $$
+CREATE TRIGGER `on_insert` AFTER INSERT ON `item` FOR EACH ROW BEGIN
+INSERT INTO log(i_id, price, item_created_at, item_returned_at, item_paid_at, item_sold_at, created_at, type) VALUES (new.id, new.price , new.created_at, new.returned_at, new.paid_at, new.sold_at, NOW(), 'INSERT');
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `on_update` AFTER UPDATE ON `item` FOR EACH ROW BEGIN
+IF new.paid_at <> old.paid_at
+THEN
+INSERT INTO log (i_id, item_paid_at, type, created_at) VALUES (new.id, new.paid_at, 'UPDATE', NOW());
+END IF;
+IF new.sold_at <> old.sold_at
+THEN
+INSERT INTO log (i_id, item_sold_at, type, created_at) VALUES (new.id, new.sold_at, 'UPDATE', NOW());
+END IF;
+IF new.returned_at <> old.returned_at
+THEN
+INSERT INTO log (i_id, item_returned_at, type, created_at) VALUES (new.id, new.returned_at, 'UPDATE', NOW());
+END IF;
+IF new.price <> old.price
+THEN
+INSERT INTO log (i_id, price, type, created_at) VALUES (new.id, new.price, 'UPDATE', NOW());
+END IF;
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Štruktúra tabuľky pre tabuľku `log`
+--
+
+CREATE TABLE `log` (
+  `id` int(11) NOT NULL,
+  `i_id` int(11) NOT NULL,
+  `price` double NOT NULL,
+  `item_created_at` date NOT NULL,
+  `item_paid_at` date NOT NULL,
+  `item_sold_at` date NOT NULL,
+  `item_returned_at` date NOT NULL,
+  `created_at` date NOT NULL,
+  `type` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Sťahujem dáta pre tabuľku `log`
+--
+
+INSERT INTO `log` (`id`, `i_id`, `price`, `item_created_at`, `item_paid_at`, `item_sold_at`, `item_returned_at`, `created_at`, `type`) VALUES
+(7, 34, 1, '2019-04-07', '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-07', 'INSERT'),
+(8, 35, 1, '2019-04-07', '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-07', 'INSERT'),
+(12, 36, 0.99, '2019-04-08', '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-08', 'INSERT'),
+(13, 36, 0.99, '2019-04-08', '0000-00-00', '2019-04-08', '0000-00-00', '2019-04-08', 'UPDATE'),
+(15, 24, 0, '0000-00-00', '2019-04-08', '0000-00-00', '0000-00-00', '2019-04-08', 'UPDATE'),
+(16, 23, 0, '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-08', 'UPDATE'),
+(17, 23, 0, '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-08', 'UPDATE'),
+(18, 23, 0, '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-08', '2019-04-08', 'UPDATE'),
+(19, 34, 0, '0000-00-00', '0000-00-00', '2019-04-08', '0000-00-00', '2019-04-08', 'UPDATE'),
+(20, 35, 0, '0000-00-00', '0000-00-00', '2019-04-08', '0000-00-00', '2019-04-08', 'UPDATE'),
+(21, 25, 0, '0000-00-00', '2019-04-08', '0000-00-00', '0000-00-00', '2019-04-08', 'UPDATE'),
+(22, 26, 0, '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-08', 'UPDATE'),
+(23, 26, 0, '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-08', 'UPDATE'),
+(24, 26, 0, '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-08', '2019-04-08', 'UPDATE'),
+(25, 26, 13.99, '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-08', 'UPDATE');
 
 -- --------------------------------------------------------
 
@@ -87,7 +147,7 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`year`, `_numbers`, `first_name`, `second_name`, `address`, `telephone`, `created_at`) VALUES
-(19, 102, 'Daniel', 'Hlavaty', 'Dubova 3 Sala 927 01', 918654714, '2019-03-31'),
+(19, 102, 'Danilael', 'Hlavaty', 'Dubova 3 Sala 927 01', 2131323, '2019-03-31'),
 (19, 105, 'Martin', 'Zeleny', 'Bratislava Ulica 14 927', 996665888, '2019-03-31'),
 (19, 107, 'Palo', 'Cerveny', 'Bratislavska 15 Bratislava 45785', 905124587, '2019-03-31');
 
@@ -103,6 +163,12 @@ ALTER TABLE `item`
   ADD KEY `user_year` (`user_year`,`user_numbers`);
 
 --
+-- Indexy pre tabuľku `log`
+--
+ALTER TABLE `log`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexy pre tabuľku `user`
 --
 ALTER TABLE `user`
@@ -116,7 +182,13 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT pre tabuľku `item`
 --
 ALTER TABLE `item`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+
+--
+-- AUTO_INCREMENT pre tabuľku `log`
+--
+ALTER TABLE `log`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- Obmedzenie pre exportované tabuľky

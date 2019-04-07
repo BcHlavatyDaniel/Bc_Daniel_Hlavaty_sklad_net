@@ -99,7 +99,7 @@
                     <TextBox VerticalAlignment="Center" Margin="20,10" Text="Tovar"></TextBox>
                 </StackPanel>
             </Button>
-            <Button x:Name="BtnLogs" HorizontalAlignment="Left" Margin="0, 210,0,0" VerticalAlignment="Top" Width="150" Height="70">
+            <Button x:Name="BtnLogs" HorizontalAlignment="Left" Click="Log_Open" Margin="0, 210,0,0" VerticalAlignment="Top" Width="150" Height="70">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="Assignment" Height="25" Width="25" Margin="10"/>
                     <TextBox VerticalAlignment="Center" Margin="20,10" Text="Logy"></TextBox>
@@ -145,6 +145,35 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns> -->
+            </DataGrid>
+        </Grid>
+        <Grid x:Name="logGrid" HorizontalAlignment="Center" Margin="0,0,0,0">
+            <DockPanel>
+                <DatePicker x:Name="picker_from"></DatePicker>
+                <DatePicker x:Name="picker_to" Margin="150,0,0,0"></DatePicker>
+                <TextBox x:Name="text_date_err" Margin="100,0,0,0"></TextBox>
+            </DockPanel>
+            <DataGrid x:Name="logDataGrid" CanUserReorderColumns="False" HorizontalAlignment="Center" Background="#E1F5FE" IsReadOnly="True" Margin="0, 50, 0,0" VerticalAlignment="Top" Grid.Column="2">
+                <DataGrid.Resources>
+                    <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
+                        <Setter Property="Background" Value="#81D4FA" />
+                    </Style>
+                    <Style BasedOn="{StaticResource {x:Type DataGridCell}}" TargetType="{x:Type DataGridCell}">
+                        <Style.Triggers>
+                            <Trigger Property="DataGridCell.IsSelected" Value="True">
+                                <Setter Property="Background" Value="#dbedfc"/>
+                                <Setter Property="BorderBrush" Value="#01579B"></Setter>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.Resources>
+                <DataGrid.CellStyle>
+                    <Style BasedOn="{StaticResource {x:Type DataGridCell}}" TargetType="{x:Type DataGridCell}">
+                        <Setter Property="BorderThickness" Value="0.3"></Setter>
+                        <Setter Property="BorderBrush" Value="#01579B"></Setter>
+                        <Setter Property="Background" Value="#dbedfc"></Setter>
+                    </Style>
+                </DataGrid.CellStyle>
             </DataGrid>
         </Grid>
         <Grid x:Name="itemsGrid" HorizontalAlignment="Left" Margin="190,0,0,0">

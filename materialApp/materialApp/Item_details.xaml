@@ -15,16 +15,17 @@
         Title="Item_details" Height="500" Width="800">
     <Grid Background="WhiteSmoke">
         <StackPanel Margin="0,20,0,0">
-            <DockPanel HorizontalAlignment="Center" Background="#E1F5FE">
-                <Label Content="_Popis:" Target="{Binding ElementName=text_description}"/>
-                <TextBox Background="White" x:Name="text_description" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0, 0 ,0, 0" Width="200">
-                </TextBox>
-            </DockPanel>
             <DockPanel>
                 <StackPanel Margin="50,00,0,0" Background="#E1F5FE">
                     <DockPanel  Margin="0,0 ,0,0">
                         <Label Content="_Prve meno:" Target="{Binding ElementName=text_first_name}"/>
                         <TextBox Background="White" x:Name="text_first_name" HorizontalAlignment="Left" VerticalAlignment="Top">
+                        </TextBox>
+                    </DockPanel>
+
+                    <DockPanel Margin ="0,20,0,0"  Background="#E1F5FE">
+                        <Label Content="_Nazov:" Target="{Binding ElementName=text_name}"/>
+                        <TextBox Background="White" x:Name="text_name" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0, 0 ,0, 0" >
                         </TextBox>
                     </DockPanel>
 
@@ -52,6 +53,11 @@
                     <DockPanel  Margin="0, 0 , 0 ,0">
                         <Label Content="_Druhe meno:" Target="{Binding ElementName=text_second_name}"/>
                         <TextBox Background="White" x:Name="text_second_name" HorizontalAlignment="Left" VerticalAlignment="Top">
+                        </TextBox>
+                    </DockPanel>
+                    <DockPanel Margin ="0,20,0,0"  Background="#E1F5FE">
+                        <Label Content="_Popis:" Target="{Binding ElementName=text_description}"/>
+                        <TextBox Background="White" x:Name="text_description" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0, 0 ,0, 0" >
                         </TextBox>
                     </DockPanel>
                     <DockPanel Margin="0, 20 , 0,0">

@@ -192,6 +192,46 @@ namespace materialApp
             return ret;
         }
 
+        public void ItemEditTimes(string id, int type)
+        {
+            MySqlConnection mSql = new MySqlConnection(connMainStr);
+            mSql.Open();
+            
+            try
+            {
+                MySqlCommand cmd = mSql.CreateCommand();
+                if (type == 0) //item_sell
+                {
+                    cmd.CommandText = "UPDATE item SET sold_at = @time WHERE id = @id";
+                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.Parameters.AddWithValue("@time", DateTime.Now);
+                }
+                else if (type == 1) //item_pay
+                {
+                    cmd.CommandText = "UPDATE item SET paid_at = @time WHERE id = @id";
+                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.Parameters.AddWithValue("@time", DateTime.Now);
+                }
+                else //item_return
+                {
+                    cmd.CommandText = "UPDATE item SET returned_at = @time, paid_at = @paid, sold_at = @sold WHERE id = @id";
+                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.Parameters.AddWithValue("@time", DateTime.Now);
+                    cmd.Parameters.AddWithValue("@paid", "");
+                    cmd.Parameters.AddWithValue("@sold", "");
+                }
+                cmd.ExecuteNonQuery();
+            }
+            catch(Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                if (mSql.State == ConnectionState.Open) mSql.Close();
+            }
+        }
+
         public int GetNumberOfItemsForUser(string year, string numbers)
         {
             MySqlConnection mSql = new MySqlConnection(connMainStr);
@@ -373,12 +413,13 @@ namespace materialApp
             try
             {
                 MySqlCommand cmd = mSql.CreateCommand();
-                cmd.CommandText = "INSERT INTO item(user_year, user_numbers, description, size, price, photo, created_at) VALUES (@user_year, @user_numbers, @description, @size, @price, @photo, @created_at)";
+                cmd.CommandText = "INSERT INTO item(user_year, user_numbers, name, description, size, price, photo, created_at) VALUES (@user_year, @user_numbers, @name, @description, @size, @price, @photo, @created_at)";
                 cmd.Parameters.AddWithValue("@user_year", itemStruct.keyy);
                 cmd.Parameters.AddWithValue("@user_numbers", itemStruct.keyn);
                 cmd.Parameters.AddWithValue("@description", itemStruct.description);
                 cmd.Parameters.AddWithValue("@size", itemStruct.size);
                 cmd.Parameters.AddWithValue("@price", itemStruct.price);
+                cmd.Parameters.AddWithValue("@name", itemStruct.name);
                 cmd.Parameters.AddWithValue("@photo", itemStruct.photo);
                 cmd.Parameters.AddWithValue("@created_at", DateTime.Now);
                 cmd.ExecuteNonQuery();
@@ -401,10 +442,11 @@ namespace materialApp
             try
             {
                 MySqlCommand cmd = mSql.CreateCommand();
-                cmd.CommandText = "UPDATE item SET description = @desc, size = @size, price = @price";
+                cmd.CommandText = "UPDATE item SET description = @desc, size = @size, price = @price, name = @name";
                 cmd.Parameters.AddWithValue("@desc", itemStruct.description);
                 cmd.Parameters.AddWithValue("@size", itemStruct.size);
                 cmd.Parameters.AddWithValue("@price", itemStruct.price);
+                cmd.Parameters.AddWithValue("@name", itemStruct.name);
                 if (itemStruct.created_at.ToString() != "1/1/0001 12:00:00 AM")
                 {
                     cmd.CommandText += ", created_at = @created_at";
@@ -499,6 +541,31 @@ namespace materialApp
             return data;
         }
 
- 
+        public DataSet LoadLogData()
+        {
+            MySqlConnection mSql = new MySqlConnection(connMainStr);
+            mSql.Open();
+            DataSet data;
+
+            try
+            {
+                MySqlCommand cmd = mSql.CreateCommand();
+                cmd.CommandText = "SELECT * FROM log";
+                MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                data = new DataSet();
+                adapter.Fill(data);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                if (mSql.State == ConnectionState.Open) mSql.Close();
+            }
+
+            return data;
+        }
+
     }
 }
