@@ -19,7 +19,10 @@ using Emgu.CV;
 using Emgu.CV.UI;
 using Emgu.CV.Structure;
 using System.IO;
-//using System.Drawing;
+using Spire.Pdf;
+using Spire.Pdf.Graphics;
+using System.Management;
+using System.Drawing.Printing;
 
 namespace materialApp
 {
@@ -43,6 +46,48 @@ namespace materialApp
             InitializeComponent();
             Init(dataRow, view, cap);
         }
+
+        private void Print(object sender, RoutedEventArgs e)
+        {
+            PdfDocument pdf = new PdfDocument();
+            if (File.Exists("~/../../../imageres/zmluva.pdf"))
+                pdf.LoadFromFile("~/../../../imageres/zmluva.pdf");
+
+            PdfPageBase page = pdf.Pages[0];
+            PdfFont font = new PdfFont(PdfFontFamily.Courier, 14f);
+
+            DataRowView datView = (DataRowView)dataGrid.SelectedItem;
+            page.Canvas.DrawString(text_first_name.Text, font, PdfBrushes.Black, new System.Drawing.PointF(40, 80f));
+            page.Canvas.DrawString(text_second_name.Text, font, PdfBrushes.Black, new System.Drawing.PointF(200, 80f));
+            page.Canvas.DrawString(text_address.Text, font, PdfBrushes.Black, new System.Drawing.PointF(300, 80f));
+            page.Canvas.DrawString(year_key + "-" + number_key, font, PdfBrushes.Black, new System.Drawing.PointF(530, 80f));
+            page.Canvas.DrawString(datView.Row.ItemArray[0].ToString(), font, PdfBrushes.Black, new System.Drawing.PointF(400, 130f));
+            page.Canvas.DrawString(datView.Row.ItemArray[1].ToString(), font, PdfBrushes.Black, new System.Drawing.PointF(220, 150f));
+            page.Canvas.DrawString(datView.Row.ItemArray[3].ToString(), font, PdfBrushes.Black, new System.Drawing.PointF(520, 150f));
+            page.Canvas.DrawString(DateTime.Now.ToShortDateString(), font, PdfBrushes.Black, new System.Drawing.PointF(300, 795f));
+            pdf.SaveToFile("doesitwork.pdf");
+
+            PrinterSettings settings = new PrinterSettings();
+            string printerName = settings.PrinterName;
+            if (printerName == null || printerName == "")
+            {
+                ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM Win32_Printer");
+                foreach (ManagementObject printer in searcher.Get())
+                {
+                    printerName = printer["Name"].ToString();
+                    string availability = printer["Availability"].ToString();
+                    //ak je available zober ho not sure ako to bude vyzerat tho :D :D
+                }
+            } else
+            {
+                pdf.PrintSettings.PrinterName = printerName;
+                //if virtual -> pdf.PrintSettings.PrintToFile("PrintToXps.xps");
+                pdf.Print();
+            }
+
+        }
+
+
 
         private void Init(DataRowView dataRow, ImageViewer view, VideoCapture cap)
         {
@@ -223,7 +268,7 @@ namespace materialApp
         {
             dataGrid.Items.Refresh();
             dataGrid.UpdateLayout();
-            if (dataGrid.Columns.Count > 2) dataGrid.Columns[2].Visibility = Visibility.Hidden;
+            if (dataGrid.Columns.Count > 3) dataGrid.Columns[3].Visibility = Visibility.Hidden;
 
             int counter = 0;
             foreach (var item in dataGrid.Items)
@@ -236,13 +281,13 @@ namespace materialApp
 
         private void ButtonVisibilityEdit(DataGridRow row, int id)
         {
-            FrameworkElement element = dataGrid.Columns[1].GetCellContent(row);
+            FrameworkElement element = dataGrid.Columns[2].GetCellContent(row);
             element.ApplyTemplate();
-            Button butSell = ((DataGridTemplateColumn)dataGrid.Columns[1]).CellTemplate.FindName("btnSell", element) as Button;
-            Button butPay = ((DataGridTemplateColumn)dataGrid.Columns[1]).CellTemplate.FindName("btnPay", element) as Button;
-            Button butRet = ((DataGridTemplateColumn)dataGrid.Columns[1]).CellTemplate.FindName("btnReturn", element) as Button;
-            Button butEdit = ((DataGridTemplateColumn)dataGrid.Columns[1]).CellTemplate.FindName("btnEditGrid", element) as Button;
-            TextBox text = ((DataGridTemplateColumn)dataGrid.Columns[1]).CellTemplate.FindName("text_Paid", element) as TextBox;
+            Button butSell = ((DataGridTemplateColumn)dataGrid.Columns[2]).CellTemplate.FindName("btnSell", element) as Button;
+            Button butPay = ((DataGridTemplateColumn)dataGrid.Columns[2]).CellTemplate.FindName("btnPay", element) as Button;
+            Button butRet = ((DataGridTemplateColumn)dataGrid.Columns[2]).CellTemplate.FindName("btnReturn", element) as Button;
+            Button butEdit = ((DataGridTemplateColumn)dataGrid.Columns[2]).CellTemplate.FindName("btnEditGrid", element) as Button;
+            TextBox text = ((DataGridTemplateColumn)dataGrid.Columns[2]).CellTemplate.FindName("text_Paid", element) as TextBox;
 
             if (id == 0) //TO DO scale width accordingly
             { //50 /50 //skladom, da sa predat
@@ -273,7 +318,7 @@ namespace materialApp
                 text.Width = 80;
                 butEdit.Width = 80;
             }
-            dataGrid.Columns[1].Width = 265;
+            dataGrid.Columns[2].Width = 265;
         }
 
         private void LoadGrid(DataSet gridData)
@@ -317,7 +362,6 @@ namespace materialApp
             }
 
             gridData.Tables[0].Columns.Remove("description");
-            dataGrid.CanUserAddRows = false;
             gridData.Tables[0].Columns.Remove("created_at");
             gridData.Tables[0].Columns.Remove("returned_at");
             gridData.Tables[0].Columns.Remove("sold_at");
