@@ -19,6 +19,9 @@ using System.Windows.Shapes;
 using System.Collections;
 using System.Data;
 using MySql.Data.MySqlClient;
+using Emgu.CV;
+using Emgu.CV.UI;
+using Emgu.CV.Structure;
 
 namespace materialApp
 {
@@ -30,6 +33,8 @@ namespace materialApp
         DbActions mDbActions;
         bool hamClosed = true;
         List<int> mVisibleList = new List<int>();
+        VideoCapture capture = new VideoCapture();
+        ImageViewer viewer = new ImageViewer();
 
         public MainWindow()
         {
@@ -39,6 +44,7 @@ namespace materialApp
 
         private void Init()
         {
+           
             mDbActions = new DbActions();
             DataSet data = mDbActions.LoadData();
             LoadGrid(data);
@@ -131,7 +137,7 @@ namespace materialApp
 
         private void Profile_Open(object sender, RoutedEventArgs e)
         {
-            User_details mUserDWindow = new User_details((DataRowView)dataGrid.SelectedItem);
+            User_details mUserDWindow = new User_details((DataRowView)dataGrid.SelectedItem, viewer, capture);
             mUserDWindow.Owner = this;
             mUserDWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             mUserDWindow.ShowDialog();

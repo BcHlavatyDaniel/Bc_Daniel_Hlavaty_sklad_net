@@ -8,11 +8,14 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("imageres/add.png")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("imageres/change.png")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("imageres/database.png")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("imageres/delete.png")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("imageres/profiles.png")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("imageres/unavailable.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("imageres/webimage0.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("imageres/webimage1.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("imageres/webimage2.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("imageres/webimage3.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("imageres/webimage4.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("imageres/webimage5.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("imageres/webimage6.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("imageres/webimage7.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("imageres/webimage8.png")]
 
 

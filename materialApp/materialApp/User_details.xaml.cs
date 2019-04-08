@@ -15,6 +15,11 @@ using System.Windows.Shapes;
 using System.Collections;
 using System.Data;
 using MySql.Data.MySqlClient;
+using Emgu.CV;
+using Emgu.CV.UI;
+using Emgu.CV.Structure;
+using System.IO;
+//using System.Drawing;
 
 namespace materialApp
 {
@@ -30,15 +35,20 @@ namespace materialApp
         string photo_path = "";
         List<int> mVisibleList = new List<int>();
         List<int> mButtonList;
+        ImageViewer viewer;
+        VideoCapture capture;
 
-        public User_details(DataRowView dataRow)
+        public User_details(DataRowView dataRow, ImageViewer view, VideoCapture cap)
         {
             InitializeComponent();
-            Init(dataRow);
+            Init(dataRow, view, cap);
         }
 
-        private void Init(DataRowView dataRow)
+        private void Init(DataRowView dataRow, ImageViewer view, VideoCapture cap)
         {
+            viewer = view;
+            capture = cap;
+
             mDbActions = new DbActions();
             mDatRow = dataRow;
 
@@ -70,22 +80,6 @@ namespace materialApp
             BtnEdit.Visibility = Visibility.Hidden;
             icon_edit_err.Visibility = Visibility.Hidden;
             text_edit_err.Text = "";
-        }
-
-        private void AddPhotoPath(object sender, RoutedEventArgs e)
-        {
-            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
-
-            dlg.DefaultExt = ".png";
-            dlg.Filter = "JPEG Files (*.jpeg)|*.jpeg|PNG Files (*.png)|*.png|JPG Files (*.jpg)|*.jpg|GIF Files (*.gif)|*.gif";
-
-            Nullable<bool> result = dlg.ShowDialog();
-
-            if (result == true)
-            {
-                photo_path = dlg.FileName;
-                image1.Source = new BitmapImage(new Uri(photo_path, UriKind.RelativeOrAbsolute));
-            }
         }
 
         private void Save(object sender, RoutedEventArgs e)
@@ -187,7 +181,7 @@ namespace materialApp
         {
             DataRowView datView = (DataRowView)dataGrid.SelectedItem;
 
-            Item_details mItemDWindow = new Item_details(mDatRow, datView.Row.ItemArray[0].ToString(), text_first_name.Text, text_second_name.Text);
+            Item_details mItemDWindow = new Item_details(mDatRow, datView.Row.ItemArray[0].ToString(), text_first_name.Text, text_second_name.Text, viewer, capture);
             mItemDWindow.Owner = this;
             mItemDWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             mItemDWindow.ShowDialog();
@@ -229,6 +223,8 @@ namespace materialApp
         {
             dataGrid.Items.Refresh();
             dataGrid.UpdateLayout();
+            if (dataGrid.Columns.Count > 2) dataGrid.Columns[2].Visibility = Visibility.Hidden;
+
             int counter = 0;
             foreach (var item in dataGrid.Items)
             {
@@ -344,6 +340,56 @@ namespace materialApp
         private void ModalBack(object sender, RoutedEventArgs e)
         {
             DialogHost.IsOpen = false;
+        }
+
+        private void TakeAPic(object sender, RoutedEventArgs e)
+        {
+
+            viewer.Image = capture.QueryFrame(); //TO DO if throws err
+            viewer.Image.Save("webImage0.png"); // -> odtialto ho skopcit do imageres, nazov +id
+            DirectoryInfo di = new DirectoryInfo("~/../../../imageres/");
+            FileInfo[] currFiles = di.GetFiles("*.png");
+
+            string imgName = "webImage0.png";
+            int id = 0;
+            while (File.Exists("~/../../../imageres/" + imgName))
+            {
+                imgName = new String(imgName.Where(c => c != '-' && (c < '0' || c > '9')).ToArray());
+                id++;
+                imgName = imgName.Insert(8, id.ToString());
+            }
+            
+            string getImage = "webImage0.png";
+            
+            string saveImage = "~/../../../imageres/" + imgName;
+            File.Copy(getImage, saveImage);
+            //photo_path = "/imageres/" +imgName;
+            photo_path = "C://Users/Daniel/source/repos/materialApp/materialApp/imageres/" + imgName;   //TO DO this directory path to config
+           // image1.Source = new BitmapImage(new Uri(photo_path, UriKind.RelativeOrAbsolute));
+            image1.Source = new BitmapImage(new Uri(photo_path, UriKind.RelativeOrAbsolute));
+
+            /*        System.Windows.Forms.FolderBrowserDialog filedlg = new System.Windows.Forms.FolderBrowserDialog();
+                    System.Windows.Forms.DialogResult result = filedlg.ShowDialog();
+                    if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(filedlg.SelectedPath))
+                    {
+                        string path = filedlg.SelectedPath;
+                    }*/
+        }
+
+        private void AddPhotoPath(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+
+            dlg.DefaultExt = ".png";
+            dlg.Filter = "JPEG Files (*.jpeg)|*.jpeg|PNG Files (*.png)|*.png|JPG Files (*.jpg)|*.jpg|GIF Files (*.gif)|*.gif";
+
+            Nullable<bool> result = dlg.ShowDialog();
+
+            if (result == true)
+            {
+                photo_path = dlg.FileName;
+                image1.Source = new BitmapImage(new Uri(photo_path, UriKind.RelativeOrAbsolute));
+            }
         }
 
         private void Add(object sender, RoutedEventArgs e)

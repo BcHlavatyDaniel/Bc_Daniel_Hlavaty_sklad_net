@@ -95,9 +95,14 @@
             Upravit
         </Button>
 
-        <Button x:Name="BtnAddPhotoPath" HorizontalAlignment="Left" Margin="130 ,300, 0,0" VerticalAlignment="Top" Click="AddPhotoPath" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
+        <Button x:Name="BtnAddPhotoPath" HorizontalAlignment="Left" Margin="130 ,280, 0,0" VerticalAlignment="Top" Click="AddPhotoPath" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
                  Width="75" Height="75" ToolTip="MaterialDesignFloatingActionMiniLightButton">
             <materialDesign:PackIcon Kind="InsertPhoto" Height="24" Width="24" />
+        </Button>
+
+        <Button x:Name="BtnAddWebCamPhoto" HorizontalAlignment="Left"  Margin="130,360,0,0" VerticalAlignment="Top" Click="TakeAPic" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
+                                        Width="75" Height="75" ToolTip="MaterialDesignFloatingActionMiniLightButton">
+            <materialDesign:PackIcon Kind="AddToPhotos" Height="24" Width="24" />
         </Button>
 
         <Image x:Name="image1" HorizontalAlignment="Right" Height="150" VerticalAlignment="Top" Width="150" Margin="0,270, 100,0"/>

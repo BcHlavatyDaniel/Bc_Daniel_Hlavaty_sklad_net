@@ -14,7 +14,10 @@ using System.Windows.Shapes;
 using System.Collections;
 using System.Data;
 using MySql.Data.MySqlClient;
-
+using Emgu.CV;
+using Emgu.CV.UI;
+using Emgu.CV.Structure;
+using System.IO;
 namespace materialApp
 {
     /// <summary>
@@ -26,17 +29,22 @@ namespace materialApp
         string mId;
         DataRowView mDatRow;
         string mPhotoPath = "";
+        ImageViewer viewer;
+        VideoCapture capture;
 
-        public Item_details(DataRowView datRow, string id, string f_name, string s_name)
+        public Item_details(DataRowView datRow, string id, string f_name, string s_name, ImageViewer view, VideoCapture cap)
         {
             InitializeComponent();
-            Init(datRow, id, f_name, s_name);
+            Init(datRow, id, f_name, s_name, view, cap);
         }
 
-        private void Init(DataRowView datRow, string id, string f_name, string s_name)
+        private void Init(DataRowView datRow, string id, string f_name, string s_name, ImageViewer view, VideoCapture cap)
         {
             mDbActions = new DbActions();
             mDatRow = datRow;
+
+            viewer = view;
+            capture = cap;
 
             ChangeSaveVisibility(false);
             text_first_name.IsEnabled = false;
@@ -72,6 +80,32 @@ namespace materialApp
             //User_details userWindow = new User_details(mDatRow);
             //userWindow.Show();
             this.Close();
+        }
+
+        private void TakeAPic(object sender, RoutedEventArgs e)
+        {
+            viewer.Image = capture.QueryFrame(); //TO DO if throws err
+            viewer.Image.Save("webImage0.png"); // -> odtialto ho skopcit do imageres, nazov +id
+            DirectoryInfo di = new DirectoryInfo("~/../../../imageres/");
+            FileInfo[] currFiles = di.GetFiles("*.png");
+
+            string imgName = "webImage0.png";
+            int id = 0;
+            while (File.Exists("~/../../../imageres/" + imgName))
+            {
+                imgName = new String(imgName.Where(c => c != '-' && (c < '0' || c > '9')).ToArray());
+                id++;
+                imgName = imgName.Insert(8, id.ToString());
+            }
+
+            string getImage = "webImage0.png";
+
+            string saveImage = "~/../../../imageres/" + imgName;
+            File.Copy(getImage, saveImage);
+            //photo_path = "/imageres/" +imgName;
+            mPhotoPath = "C://Users/Daniel/source/repos/materialApp/materialApp/imageres/" + imgName;   //TO DO this directory path to config
+                                                                                                        // image1.Source = new BitmapImage(new Uri(photo_path, UriKind.RelativeOrAbsolute));
+            image1.Source = new BitmapImage(new Uri(mPhotoPath, UriKind.RelativeOrAbsolute));
         }
 
         private void AddPhotoPath(object sender, RoutedEventArgs s)
