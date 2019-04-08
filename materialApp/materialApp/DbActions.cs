@@ -513,6 +513,34 @@ namespace materialApp
             return data;
         }
 
+
+        public DataSet LoadItemsByName(string name)
+        {
+            MySqlConnection mSql = new MySqlConnection(connMainStr);
+            mSql.Open();
+            DataSet data;
+
+            try
+            {
+                MySqlCommand cmd = mSql.CreateCommand();
+                cmd.CommandText = "SELECT * FROM item WHERE name = @name";
+                cmd.Parameters.AddWithValue("@name", name);
+                MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                data = new DataSet();
+                adapter.Fill(data);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                if (mSql.State == ConnectionState.Open) mSql.Close();
+            }
+
+            return data;
+        }
+
         public DataSet LoadUserData(string keyy, string keyn)
         {
             MySqlConnection mSql = new MySqlConnection(connMainStr);
@@ -551,6 +579,33 @@ namespace materialApp
             {
                 MySqlCommand cmd = mSql.CreateCommand();
                 cmd.CommandText = "SELECT * FROM log";
+                MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                data = new DataSet();
+                adapter.Fill(data);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                if (mSql.State == ConnectionState.Open) mSql.Close();
+            }
+
+            return data;
+        }
+
+        public DataSet LoadLogByDay(DateTime day)
+        {
+            MySqlConnection mSql = new MySqlConnection(connMainStr);
+            mSql.Open();
+            DataSet data;
+
+            try
+            {
+                MySqlCommand cmd = mSql.CreateCommand();
+                cmd.CommandText = "SELECT * FROM log WHERE created_at = @day";
+                cmd.Parameters.AddWithValue("@day", day);
                 MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
                 data = new DataSet();
                 adapter.Fill(data);

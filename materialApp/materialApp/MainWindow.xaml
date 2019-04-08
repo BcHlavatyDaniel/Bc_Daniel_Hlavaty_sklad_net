@@ -149,8 +149,7 @@
         </Grid>
         <Grid x:Name="logGrid" HorizontalAlignment="Center" Margin="0,0,0,0">
             <DockPanel>
-                <DatePicker x:Name="picker_from"></DatePicker>
-                <DatePicker x:Name="picker_to" Margin="150,0,0,0"></DatePicker>
+                <DatePicker x:Name="picker" SelectedDateChanged="Select_log" Margin="100,0,0,0"></DatePicker>
                 <TextBox x:Name="text_date_err" Margin="100,0,0,0"></TextBox>
             </DockPanel>
             <DataGrid x:Name="logDataGrid" CanUserReorderColumns="False" HorizontalAlignment="Center" Background="#E1F5FE" IsReadOnly="True" Margin="0, 50, 0,0" VerticalAlignment="Top" Grid.Column="2">

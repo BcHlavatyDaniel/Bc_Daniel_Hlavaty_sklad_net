@@ -131,7 +131,10 @@
                     <!-- Click="Add" -->
                     Pridaj
                 </Button>
-                <DataGrid x:Name="dataGrid" HorizontalAlignment="Center" Loaded="MkayUpdate" CanUserReorderColumns="False" Background="#E1F5FE" Margin="0 , 280 ,0,0" IsReadOnly="True" VerticalAlignment="Top" Grid.ColumnSpan="2">
+                
+                <ComboBox x:Name="Name_Cmb" SelectionChanged="SearchItems" HorizontalAlignment="Left" Margin="190,270,0,0" VerticalAlignment="Top" Width="80"/>
+
+                <DataGrid x:Name="dataGrid" HorizontalAlignment="Left" Loaded="MkayUpdate" CanUserReorderColumns="False" Background="#E1F5FE" Margin="190 , 300 ,0,0" IsReadOnly="True" VerticalAlignment="Top" Grid.ColumnSpan="2">
                     <!--MouseDoubleClick="Item_Details_Open"-->
                     <DataGrid.Resources>
                         <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">

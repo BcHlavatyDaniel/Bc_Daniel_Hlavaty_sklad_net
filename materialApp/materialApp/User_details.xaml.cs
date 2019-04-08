@@ -36,6 +36,8 @@ namespace materialApp
         string year_key;
         string number_key;
         string photo_path = "";
+        bool firstBrush = false;
+        Brush defBrush = Brushes.Black;
         List<int> mVisibleList = new List<int>();
         List<int> mButtonList;
         ImageViewer viewer;
@@ -55,11 +57,13 @@ namespace materialApp
 
             PdfPageBase page = pdf.Pages[0];
             PdfFont font = new PdfFont(PdfFontFamily.Courier, 14f);
+            PdfFont fontSmall = new PdfFont(PdfFontFamily.Courier, 10f);
 
             DataRowView datView = (DataRowView)dataGrid.SelectedItem;
             page.Canvas.DrawString(text_first_name.Text, font, PdfBrushes.Black, new System.Drawing.PointF(40, 80f));
             page.Canvas.DrawString(text_second_name.Text, font, PdfBrushes.Black, new System.Drawing.PointF(200, 80f));
-            page.Canvas.DrawString(text_address.Text, font, PdfBrushes.Black, new System.Drawing.PointF(300, 80f));
+            if (text_address.Text.Length > 30) page.Canvas.DrawString(text_address.Text, fontSmall, PdfBrushes.Black, new System.Drawing.PointF(300, 85f));
+            else page.Canvas.DrawString(text_address.Text, font, PdfBrushes.Black, new System.Drawing.PointF(300, 80f));
             page.Canvas.DrawString(year_key + "-" + number_key, font, PdfBrushes.Black, new System.Drawing.PointF(530, 80f));
             page.Canvas.DrawString(datView.Row.ItemArray[0].ToString(), font, PdfBrushes.Black, new System.Drawing.PointF(400, 130f));
             page.Canvas.DrawString(datView.Row.ItemArray[1].ToString(), font, PdfBrushes.Black, new System.Drawing.PointF(220, 150f));
@@ -84,7 +88,7 @@ namespace materialApp
                 //if virtual -> pdf.PrintSettings.PrintToFile("PrintToXps.xps");
                 pdf.Print();
             }
-
+            
         }
 
 
@@ -93,6 +97,7 @@ namespace materialApp
         {
             viewer = view;
             capture = cap;
+
 
             mDbActions = new DbActions();
             mDatRow = dataRow;
@@ -117,6 +122,16 @@ namespace materialApp
 
             DataSet data = mDbActions.LoadUserData(year_key, number_key);
             LoadGrid(data);
+            DataTable dataTable = data.Tables[0];
+
+            Name_Cmb.Items.Add("");
+            foreach(DataRow row in dataTable.Rows)
+            {
+                if (!Name_Cmb.Items.Contains(row["name"].ToString()))
+                {
+                    Name_Cmb.Items.Add(row["name"].ToString());
+                }
+            }
         }
    
         private void Edit(object sender, RoutedEventArgs e)
@@ -259,6 +274,21 @@ namespace materialApp
             ButtonVisibilityEdit(gridRow, 1);
         }
 
+        private void SearchItems(object sender, RoutedEventArgs e)
+        {
+            DataSet data;
+            if (Name_Cmb.SelectedItem.ToString() == "")
+            {
+                data = mDbActions.LoadUserData(year_key, number_key);
+            } else
+            {
+                data = mDbActions.LoadItemsByName(Name_Cmb.SelectedItem.ToString());
+            }
+
+            LoadGrid(data);
+
+        }
+
         private void MkayUpdate(object sender, RoutedEventArgs e)
         {
             UpdateButtons();
@@ -277,18 +307,37 @@ namespace materialApp
                 if (row != null) ButtonVisibilityEdit(row, mButtonList.ElementAt(counter));
                 counter++;
             }
+
+            //dataGrid.Items.Refresh();
+            dataGrid.UpdateLayout();
+            DataGridRow gridRow = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromIndex(0);
+            if (gridRow == null) return;
+            DataGridCell cell = GetGridCell(gridRow, 0);
+            double cmbMargin = cell.ActualWidth;
+            cell = GetGridCell(gridRow, 1);
+            cmbMargin += cell.ActualWidth;
+            cell = GetGridCell(gridRow, 2);
+            cmbMargin += cell.ActualWidth;
+            Name_Cmb.Margin = new Thickness(cmbMargin+190, 270, 0, 0);
         }
 
         private void ButtonVisibilityEdit(DataGridRow row, int id)
         {
             FrameworkElement element = dataGrid.Columns[2].GetCellContent(row);
+            FrameworkElement elementPrint = dataGrid.Columns[1].GetCellContent(row);
             element.ApplyTemplate();
+            elementPrint.ApplyTemplate();
             Button butSell = ((DataGridTemplateColumn)dataGrid.Columns[2]).CellTemplate.FindName("btnSell", element) as Button;
             Button butPay = ((DataGridTemplateColumn)dataGrid.Columns[2]).CellTemplate.FindName("btnPay", element) as Button;
             Button butRet = ((DataGridTemplateColumn)dataGrid.Columns[2]).CellTemplate.FindName("btnReturn", element) as Button;
             Button butEdit = ((DataGridTemplateColumn)dataGrid.Columns[2]).CellTemplate.FindName("btnEditGrid", element) as Button;
             TextBox text = ((DataGridTemplateColumn)dataGrid.Columns[2]).CellTemplate.FindName("text_Paid", element) as TextBox;
-
+            Button butPrint = ((DataGridTemplateColumn)dataGrid.Columns[1]).CellTemplate.FindName("btnPrint", elementPrint) as Button;
+            if (firstBrush == false)
+            {
+                firstBrush = true;
+                defBrush = butPrint.Background;
+            }
             if (id == 0) //TO DO scale width accordingly
             { //50 /50 //skladom, da sa predat
                 butSell.Width = 120;
@@ -297,6 +346,8 @@ namespace materialApp
                 butPay.Visibility = Visibility.Collapsed;
                 butRet.Visibility = Visibility.Collapsed;
                 text.Visibility = Visibility.Collapsed;
+                butPrint.Background = Brushes.Gray;
+                butPrint.IsEnabled = false;
             }
             else if (id == 2)//predane nezaplatene
             { //33/33/33 //
@@ -307,6 +358,8 @@ namespace materialApp
                 butRet.Width = 80;
                 butEdit.Width = 80;
                 text.Visibility = Visibility.Collapsed;
+                butPrint.Background = defBrush;
+                butPrint.IsEnabled = true;
             }
             else 
             { //33/33/33 
@@ -317,8 +370,23 @@ namespace materialApp
                 butRet.Width = 80;
                 text.Width = 80;
                 butEdit.Width = 80;
+                butPrint.Background = Brushes.Gray;
+                butPrint.IsEnabled = false;
             }
             dataGrid.Columns[2].Width = 265;
+        }
+
+        public static DataGridCell GetGridCell(DataGridRow row, int column = 0)
+        {
+            if (row == null) return null;
+
+            DataGridCellsPresenter presenter = FindVisualChild<DataGridCellsPresenter>(row);
+            if (presenter == null) return null;
+
+            DataGridCell cell = (DataGridCell)presenter.ItemContainerGenerator.ContainerFromIndex(column);
+            if (cell != null) return cell;
+
+            return cell;
         }
 
         private void LoadGrid(DataSet gridData)
@@ -383,6 +451,8 @@ namespace materialApp
 
         private void ModalBack(object sender, RoutedEventArgs e)
         {
+            icon_add_err.Visibility = Visibility.Hidden;
+            text_add_err.Text = "";
             DialogHost.IsOpen = false;
         }
 

@@ -148,6 +148,17 @@ namespace materialApp
             mUserDWindow.Owner = this;
             mUserDWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             mUserDWindow.ShowDialog();
+            UpdateGrids();
+        }
+
+        private void UpdateGrids()
+        {
+            DataSet data = mDbActions.LoadData();
+            LoadGrid(data);
+            data = mDbActions.LoadAllItems();
+            LoadItemsGrid(data);
+            data = mDbActions.LoadLogData();
+            LoadLogGrid(data);
         }
 
         private void Open_Hamburger(object sender, RoutedEventArgs e)
@@ -295,7 +306,7 @@ namespace materialApp
             LoadItemsGrid(data);
         }
 
-        private void Datagrid_Cmb_Update(object sender, RoutedEventArgs e)  //TO DO ONE METHOD FOR THESE COZ OMFGGKGDKFLSAD
+        private void Datagrid_Cmb_Update(object sender, RoutedEventArgs e)  
         {
             dataGrid.Items.Refresh();
             dataGrid.UpdateLayout();
@@ -324,12 +335,12 @@ namespace materialApp
                 if (gridRow == null) return;
                 DataGridCell cell = GetGridCell(gridRow, 0);
                 Year_numbersItemCmb.Margin = new Thickness(cell.ActualWidth,20,0,0);
-                cell = GetGridCell(gridRow, 1); //dlzka prveho ako margin, 
+                cell = GetGridCell(gridRow, 1); 
                 Year_numbersItemCmb.Width = cell.ActualWidth;
                 cell = GetGridCell(gridRow, 2);
                 FirstNameItemCmb.Width = cell.ActualWidth;
                 cell = GetGridCell(gridRow, 3);
-                SecondNameItemCmb.Width = cell.ActualWidth; //pridat meno cmb
+                SecondNameItemCmb.Width = cell.ActualWidth; 
             }
         }
 
@@ -368,19 +379,32 @@ namespace materialApp
             dataGrid_CmbPositionUpdate(dataGrid, 0);
         }
 
+        private void Select_log(object sender, RoutedEventArgs e)
+        {
+            DateTime day;
+            DateTime.TryParse(picker.ToString(), out day);
+            DataSet data = mDbActions.LoadLogByDay(day);
+            LoadLogGrid(data);
+        }
+
         private void LoadLogGrid(DataSet data)
         {
             logDataGrid.ItemsSource = null;
             data.Tables[0].Columns.Add("Popis", typeof(string));
+            data.Tables[0].Columns.Add("Dna", typeof(string));
+            DateTime outTime;
+            
 
-            foreach(DataRow row in data.Tables[0].Rows)
+            foreach (DataRow row in data.Tables[0].Rows)
             {
+                DateTime.TryParse(row["created_at"].ToString(), out outTime);
+                row["Dna"] = outTime.ToShortDateString();
                 if (row["type"].ToString() == "INSERT")
                 {
                     row["Popis"] = "Pridanie";
                 }
                 else
-                {
+                {                   
                     if (row["item_paid_at"].ToString() == "1/1/0001 12:00:00 AM" && row["item_sold_at"].ToString() != "1/1/0001 12:00:00 AM" && row["item_returned_at"].ToString() == "1/1/0001 12:00:00 AM")
                     {
                         row["Popis"] = "Predanie";
@@ -405,6 +429,7 @@ namespace materialApp
             data.Tables[0].Columns.Remove("i_id");
             data.Tables[0].Columns.Remove("price");
             data.Tables[0].Columns.Remove("item_created_at");
+            data.Tables[0].Columns.Remove("created_at");
             data.Tables[0].Columns.Remove("item_paid_at");
             data.Tables[0].Columns.Remove("item_sold_at");
             data.Tables[0].Columns.Remove("item_returned_at");
