@@ -12,28 +12,93 @@
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
         ResizeMode="NoResize"
-        Title="Item_details" Height="500" Width="800">
+        Closing="Window_Closing"
+        Title="Item_details" Height="700" Width="500">
     <Grid Background="WhiteSmoke">
-        <StackPanel Margin="0,20,0,0">
+        <Grid>
+            <Popup Name="OnClosePopup"
+                   Placement="Center"
+                   Height="200"
+                   Width="200">
+                <Border BorderThickness="2" BorderBrush="Black">
+                    <Grid Background="WhiteSmoke">
+                        <StackPanel>
+                                <TextBox IsReadOnly="True" x:Name ="text_popupFline" HorizontalAlignment="Center" VerticalAlignment="Top" AcceptsReturn="True" Margin="0,10,0,0">Zmenene udaje</TextBox>
+                                <TextBox IsReadOnly="True" x:Name="text_popupSline" HorizontalAlignment="Center" VerticalAlignment="Top" AcceptsReturn="True" Margin="0,5,0,0">Chcete ulozit?</TextBox>
+                                <TextBox IsReadOnly="True" x:Name="text_popupwarning" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,5,0,0"></TextBox>
+                                <Button x:Name="PopupSave" HorizontalAlignment="Center" Click="Close_Popup"  VerticalAlignment="Top" Margin="0,5,0,0" Height="30">ulozit</Button>
+                                <Button x:Name="PopupDontSave" HorizontalAlignment="Center" VerticalAlignment="Top" Click="Close_Popup" Margin="0,5,0,0" Height="30">neulozit</Button>
+                            </StackPanel>
+                            <Button x:Name="OkButton" Click="Close_from_Popup" Visibility="Hidden" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,110,0,0" Height="50">OK</Button>
+                    </Grid>
+                </Border>
+            </Popup>
+            <Grid x:Name="HideGrid">
+                <StackPanel VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,20,0,0">
+                    <DockPanel VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,0,0,0">
+                        <TextBox  x:Name="text_first_name" Margin="0,0,0,25" HorizontalAlignment="Left" IsEnabled="False" VerticalAlignment="Top" materialDesign:HintAssist.Hint="Prve meno" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                        </TextBox>
+                        <TextBox x:Name="text_user_id" Margin="25,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" IsEnabled="False"  materialDesign:HintAssist.Hint="Id" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+
+                        </TextBox>
+                        <TextBox  x:Name="text_second_name" HorizontalAlignment="Left" VerticalAlignment="Top" IsEnabled="False" Margin="25, 0 , 0, 0" materialDesign:HintAssist.Hint="Druhe meno" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                        </TextBox>
+                    </DockPanel>
+
+                    <TextBox  x:Name="text_name" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0, 0 ,0, 0" materialDesign:HintAssist.Hint="Meno" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                    </TextBox>
+
+                    <TextBox  x:Name="text_size" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0, 0 , 0, 0" materialDesign:HintAssist.Hint="Velkost" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                    </TextBox>
+
+                    <TextBox  x:Name="text_description" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0, 0 ,0, 0" materialDesign:HintAssist.Hint="Popis" Style="{StaticResource MaterialDesignFloatingHintTextBox}" >
+                    </TextBox>
+
+                    <TextBox  x:Name="text_price" TextChanged="PreviewTextInput" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0, 0 , 0, 0" materialDesign:HintAssist.Hint="Cena" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                    </TextBox>
+
+                    <ComboBox x:Name="cmbChangeItemState" SelectionChanged="ChangeState" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,0,0,0" materialDesign:HintAssist.Hint="Zmen stav" Style="{StaticResource MaterialDesignFloatingHintComboBox}"/>
+
+                    <materialDesign:PackIcon x:Name="icon_edit_err" Height="24" Width="24" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0, 20, 0, 0"/>
+
+                    <TextBox x:Name="text_edit_err" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0, 20 ,0,0">
+                    </TextBox>
+
+                    <Button x:Name="BtnSave" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" Click="Save" Width="100" Height="40">
+                        Ulozit
+                    </Button>
+                </StackPanel>
+
+                <Button x:Name="BtnAddPhotoPath" HorizontalAlignment="Left" Margin="50 ,400, 0,0" VerticalAlignment="Top" Click="AddPhotoPath" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
+                 Width="75" Height="75" ToolTip="MaterialDesignFloatingActionMiniLightButton">
+                    <materialDesign:PackIcon Kind="InsertPhoto" Height="24" Width="24" />
+                </Button>
+
+                <Button x:Name="BtnAddWebCamPhoto" HorizontalAlignment="Left"  Margin="50,520,0,0" VerticalAlignment="Top" Click="TakeAPic" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
+                                        Width="75" Height="75" ToolTip="MaterialDesignFloatingActionMiniLightButton">
+                    <materialDesign:PackIcon Kind="AddToPhotos" Height="24" Width="24" />
+                </Button>
+
+                <Image x:Name="image1" HorizontalAlignment="Right" Height="150" VerticalAlignment="Top" Width="150" Margin="0,425, 50,0"/>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>
+
+<!--    <StackPanel Margin="0,20,0,0">
             <DockPanel>
-                <StackPanel Margin="50,00,0,0" Background="#E1F5FE">
-                    <DockPanel  Margin="0,0 ,0,0">
-                        <Label Content="_Prve meno:" Target="{Binding ElementName=text_first_name}"/>
-                        <TextBox Background="White" x:Name="text_first_name" HorizontalAlignment="Left" VerticalAlignment="Top">
-                        </TextBox>
-                    </DockPanel>
+                <StackPanel Margin="0,00,0,0" HorizontalAlignment="Center" Background="#E1F5FE">
 
-                    <DockPanel Margin ="0,20,0,0"  Background="#E1F5FE">
-                        <Label Content="_Nazov:" Target="{Binding ElementName=text_name}"/>
-                        <TextBox Background="White" x:Name="text_name" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0, 0 ,0, 0" >
+                    <TextBox Background="White" x:Name="text_first_name" Margin="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" materialDesign:HintAssist.Hint="Prve meno" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
                         </TextBox>
-                    </DockPanel>
 
-                    <DockPanel  Margin="0, 20 ,0,0">
-                        <Label Content="_Velkost:" Target="{Binding ElementName=text_size}"/>
-                        <TextBox Background="White" x:Name="text_size" HorizontalAlignment="Left" VerticalAlignment="Top">
-                        </TextBox>
-                    </DockPanel>
+
+                    <TextBox Background="White" x:Name="text_name" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0, 0 ,0, 0" materialDesign:HintAssist.Hint="Meno" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                    </TextBox>
+
+
+                    <TextBox Background="White" x:Name="text_size" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0, 0 , 0, 0" materialDesign:HintAssist.Hint="Velkost" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                    </TextBox>
 
                     <DockPanel  Margin="0, 20 ,0,0">
                         <Label Content="_Datum prichodu:" Target="{Binding ElementName=text_created_at}"/>
@@ -43,30 +108,26 @@
                     </DockPanel>
 
                     <DockPanel Margin="0, 20 ,0,0">
-                        <Label Content="_Datum zaplatenia:" Target="{Binding ElementName=text_paid_at}"/>
+                        <Label Content="_Datum predaja:" Target="{Binding ElementName=text_paid_at}"/>
                         <TextBox Background="White" x:Name="text_paid_at" HorizontalAlignment="Left" VerticalAlignment="Top">
                         </TextBox>
                         <DatePicker x:Name="picker_paid_at" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100"/>
-                    </DockPanel>
+                    </DockPanel>  
+                    
                 </StackPanel>
                 <StackPanel HorizontalAlignment="Right" Background="#E1F5FE" Margin="0,0,50,0">
-                    <DockPanel  Margin="0, 0 , 0 ,0">
-                        <Label Content="_Druhe meno:" Target="{Binding ElementName=text_second_name}"/>
-                        <TextBox Background="White" x:Name="text_second_name" HorizontalAlignment="Left" VerticalAlignment="Top">
-                        </TextBox>
-                    </DockPanel>
-                    <DockPanel Margin ="0,20,0,0"  Background="#E1F5FE">
-                        <Label Content="_Popis:" Target="{Binding ElementName=text_description}"/>
-                        <TextBox Background="White" x:Name="text_description" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0, 0 ,0, 0" >
-                        </TextBox>
-                    </DockPanel>
-                    <DockPanel Margin="0, 20 , 0,0">
-                        <Label Content="_Cena:" Target="{Binding ElementName=text_price}"/>
-                        <TextBox Background="White" x:Name="text_price" HorizontalAlignment="Left" VerticalAlignment="Top">
-                        </TextBox>
-                    </DockPanel>
+
+                    <TextBox Background="White" x:Name="text_second_name" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0, 0 , 0, 0" materialDesign:HintAssist.Hint="Druhe meno" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                    </TextBox>
+
+                    <TextBox Background="White" x:Name="text_description" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0, 0 ,0, 0" materialDesign:HintAssist.Hint="Popis" Style="{StaticResource MaterialDesignFloatingHintTextBox}" >
+                    </TextBox>
+
+                    <TextBox Background="White" x:Name="text_price" TextChanged="PreviewTextInput" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0, 0 , 0, 0" materialDesign:HintAssist.Hint="Cena" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                    </TextBox>
+
                     <DockPanel Margin="0, 20 , 0 ,0 ">
-                        <Label Content="_Datum predaja:" Target="{Binding ElementName=text_sold_at}"/>
+                        <Label Content="_Datum zaplatenia:" Target="{Binding ElementName=text_sold_at}"/>
                         <TextBox Background="White" x:Name="text_sold_at" HorizontalAlignment="Left" VerticalAlignment="Top">
                         </TextBox>
                         <DatePicker x:Name="picker_sold_at" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100"/>
@@ -76,7 +137,7 @@
                         <TextBox Background="White" x:Name="text_returned_at" HorizontalAlignment="Left" VerticalAlignment="Top">
                         </TextBox>
                         <DatePicker x:Name="picker_returned_at" HorizontalAlignment="Left"  VerticalAlignment="Top" Width="100"/>
-                    </DockPanel>
+                    </DockPanel> 
                 </StackPanel>
             </DockPanel>
 
@@ -93,7 +154,7 @@
 
         <Button x:Name="BtnEdit" HorizontalAlignment="Center" Margin="0,60,0,0" VerticalAlignment="Top" Click="Edit" Width="100" Height="60">
             Upravit
-        </Button>
+        </Button> 
 
         <Button x:Name="BtnAddPhotoPath" HorizontalAlignment="Left" Margin="130 ,280, 0,0" VerticalAlignment="Top" Click="AddPhotoPath" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
                  Width="75" Height="75" ToolTip="MaterialDesignFloatingActionMiniLightButton">
@@ -106,6 +167,5 @@
         </Button>
 
         <Image x:Name="image1" HorizontalAlignment="Right" Height="150" VerticalAlignment="Top" Width="150" Margin="0,270, 100,0"/>
+-->
 
-    </Grid>
-</Window>

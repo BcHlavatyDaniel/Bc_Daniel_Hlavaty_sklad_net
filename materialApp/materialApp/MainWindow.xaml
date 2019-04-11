@@ -11,8 +11,7 @@
         TextElement.FontSize="13"
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
-        ResizeMode="NoResize"
-        Title="MahWindow" Height="450" Width="1000">
+        Title="Sklad" Height="1000" Width="1200">
     <Window.Resources>
         <Storyboard x:Key="OpenMenu" SpeedRatio="10">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)" Storyboard.TargetName="rectangle">
@@ -58,165 +57,210 @@
         </Storyboard>
     </Window.Resources>
     <Grid Background="WhiteSmoke">
-        <Grid x:Name="HamMenu" HorizontalAlignment="Left" Width="70" Background="#01579B">
-            <StackPanel>
-                <Grid Height="70" Background="White"/>
-            </StackPanel>
-            <Button x:Name="ButtonMenu" HorizontalAlignment="Right" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="{x:Null}" Width="70" Height="70" Click="Open_Hamburger">
-                <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <Rectangle x:Name="rectangle" Width="30" Height="5" Margin="0 0 0 0" Fill="Black" HorizontalAlignment="Center" VerticalAlignment="Top" RenderTransformOrigin="-0,0.5">
-                        <Rectangle.RenderTransform>
-                            <TransformGroup>
-                                <ScaleTransform/>
-                                <SkewTransform/>
-                                <RotateTransform/>
-                                <TranslateTransform/>
-                            </TransformGroup>
-                        </Rectangle.RenderTransform>
-                    </Rectangle>
-                    <Rectangle x:Name="rectangle1" Width="30" Height="5" Margin="0 20 0 0 " Fill="Black" HorizontalAlignment="Center" VerticalAlignment="Top" RenderTransformOrigin="-0,0.5">
-                        <Rectangle.RenderTransform>
-                            <TransformGroup>
-                                <ScaleTransform/>
-                                <SkewTransform/>
-                                <RotateTransform/>
-                                <TranslateTransform/>
-                            </TransformGroup>
-                        </Rectangle.RenderTransform>
-                    </Rectangle>
-                    <Rectangle x:Name="rectangle2" Width="30" Height="5" Margin="0 10 0 0" Fill="Black" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+        <materialDesign:DialogHost x:Name="DialogHost" IsOpen="{Binding IsDialogOpen}">
+            <materialDesign:DialogHost.DialogContent>
+                <Grid Margin="20">
+                    <DockPanel>
+                        <Button x:Name="ModalBtnBack" Click="ModalBack" Margin="20,20,20,20" Width="100" Height="75">
+                            &lt;&lt; spat
+                        </Button>
+                        <StackPanel HorizontalAlignment="Center">
+
+                                <TextBox x:Name="text_first_name" HorizontalAlignment="Center" Margin="0,20,0,0" Width="100" materialDesign:HintAssist.Hint="Prve meno" Style="{StaticResource MaterialDesignFloatingHintTextBox}">                                    
+                                </TextBox>
+
+                                <TextBox x:Name="text_second_name" HorizontalAlignment="Center" Margin="0,20,0,0" Width="100" materialDesign:HintAssist.Hint="Druhe meno" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                                </TextBox>
+
+                                <TextBox x:Name="text_address" HorizontalAlignment="Center" Margin="0,20,0,0" Width="100" materialDesign:HintAssist.Hint="Adresa" Style="{StaticResource MaterialDesignFloatingHintTextBox}">                                    
+                                </TextBox>
+
+                                <TextBox x:Name="text_tel" TextChanged="PreviewTextInput" Margin="0,20,0,0" HorizontalAlignment="Center" Width="100" materialDesign:HintAssist.Hint="Tel. cislo" Style="{StaticResource MaterialDesignFloatingHintTextBox}">                                    
+                                </TextBox>
+
+                            <materialDesign:PackIcon Margin="0, 10, 0,0" x:Name="icon_add_err" Width="24" Height="24" HorizontalAlignment="Center"/>
+                            <TextBox x:Name="text_add_err" Margin="0, 10, 0, 0" HorizontalAlignment="Center" />
+                        </StackPanel>
+                        <Button x:Name="ModalBtnSave" Click="ModalAdd" Margin="20,20,20,20" Width="100" Height="75">
+                            Uloz
+                        </Button>
+                    </DockPanel>
+                    
                 </Grid>
-            </Button>
-            <Button x:Name="BtnUsers" HorizontalAlignment="Left" Click="Users_Open" Margin="0,70,0,0" VerticalAlignment="Top" Width="150" Height="70">
-                <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="Person" Height="25" Width="25" Margin="10"/>
-                    <TextBox VerticalAlignment="Center" Margin="20,10" Text="Osoby"></TextBox>
-                </StackPanel>
-            </Button>
-            <Button x:Name="BtnItems" HorizontalAlignment="Left" Click="Items_Open" Margin="0,140,0,0" VerticalAlignment="Top" Width="150" Height="70">
-                <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="Archive" Height="25" Width="25" Margin="10"/>
-                    <TextBox VerticalAlignment="Center" Margin="20,10" Text="Tovar"></TextBox>
-                </StackPanel>
-            </Button>
-            <Button x:Name="BtnLogs" HorizontalAlignment="Left" Click="Log_Open" Margin="0, 210,0,0" VerticalAlignment="Top" Width="150" Height="70">
-                <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="Assignment" Height="25" Width="25" Margin="10"/>
-                    <TextBox VerticalAlignment="Center" Margin="20,10" Text="Logy"></TextBox>
-                </StackPanel>
-            </Button>
-        </Grid>
-     <!--   <Grid HorizontalAlignment="Left" Width="200" x:Name="Hamburger" Background="#082606"></Grid> -->
-        <Grid x:Name="usersGrid" HorizontalAlignment="Left"  Margin="190,0,0,0">
-            <DockPanel>
-                <ComboBox x:Name="Year_numbersSearchCmb" SelectionChanged="Search" HorizontalAlignment="Left" Margin="0, 20,0,0" VerticalAlignment="Top" Width="60"/>
-                <ComboBox x:Name="FirstNameSearchCmb" SelectionChanged="Search" HorizontalAlignment="Left" Margin="0, 20 ,0,0" VerticalAlignment="Top" Width="80"/>
-                <ComboBox x:Name="SecondnameSearchCmb" SelectionChanged ="Search" HorizontalAlignment="Left" Margin="0, 20,0,0" VerticalAlignment="Top" Width="80"/>
-                <ComboBox x:Name="AddressSearchCmb" SelectionChanged="Search" HorizontalAlignment="Left" Margin="0, 20, 0,0" VerticalAlignment="Top" Width="200"/>
-                <ComboBox x:Name="PhoneSearchCmb" SelectionChanged="Search" HorizontalAlignment="Left" Margin="0, 20, 0,0" VerticalAlignment="Top" Width="70"/>
-            </DockPanel>
-            <DataGrid x:Name="dataGrid" Loaded="Datagrid_Cmb_Update" Background="#E1F5FE" CanUserReorderColumns="False" MouseDoubleClick="Profile_Open" HorizontalAlignment="Left" IsReadOnly="True" Margin="0 , 50 ,20,0" VerticalAlignment="Top" Grid.ColumnSpan="2">
-                <DataGrid.Resources>
-                    <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
-                        <Setter Property="Background" Value="#81D4FA" />
-                    </Style>
-                    <Style BasedOn="{StaticResource {x:Type DataGridCell}}" TargetType="{x:Type DataGridCell}">
-                        <Style.Triggers>
-                            <Trigger Property="DataGridCell.IsSelected" Value="True">
-                                <Setter Property="Background" Value="#dbedfc"/>
-                                <Setter Property="BorderBrush" Value="#01579B"></Setter>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style> 
-                </DataGrid.Resources>
-                <DataGrid.CellStyle>
-                    <Style BasedOn="{StaticResource {x:Type DataGridCell}}" TargetType="{x:Type DataGridCell}">
-                        <Setter Property="BorderThickness" Value="0.3"></Setter>
-                        <Setter Property="BorderBrush" Value="#01579B"></Setter>
-                        <Setter Property="Background" Value="#dbedfc"></Setter>
-                    </Style>
-                </DataGrid.CellStyle>
-                <!-- <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Detail">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Name="btnProfile" Content="Detail" Click="Profile_Open"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns> -->
-            </DataGrid>
-        </Grid>
-        <Grid x:Name="logGrid" HorizontalAlignment="Center" Margin="0,0,0,0">
-            <DockPanel>
-                <DatePicker x:Name="picker" SelectedDateChanged="Select_log" Margin="100,0,0,0"></DatePicker>
-                <TextBox x:Name="text_date_err" Margin="100,0,0,0"></TextBox>
-            </DockPanel>
-            <DataGrid x:Name="logDataGrid" CanUserReorderColumns="False" HorizontalAlignment="Center" Background="#E1F5FE" IsReadOnly="True" Margin="0, 50, 0,0" VerticalAlignment="Top" Grid.Column="2">
-                <DataGrid.Resources>
-                    <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
-                        <Setter Property="Background" Value="#81D4FA" />
-                    </Style>
-                    <Style BasedOn="{StaticResource {x:Type DataGridCell}}" TargetType="{x:Type DataGridCell}">
-                        <Style.Triggers>
-                            <Trigger Property="DataGridCell.IsSelected" Value="True">
-                                <Setter Property="Background" Value="#dbedfc"/>
-                                <Setter Property="BorderBrush" Value="#01579B"></Setter>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </DataGrid.Resources>
-                <DataGrid.CellStyle>
-                    <Style BasedOn="{StaticResource {x:Type DataGridCell}}" TargetType="{x:Type DataGridCell}">
-                        <Setter Property="BorderThickness" Value="0.3"></Setter>
-                        <Setter Property="BorderBrush" Value="#01579B"></Setter>
-                        <Setter Property="Background" Value="#dbedfc"></Setter>
-                    </Style>
-                </DataGrid.CellStyle>
-            </DataGrid>
-        </Grid>
-        <Grid x:Name="itemsGrid" HorizontalAlignment="Left" Margin="190,0,0,0">
-            <DockPanel>
-                <ComboBox x:Name="Year_numbersItemCmb" SelectionChanged="SearchItems" HorizontalAlignment="Left" Margin="0,20,0,0" VerticalAlignment="Top" Width="60"/>
-                <ComboBox x:Name="FirstNameItemCmb" SelectionChanged="SearchItems" HorizontalAlignment="Left" Margin="0,20,0,0" VerticalAlignment="Top" Width="80"/>
-                <ComboBox x:Name="SecondNameItemCmb" SelectionChanged="SearchItems" HorizontalAlignment="Left" Margin="0,20,0,0" VerticalAlignment="Top" Width="80"/>
-            </DockPanel>
-            <DataGrid x:Name="itemsDataGrid" CanUserReorderColumns="False" HorizontalAlignment="Left" RowDetailsVisibilityMode="Collapsed" Background="#E1F5FE" IsReadOnly="True" Margin="0,50,20,0" VerticalAlignment="Top" Grid.ColumnSpan="2">
-                <DataGrid.Resources>
-                    <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
-                        <Setter Property="Background" Value="#81D4FA" />
-                    </Style>
-                    <Style BasedOn="{StaticResource {x:Type DataGridCell}}" TargetType="{x:Type DataGridCell}">
-                        <Style.Triggers>
-                            <Trigger Property="DataGridCell.IsSelected" Value="True">
-                                <Setter Property="Background" Value="#dbedfc"/>
-                                <Setter Property="BorderBrush" Value="#01579B"></Setter>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </DataGrid.Resources>
-                <DataGrid.CellStyle>
-                    <Style BasedOn="{StaticResource {x:Type DataGridCell}}" TargetType="{x:Type DataGridCell}">
-                        <Setter Property="BorderThickness" Value="0.3"></Setter>
-                        <Setter Property="BorderBrush" Value="#01579B"></Setter>
-                        <Setter Property="Background" Value="#dbedfc"></Setter>
-                    </Style>
-                </DataGrid.CellStyle>
-                <DataGrid.Columns>
-                    <DataGridTemplateColumn Header="Popis">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Name="btnDesc" Content="Popis" Click="Open_Description"/>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-                <DataGrid.RowDetailsTemplate >
-                    <DataTemplate >
-                        <TextBox  x:Name="Descrip" Height="30" TextAlignment="Center"></TextBox>
-                    </DataTemplate>
-                </DataGrid.RowDetailsTemplate>
-            </DataGrid>
-        </Grid>
+            </materialDesign:DialogHost.DialogContent>
+            <Grid>
+                <Grid x:Name="HamMenu" HorizontalAlignment="Left" Width="70" Background="#01579B">
+                    <StackPanel>
+                        <Grid Height="70" Background="White"/>
+                    </StackPanel>
+                    <Button x:Name="ButtonMenu" HorizontalAlignment="Right" VerticalAlignment="Top" Background="{x:Null}" BorderBrush="{x:Null}" Width="70" Height="70" Click="Open_Hamburger">
+                        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Rectangle x:Name="rectangle" Width="30" Height="5" Margin="0 0 0 0" Fill="Black" HorizontalAlignment="Center" VerticalAlignment="Top" RenderTransformOrigin="-0,0.5">
+                                <Rectangle.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform/>
+                                        <SkewTransform/>
+                                        <RotateTransform/>
+                                        <TranslateTransform/>
+                                    </TransformGroup>
+                                </Rectangle.RenderTransform>
+                            </Rectangle>
+                            <Rectangle x:Name="rectangle1" Width="30" Height="5" Margin="0 20 0 0 " Fill="Black" HorizontalAlignment="Center" VerticalAlignment="Top" RenderTransformOrigin="-0,0.5">
+                                <Rectangle.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform/>
+                                        <SkewTransform/>
+                                        <RotateTransform/>
+                                        <TranslateTransform/>
+                                    </TransformGroup>
+                                </Rectangle.RenderTransform>
+                            </Rectangle>
+                            <Rectangle x:Name="rectangle2" Width="30" Height="5" Margin="0 10 0 0" Fill="Black" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                        </Grid>
+                    </Button>
+                    <Button x:Name="BtnUsers" HorizontalAlignment="Left" Click="Users_Open" Margin="0,70,0,0" VerticalAlignment="Top" Width="150" Height="70">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Person" Height="25" Width="25" Margin="10"/>
+                            <TextBox VerticalAlignment="Center" Margin="20,10" Text="Osoby"></TextBox>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="BtnItems" HorizontalAlignment="Left" Click="Items_Open" Margin="0,140,0,0" VerticalAlignment="Top" Width="150" Height="70">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Archive" Height="25" Width="25" Margin="10"/>
+                            <TextBox VerticalAlignment="Center" Margin="20,10" Text="Tovar"></TextBox>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="BtnLogs" HorizontalAlignment="Left" Click="Log_Open" Margin="0, 210,0,0" VerticalAlignment="Top" Width="150" Height="70">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Assignment" Height="25" Width="25" Margin="10"/>
+                            <TextBox VerticalAlignment="Center" Margin="20,10" Text="Logy"></TextBox>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+                <!--   <Grid HorizontalAlignment="Left" Width="200" x:Name="Hamburger" Background="#082606"></Grid> -->
+                <Grid x:Name="usersGrid" HorizontalAlignment="Center"  Margin="0,10,0,0">
+                    <DockPanel HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,0,0,0">
+                        <TextBlock TextAlignment="Center" FontSize="52" FontFamily="Berlin Sans FB" TextDecorations="Underline" Text="Uzivatelia"></TextBlock>
+                        <Button x:Name="btnAddUser" Click="ModalUserAddInit" Width="100" Margin="50,0,0,0" Height="50" Content="Pridat" />
+                    </DockPanel>
+                    <Grid Margin="0,50,0,0">
+                    <DockPanel>
+                        <ComboBox x:Name="Year_numbersSearchCmb" SelectionChanged="Search" HorizontalAlignment="Left" Margin="0, 20,0,0" VerticalAlignment="Top" Width="60"/>
+                        <ComboBox x:Name="FirstNameSearchCmb" SelectionChanged="Search" HorizontalAlignment="Left" Margin="0, 20 ,0,0" VerticalAlignment="Top" Width="80"/>
+                        <ComboBox x:Name="SecondnameSearchCmb" SelectionChanged ="Search" HorizontalAlignment="Left" Margin="0, 20,0,0" VerticalAlignment="Top" Width="80"/>
+                        <ComboBox x:Name="AddressSearchCmb" SelectionChanged="Search" HorizontalAlignment="Left" Margin="0, 20, 0,0" VerticalAlignment="Top" Width="200"/>
+                        <ComboBox x:Name="PhoneSearchCmb" SelectionChanged="Search" HorizontalAlignment="Left" Margin="0, 20, 0,0" VerticalAlignment="Top" Width="70"/>
+                    </DockPanel>
+                    <DataGrid x:Name="dataGrid" Loaded="Datagrid_Cmb_Update" Background="#E1F5FE" CanUserReorderColumns="False" MouseDoubleClick="Profile_Open" HorizontalAlignment="Left" IsReadOnly="True" Margin="0 , 50 ,00,0" VerticalAlignment="Top" Grid.ColumnSpan="2">
+                        <DataGrid.Resources>
+                            <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
+                                <Setter Property="Background" Value="#81D4FA" />
+                            </Style>
+                            <Style BasedOn="{StaticResource {x:Type DataGridCell}}" TargetType="{x:Type DataGridCell}">
+                                <Style.Triggers>
+                                    <Trigger Property="DataGridCell.IsSelected" Value="True">
+                                        <Setter Property="Background" Value="#dbedfc"/>
+                                        <Setter Property="BorderBrush" Value="#01579B"></Setter>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.Resources>
+                            <DataGrid.CellStyle>
+                                <Style BasedOn="{StaticResource {x:Type DataGridCell}}" TargetType="{x:Type DataGridCell}">
+                                    <Setter Property="BorderThickness" Value="0.3"></Setter>
+                                    <Setter Property="BorderBrush" Value="#01579B"></Setter>
+                                    <Setter Property="Background" Value="#dbedfc"></Setter>
+                                </Style>
+                            </DataGrid.CellStyle>
+                        </DataGrid>
+                    </Grid>
+                </Grid>
+                <Grid x:Name="logGrid" HorizontalAlignment="Center" Margin="0,0,0,0">
+                    <DockPanel HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0">
+                        <TextBlock TextAlignment="Center" FontSize="52" FontFamily="Berlin Sans FB" TextDecorations="Underline" Text="Zaznamy"></TextBlock>
+                    </DockPanel>
+                    <Grid Margin="0,85,0,0">
+                        <DockPanel>
+                            <DatePicker x:Name="picker" SelectedDateChanged="Select_log" HorizontalAlignment="Center" materialDesign:HintAssist.Hint="Den" Margin="0,0,0,0"></DatePicker>
+                        </DockPanel>
+                        <DataGrid x:Name="logDataGrid" MouseDoubleClick="Item_Log_Open" CanUserReorderColumns="False" HorizontalAlignment="Center" Background="#E1F5FE" IsReadOnly="True" Margin="0, 40, 0,0" VerticalAlignment="Top" Grid.Column="2">
+                            <DataGrid.Resources>
+                                <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
+                                    <Setter Property="Background" Value="#81D4FA" />
+                                </Style>
+                                <Style BasedOn="{StaticResource {x:Type DataGridCell}}" TargetType="{x:Type DataGridCell}">
+                                    <Style.Triggers>
+                                        <Trigger Property="DataGridCell.IsSelected" Value="True">
+                                            <Setter Property="Background" Value="#dbedfc"/>
+                                            <Setter Property="BorderBrush" Value="#01579B"></Setter>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.Resources>
+                            <DataGrid.CellStyle>
+                                <Style BasedOn="{StaticResource {x:Type DataGridCell}}" TargetType="{x:Type DataGridCell}">
+                                    <Setter Property="BorderThickness" Value="0.3"></Setter>
+                                    <Setter Property="BorderBrush" Value="#01579B"></Setter>
+                                    <Setter Property="Background" Value="#dbedfc"></Setter>
+                                </Style>
+                            </DataGrid.CellStyle>
+                        </DataGrid>
+                    </Grid>
+                </Grid>
+                <Grid x:Name="itemsGrid"  HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,0,0,0">
+                    <DockPanel HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0">
+                        <TextBlock TextAlignment="Center" FontSize="52" FontFamily="Berlin Sans FB" TextDecorations="Underline" Text="Zoznam Tovaru"></TextBlock>
+                    </DockPanel>
+                    <Grid Margin="0,85,0,0">
+                        <DockPanel>
+                            <ComboBox x:Name="Year_numbersItemCmb" SelectionChanged="SearchItems" HorizontalAlignment="Left" Margin="0,20,0,0" VerticalAlignment="Top" Width="60"/>
+                            <ComboBox x:Name="FirstNameItemCmb" SelectionChanged="SearchItems" HorizontalAlignment="Left" Margin="0,20,0,0" VerticalAlignment="Top" Width="80"/>
+                            <ComboBox x:Name="SecondNameItemCmb" SelectionChanged="SearchItems" HorizontalAlignment="Left" Margin="0,20,0,0" VerticalAlignment="Top" Width="80"/>
+                            <ComboBox x:Name="ItemNameCmb" SelectionChanged="SearchItems" HorizontalAlignment="Left" Margin="45,20,0,0" VerticalAlignment="Top" Width="60"/>
+                        </DockPanel>
+                        <DataGrid  x:Name="itemsDataGrid" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False" VirtualizingPanel.IsVirtualizing="False" HorizontalAlignment="Left" RowDetailsVisibilityMode="Collapsed" Background="#E1F5FE" IsReadOnly="True" Margin="0,50,0,20" VerticalAlignment="Top" Grid.ColumnSpan="2">
+                            <DataGrid.Resources>
+                                <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
+                                    <Setter Property="Background" Value="#81D4FA" />
+                                </Style>
+                                <Style BasedOn="{StaticResource {x:Type DataGridCell}}" TargetType="{x:Type DataGridCell}">
+                                    <Style.Triggers>
+                                        <Trigger Property="DataGridCell.IsSelected" Value="True">
+                                            <Setter Property="Background" Value="#dbedfc"/>
+                                            <Setter Property="BorderBrush" Value="#01579B"></Setter>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.Resources>
+                            <DataGrid.CellStyle>
+                                <Style BasedOn="{StaticResource {x:Type DataGridCell}}" TargetType="{x:Type DataGridCell}">
+                                    <Setter Property="BorderThickness" Value="0.3"></Setter>
+                                    <Setter Property="BorderBrush" Value="#01579B"></Setter>
+                                    <Setter Property="Background" Value="#dbedfc"></Setter>
+                                </Style>
+                            </DataGrid.CellStyle>
+                            <DataGrid.Columns>
+                                <DataGridTemplateColumn Header="Popis">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <DockPanel>
+                                                <Button Name="btnDesc" Content="Popis" Click="Open_Description"/>
+                                                <Button x:Name="btnOpenTovar" Content="Tovar" Click="Item_Open" />
+                                                <Button x:Name="btnOpenUser" Content="Zakaznik" Click="Profile_Item_Open"/>
+                                            </DockPanel>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                            <DataGrid.RowDetailsTemplate >
+                                <DataTemplate >
+                                    <TextBox  x:Name="Descrip" Height="30"  LostFocus="Save_Description" TextAlignment="Center"></TextBox>
+                                </DataTemplate>
+                            </DataGrid.RowDetailsTemplate>
+                        </DataGrid>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </materialDesign:DialogHost>
     </Grid>
 </Window>

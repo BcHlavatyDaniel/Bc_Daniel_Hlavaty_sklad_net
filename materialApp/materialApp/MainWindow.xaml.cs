@@ -29,19 +29,22 @@ using Emgu.CV.UI;
 using Emgu.CV.Structure;
 using System.IO;
 
-
 namespace materialApp
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+    /// 
+
     public partial class MainWindow : Window
     {
         DbActions mDbActions;
+        CommonActions mCommonActions;
         bool hamClosed = true;
         List<int> mVisibleList = new List<int>();
-        VideoCapture capture = new VideoCapture();
-        ImageViewer viewer = new ImageViewer();
+        List<int> mButtonList;
+        VideoCapture mCapture = new VideoCapture();
+        ImageViewer mViewer = new ImageViewer();
 
         public MainWindow()
         {
@@ -53,14 +56,15 @@ namespace materialApp
         {
            
             mDbActions = new DbActions();
-            DataSet data = mDbActions.LoadData();
+            mCommonActions = new CommonActions();
+            DataSet data = mDbActions.LoadAllUsers();
             LoadGrid(data);
-            DataSet itemData = mDbActions.LoadAllItems();
-            LoadItemsGrid(itemData);
-            DataSet logData = mDbActions.LoadLogData();
-            LoadLogGrid(logData);
+            DataSet itData = mDbActions.LoadAllItems();
+            LoadItemsGrid(itData);
+            LoadLogGrid(mDbActions.LoadAllLogs());
             itemsGrid.Visibility = Visibility.Collapsed;
             logGrid.Visibility = Visibility.Collapsed;
+            icon_add_err.Visibility = Visibility.Hidden;
 
             FirstNameSearchCmb.Items.Add("");
             SecondnameSearchCmb.Items.Add("");
@@ -71,7 +75,14 @@ namespace materialApp
             SecondNameItemCmb.Items.Add("");
             Year_numbersItemCmb.Items.Add("");
             DataTable dataTable = data.Tables[0];
-            
+            ItemNameCmb.Items.Add("");
+
+            foreach(DataRow row in itData.Tables[0].Rows)
+            {
+                if (!ItemNameCmb.Items.Contains(row["name"].ToString()))
+                    ItemNameCmb.Items.Add(row["name"].ToString());
+            }
+
             foreach (DataRow row in dataTable.Rows)
             {
                 if (!FirstNameSearchCmb.Items.Contains(row["first_name"].ToString()))
@@ -91,89 +102,40 @@ namespace materialApp
                 if (!PhoneSearchCmb.Items.Contains(row["telephone"].ToString()))
                     PhoneSearchCmb.Items.Add(row["telephone"].ToString());
             }
-            // dataGrid.Columns[1].Visibility = Visibility.Collapsed;
         }
-        /* TO DO
-        private void UpdateCmbItems(DataSet data)
-        {
-            DataTable dataTable = data.Tables[0];
 
-            for (int i = FirstNameSearchCmb.Items.Count; i > 1; i--)
+        ///<summary>                                                 
+        ///   ####################################    USER    ####################################    
+        ///</summary>
+
+        private void LoadGrid(DataSet gridData)
+        {
+            dataGrid.ItemsSource = null;
+            gridData.Tables[0].Columns.Add("rok-id", typeof(string));
+            gridData.Tables[0].Columns.Add("pocet tovaru", typeof(int));
+            gridData.Tables[0].Columns.Remove("created_at");
+            foreach (DataRow row in gridData.Tables[0].Rows)
             {
-                FirstNameSearchCmb.Items.RemoveAt(i-1);
+                row["rok-id"] = row["year"] + "-" + row["_numbers"];
+                row["pocet tovaru"] = mDbActions.GetNumberOfItemsForUser(row["year"].ToString(), row["_numbers"].ToString());
             }
+            gridData.Tables[0].Columns.Remove("year");
+            gridData.Tables[0].Columns.Remove("_numbers");
+            gridData.Tables[0].Columns["rok-id"].SetOrdinal(0);
 
-            for (int i = SecondnameSearchCmb.Items.Count; i > 1; i--)
+            dataGrid.ItemsSource = gridData.Tables[0].DefaultView;
+            dataGrid.Items.Refresh();
+            dataGrid.UpdateLayout();
+            if (dataGrid.Columns.Count != 0)
             {
-                SecondnameSearchCmb.Items.RemoveAt(i-1);
+                dataGrid.Columns[1].MaxWidth = 150;
+                dataGrid.Columns[2].MaxWidth = 150;
+                dataGrid.Columns[3].MaxWidth = 200;
+                dataGrid.Columns[4].MaxWidth = 100;
+                dataGrid.Columns[5].MaxWidth = 50;
             }
-            
-
-            foreach (DataRow row in dataTable.Rows)
-            {
-                if (!FirstNameSearchCmb.Items.Contains(row["first_name"].ToString()))
-                    FirstNameSearchCmb.Items.Add(row["first_name"].ToString());
-                if (!SecondnameSearchCmb.Items.Contains(row["second_name"].ToString()))
-                    SecondnameSearchCmb.Items.Add(row["second_name"].ToString());
-            }
-        }*/
-
-        private void Users_Open(object sender, RoutedEventArgs e)   //TO DO bude treba aj tabulky updatovat
-        {
-            itemsGrid.Visibility = Visibility.Collapsed;
-            logGrid.Visibility = Visibility.Collapsed;
-            usersGrid.Visibility = Visibility.Visible;
-        }
-
-        private void Items_Open(object sender, RoutedEventArgs e)
-        {
-            usersGrid.Visibility = Visibility.Collapsed;
-            logGrid.Visibility = Visibility.Collapsed;
-            itemsGrid.Visibility = Visibility.Visible;
-            itemsDataGrid.Items.Refresh();
-            itemsDataGrid.UpdateLayout();
-            dataGrid_CmbPositionUpdate(itemsDataGrid, 1);
-        }
-
-        private void Log_Open(object sender, RoutedEventArgs e)
-        {
-            usersGrid.Visibility = Visibility.Collapsed;
-            itemsGrid.Visibility = Visibility.Collapsed;
-            logGrid.Visibility = Visibility.Visible;          
-        }
-
-        private void Profile_Open(object sender, RoutedEventArgs e)
-        {
-            User_details mUserDWindow = new User_details((DataRowView)dataGrid.SelectedItem, viewer, capture);
-            mUserDWindow.Owner = this;
-            mUserDWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            mUserDWindow.ShowDialog();
-            UpdateGrids();
-        }
-
-        private void UpdateGrids()
-        {
-            DataSet data = mDbActions.LoadData();
-            LoadGrid(data);
-            data = mDbActions.LoadAllItems();
-            LoadItemsGrid(data);
-            data = mDbActions.LoadLogData();
-            LoadLogGrid(data);
-        }
-
-        private void Open_Hamburger(object sender, RoutedEventArgs e)
-        {
-            if(hamClosed)
-            {
-                Storyboard board = this.FindResource("OpenMenu") as Storyboard;
-                board.Begin();
-            }
-            else
-            {
-                Storyboard board = this.FindResource("CloseMenu") as Storyboard;
-                board.Begin();
-            }
-            hamClosed = !hamClosed;
+            updateTooltips();
+            dataGrid_CmbPositionUpdate(dataGrid, 0);
         }
 
         private void Search(object sender, SelectionChangedEventArgs e)
@@ -202,10 +164,10 @@ namespace materialApp
                     keyy = Year_numbersSearchCmb.SelectedItem.ToString().Substring(0, 2);
                     keyn = Year_numbersSearchCmb.SelectedItem.ToString().Substring(3, 3);
                 }
-                
+
             }
 
-            if(AddressSearchCmb.SelectedIndex != -1)
+            if (AddressSearchCmb.SelectedIndex != -1)
             {
                 address = AddressSearchCmb.SelectedItem.ToString();
             }
@@ -217,11 +179,12 @@ namespace materialApp
 
             if (name == "" && sName == "" && keyy == "" && address == "" && phone == "")
             {
-                LoadGrid(mDbActions.LoadData());
+                LoadGrid(mDbActions.LoadAllUsers());
                 return;
             }
 
-            EditUserStruct userStruct = new EditUserStruct {
+            EditUserStruct userStruct = new EditUserStruct
+            {
                 s_name = sName,
                 f_name = name,
                 address = address,
@@ -230,37 +193,232 @@ namespace materialApp
                 keyn = keyn
             };
 
-            DataSet data = mDbActions.LoadSearchedNamesData(userStruct);
+            DataSet data = mDbActions.SearchForUserNames(userStruct);
             LoadGrid(data);
         }
 
-        private void Open_Description(object sender, RoutedEventArgs e) //DUPLICATE daff aside
+        private void Profile_Open(object sender, RoutedEventArgs e)
         {
-            
-            int index = itemsDataGrid.SelectedIndex;
-            DataGridRow gridRow = (DataGridRow)itemsDataGrid.ItemContainerGenerator.ContainerFromItem(itemsDataGrid.SelectedItem);
-            DataRowView rowView = (DataRowView)itemsDataGrid.SelectedItem;
+            DataRowView datView = ((DataRowView)dataGrid.SelectedItem);
+            if (datView == null) return;
+            EditUserStruct userStruct = new EditUserStruct
+            {
+                keyy = datView.Row.ItemArray[0].ToString().Substring(0, 2),
+                keyn = datView.Row.ItemArray[0].ToString().Substring(3, 3),
+                f_name = datView.Row.ItemArray[1].ToString(),
+                s_name = datView.Row.ItemArray[2].ToString(),
+                address = datView.Row.ItemArray[3].ToString(),
+                tel = datView.Row.ItemArray[4].ToString()
+            };
 
-            string id = rowView.Row.ItemArray[3].ToString();
-            if (mVisibleList.Contains(index))
+            User_details mUserDWindow = new User_details(userStruct, mViewer, mCapture);
+            mUserDWindow.Owner = this;
+            mUserDWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            mUserDWindow.ShowDialog();
+            UpdateGrids();
+        }
+
+        private void Datagrid_Cmb_Update(object sender, RoutedEventArgs e)
+        {
+            dataGrid.Items.Refresh();
+            dataGrid.UpdateLayout();
+            dataGrid.Columns[1].MaxWidth = 150;
+            dataGrid.Columns[2].MaxWidth = 150;
+            dataGrid.Columns[3].MaxWidth = 200;
+            dataGrid.Columns[4].MaxWidth = 100;
+            dataGrid.Columns[5].MaxWidth = 50;
+            updateTooltips();
+            dataGrid_CmbPositionUpdate(dataGrid, 0);
+        }
+
+
+        ///<summary>
+        ///    ------------------------------------    USER_MODAL    ------------------------------------   
+        ///</summary>
+
+        public void ModalUserAddInit(object sender, RoutedEventArgs e)
+        {
+            DialogHost.IsOpen = true;
+        }
+
+        public void ModalBack(object sender, RoutedEventArgs e)
+        {
+            icon_add_err.Visibility = Visibility.Hidden;
+            text_add_err.Text = "";
+            DialogHost.IsOpen = false;
+            DataSet data = mDbActions.LoadAllUsers();
+            LoadGrid(data);
+        }
+
+
+
+        public void ModalAdd(object sender, RoutedEventArgs e)
+        {
+            bool err = false;
+            icon_add_err.Visibility = Visibility.Visible;
+
+            if (text_first_name.Text == "")
             {
-                gridRow.DetailsVisibility = Visibility.Collapsed;
-                DataGridDetailsPresenter presenter = FindVisualChild<DataGridDetailsPresenter>(gridRow);
-                presenter.ApplyTemplate();
-                var textbox = presenter.ContentTemplate.FindName("Descrip", presenter) as TextBox;
-                mDbActions.ItemDescription(id, true, textbox.Text);
-                mVisibleList.Remove(index);
+                err = true;
+                text_add_err.Foreground = System.Windows.Media.Brushes.Red;
+                icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
+                text_add_err.Text = "Dopln prve meno";
             }
-            else
+            if (text_second_name.Text == "")
             {
-                string desc = mDbActions.ItemDescription(id, false, "");
-                mVisibleList.Add(index);
-                DataGridDetailsPresenter presenter = FindVisualChild<DataGridDetailsPresenter>(gridRow);
-                presenter.ApplyTemplate();
-                var textbox = presenter.ContentTemplate.FindName("Descrip", presenter) as TextBox;
-                textbox.Text = desc;
-                gridRow.DetailsVisibility = Visibility.Visible;
+                err = true;
+                text_add_err.Foreground = System.Windows.Media.Brushes.Red;
+                icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
+                text_add_err.Text = "Dopln druhe meno";
             }
+            if (text_address.Text == "")
+            {
+                err = true;
+                text_add_err.Foreground = System.Windows.Media.Brushes.Red;
+                icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
+                text_add_err.Text = "Dopln adresu";
+            }
+            if (text_tel.Text == "")
+            {
+                err = true;
+                text_add_err.Foreground = System.Windows.Media.Brushes.Red;
+                icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
+                text_add_err.Text = "Dopln tel. cislo";
+            }
+
+            if (err) return;
+
+            EditUserStruct userStruct = new EditUserStruct
+            {
+                f_name = text_first_name.Text,
+                s_name = text_second_name.Text,
+                address = text_address.Text,
+                tel = text_tel.Text
+            };
+
+            mDbActions.AddUser(userStruct);
+            text_add_err.Text = "Uspesne pridane.";
+            text_add_err.Foreground = System.Windows.Media.Brushes.Green;
+            icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Done;
+            text_address.Text = "";
+            text_tel.Text = "";
+            text_first_name.Text = "";
+            text_second_name.Text = "";
+        }
+
+        private new void PreviewTextInput(object sender, RoutedEventArgs e)
+        {
+            TextBox box = (TextBox)sender;
+
+            if (!CommonActions.IsNumeric(box.Text))
+            {
+                for (int i = 0; i < box.Text.Length; i++)
+                {
+                    if (!int.TryParse(box.Text[i].ToString(), out int outVar))
+                    {
+                        box.Text = box.Text.Remove(i, 1);
+                    }
+                }
+            }
+        }
+
+        ///<summary>
+        ///   ####################################    ITEMS grid   ####################################      
+        ///</summary>
+
+        private void LoadItemsGrid(DataSet allItems)
+        {
+            DataSet allUsers = mDbActions.LoadAllUsers();
+            itemsDataGrid.ItemsSource = null;
+            allItems.Tables[0].Columns.Add("rok-id", typeof(string));
+            allItems.Tables[0].Columns.Add("prve meno", typeof(string));
+            allItems.Tables[0].Columns.Add("druhe meno", typeof(string));
+
+
+            foreach (DataRow row in allItems.Tables[0].Rows)
+            {
+                row["rok-id"] = row["user_year"] + "-" + row["user_numbers"];
+
+                foreach (DataRow uRow in allUsers.Tables[0].Rows)
+                {
+                    if (row["user_year"].ToString() == uRow["year"].ToString())
+                    {
+                        if (row["user_numbers"].ToString() == uRow["_numbers"].ToString())
+                        {
+                            row["prve meno"] = uRow["first_name"].ToString();
+                            row["druhe meno"] = uRow["second_name"].ToString();
+                            break;
+                        }
+
+                    }
+                }
+            }
+
+            DateTime retTime;
+            DateTime paidTime;
+            DateTime soldTime;
+            DateTime createdTime;
+            DateTime archTime;
+            int usedCard;
+            mButtonList = new List<int>();
+
+            foreach (DataRow row in allItems.Tables[0].Rows)
+            {
+                DateTime.TryParse(row["returned_at"].ToString(), out retTime);
+                DateTime.TryParse(row["paid_at"].ToString(), out paidTime);
+                DateTime.TryParse(row["sold_at"].ToString(), out soldTime);
+                DateTime.TryParse(row["created_at"].ToString(), out createdTime);
+                DateTime.TryParse(row["archived_at"].ToString(), out archTime);
+                int.TryParse(row["used_card"].ToString(), out usedCard);
+
+                if (archTime.ToString() != "1/1/0001 12:00:00 AM")
+                {
+                    mButtonList.Add(6);
+                }
+                else if (retTime.ToString() != "1/1/0001 12:00:00 AM")
+                {
+                    mButtonList.Add(3);
+                }
+                else if (paidTime.ToString() != "1/1/0001 12:00:00 AM")
+                {
+                    if (usedCard == 1) mButtonList.Add(4);
+                    else mButtonList.Add(5);
+                }
+                else if (soldTime.ToString() != "1/1/0001 12:00:00 AM")
+                {
+                    if (usedCard == 1) mButtonList.Add(1);
+                    else mButtonList.Add(2);
+                }
+                else
+                    mButtonList.Add(0);
+            }
+
+            allItems.Tables[0].Columns.Remove("created_at");
+            allItems.Tables[0].Columns.Remove("sold_at");
+            allItems.Tables[0].Columns.Remove("paid_at");
+            allItems.Tables[0].Columns.Remove("returned_at");
+            allItems.Tables[0].Columns.Remove("archived_at");
+            allItems.Tables[0].Columns.Remove("user_year");
+            allItems.Tables[0].Columns.Remove("user_numbers");
+            allItems.Tables[0].Columns.Remove("description");
+            allItems.Tables[0].Columns.Remove("used_card");
+            allItems.Tables[0].Columns.Remove("photo");
+            allItems.Tables[0].Columns["rok-id"].SetOrdinal(0);
+            allItems.Tables[0].Columns["prve meno"].SetOrdinal(1);
+            allItems.Tables[0].Columns["druhe meno"].SetOrdinal(2);
+            itemsDataGrid.ItemsSource = allItems.Tables[0].DefaultView;
+            itemsDataGrid.CanUserAddRows = false;
+            itemsDataGrid.Items.Refresh();
+            itemsDataGrid.UpdateLayout();
+            if (itemsDataGrid.Columns.Count > 4)
+            {
+                itemsDataGrid.Columns[1].MaxWidth = 150;
+                itemsDataGrid.Columns[2].MaxWidth = 150;
+                itemsDataGrid.Columns[4].MaxWidth = 150;
+                itemsDataGrid.Columns[5].MaxWidth = 150;
+                itemsDataGrid.Columns[6].MaxWidth = 150;
+            }
+            dataGrid_CmbPositionUpdate(itemsDataGrid, 1);
         }
 
         private void SearchItems(object sender, RoutedEventArgs e)
@@ -288,7 +446,7 @@ namespace materialApp
             }
 
             if (name == "" && sName == "" && keyy == "")
-            { 
+            {
                 LoadItemsGrid(mDbActions.LoadAllItems());
                 return;
             }
@@ -302,90 +460,88 @@ namespace materialApp
             };
 
 
-            DataSet data = mDbActions.LoadSearchedItems(userStruct);
+            DataSet data = mDbActions.SearchForItems(userStruct);
             LoadItemsGrid(data);
         }
 
-        private void Datagrid_Cmb_Update(object sender, RoutedEventArgs e)  
+        private void Profile_Item_Open(object sender, RoutedEventArgs e)
         {
-            dataGrid.Items.Refresh();
-            dataGrid.UpdateLayout();
-            dataGrid_CmbPositionUpdate(dataGrid, 0);
+
+            DataRowView datView = ((DataRowView)itemsDataGrid.SelectedItem);
+            DataSet userRow = mDbActions.LoadSpecificUser(datView.Row.ItemArray[0].ToString().Substring(0, 2), datView.Row.ItemArray[0].ToString().Substring(3, 3));
+            EditUserStruct userStruct = new EditUserStruct
+            {
+                keyy = datView.Row.ItemArray[0].ToString().Substring(0, 2),
+                keyn = datView.Row.ItemArray[0].ToString().Substring(3, 3),
+                f_name = userRow.Tables[0].Rows[0]["first_name"].ToString(),
+                s_name = userRow.Tables[0].Rows[0]["second_name"].ToString(),
+                address = userRow.Tables[0].Rows[0]["address"].ToString(),
+                tel = userRow.Tables[0].Rows[0]["telephone"].ToString()
+            };
+
+            User_details mUserDWindow = new User_details(userStruct, mViewer, mCapture);
+            mUserDWindow.Owner = this;
+            mUserDWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            mUserDWindow.ShowDialog();
+            UpdateGrids();
         }
 
-        private void dataGrid_CmbPositionUpdate(DataGrid grid, int type)
+        private void Item_Open(object sender, RoutedEventArgs e)
         {
-            if(type == 0)
+            DataRowView datView = ((DataRowView)itemsDataGrid.SelectedItem);
+            Item_details mItemDWindow = new Item_details(datView.Row.ItemArray[3].ToString(), datView.Row.ItemArray[2].ToString(), datView.Row.ItemArray[1].ToString(), datView.Row.ItemArray[0].ToString() , mViewer, mCapture);
+            mItemDWindow.Owner = this;
+            mItemDWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            mItemDWindow.ShowDialog();
+            UpdateGrids();
+        }
+
+
+        private void Open_Description(object sender, RoutedEventArgs e) //DUPLICATE daff aside
+        {
+
+            int index = itemsDataGrid.SelectedIndex;
+            DataGridRow gridRow = (DataGridRow)itemsDataGrid.ItemContainerGenerator.ContainerFromItem(itemsDataGrid.SelectedItem);
+            DataRowView rowView = (DataRowView)itemsDataGrid.SelectedItem;
+
+            string id = rowView.Row.ItemArray[3].ToString();
+            if (mVisibleList.Contains(index))
             {
-                DataGridRow gridRow = (DataGridRow)grid.ItemContainerGenerator.ContainerFromIndex(0);
-                if (gridRow == null) return;
-                DataGridCell cell = GetGridCell(gridRow, 0);
-                Year_numbersSearchCmb.Width = cell.ActualWidth;
-                cell = GetGridCell(gridRow, 1);
-                FirstNameSearchCmb.Width = cell.ActualWidth;
-                cell = GetGridCell(gridRow, 2);
-                SecondnameSearchCmb.Width = cell.ActualWidth;
-                cell = GetGridCell(gridRow, 3);
-                AddressSearchCmb.Width = cell.ActualWidth;
-                cell = GetGridCell(gridRow, 4);
-                PhoneSearchCmb.Width = cell.ActualWidth;
-            } else
+                gridRow.DetailsVisibility = Visibility.Collapsed;
+                DataGridDetailsPresenter presenter = CommonActions.FindVisualChild<DataGridDetailsPresenter>(gridRow);
+                presenter.ApplyTemplate();
+                var textbox = presenter.ContentTemplate.FindName("Descrip", presenter) as TextBox;
+                mDbActions.LoadSaveSpecificItemDescription(id, true, textbox.Text);
+                mVisibleList.Remove(index);
+            }
+            else
             {
-                DataGridRow gridRow = (DataGridRow)grid.ItemContainerGenerator.ContainerFromIndex(0);
-                if (gridRow == null) return;
-                DataGridCell cell = GetGridCell(gridRow, 0);
-                Year_numbersItemCmb.Margin = new Thickness(cell.ActualWidth,20,0,0);
-                cell = GetGridCell(gridRow, 1); 
-                Year_numbersItemCmb.Width = cell.ActualWidth;
-                cell = GetGridCell(gridRow, 2);
-                FirstNameItemCmb.Width = cell.ActualWidth;
-                cell = GetGridCell(gridRow, 3);
-                SecondNameItemCmb.Width = cell.ActualWidth; 
+                string desc = mDbActions.LoadSaveSpecificItemDescription(id, false, "");
+                mVisibleList.Add(index);
+                DataGridDetailsPresenter presenter = CommonActions.FindVisualChild<DataGridDetailsPresenter>(gridRow);// FindVisualChild<DataGridDetailsPresenter>(gridRow);
+                presenter.ApplyTemplate();
+                var textbox = presenter.ContentTemplate.FindName("Descrip", presenter) as TextBox;
+                textbox.Text = desc;
+                gridRow.DetailsVisibility = Visibility.Visible;
             }
         }
 
-        public static DataGridCell GetGridCell(DataGridRow row, int column = 0)
+        private void Save_Description(object sender, RoutedEventArgs e)
         {
-            if (row == null) return null;
+            int index = itemsDataGrid.SelectedIndex;
+            DataGridRow gridRow = (DataGridRow)itemsDataGrid.ItemContainerGenerator.ContainerFromItem(itemsDataGrid.SelectedItem);
+            DataRowView rowView = (DataRowView)itemsDataGrid.SelectedItem;
 
-            DataGridCellsPresenter presenter = FindVisualChild<DataGridCellsPresenter>(row);
-            if (presenter == null) return null;
-
-            DataGridCell cell = (DataGridCell)presenter.ItemContainerGenerator.ContainerFromIndex(column);
-            if (cell != null) return cell;
-
-            return cell;
+            string id = rowView.Row.ItemArray[3].ToString();
+            DataGridDetailsPresenter presenter = CommonActions.FindVisualChild<DataGridDetailsPresenter>(gridRow);// FindVisualChild<DataGridDetailsPresenter>(gridRow);
+            presenter.ApplyTemplate();
+            var textbox = presenter.ContentTemplate.FindName("Descrip", presenter) as TextBox;
+            mDbActions.LoadSaveSpecificItemDescription(id, true, textbox.Text);
         }
 
-        private void LoadGrid(DataSet gridData)
-        {
-            dataGrid.ItemsSource = null;
-            gridData.Tables[0].Columns.Add("rok-id", typeof(string));
-            gridData.Tables[0].Columns.Add("pocet tovaru", typeof(int));
-            gridData.Tables[0].Columns.Remove("created_at"); 
-            foreach(DataRow row in gridData.Tables[0].Rows)
-            {
-                row["rok-id"] = row["year"] + "-" + row["_numbers"];
-                row["pocet tovaru"] = mDbActions.GetNumberOfItemsForUser(row["year"].ToString(), row["_numbers"].ToString());
-            }
-            gridData.Tables[0].Columns.Remove("year");
-            gridData.Tables[0].Columns.Remove("_numbers");
-            gridData.Tables[0].Columns["rok-id"].SetOrdinal(0);
-            
-            dataGrid.ItemsSource = gridData.Tables[0].DefaultView;
-            //dataGrid.CanUserAddRows = false;
-            dataGrid.Items.Refresh();
-            dataGrid.UpdateLayout();
-            dataGrid_CmbPositionUpdate(dataGrid, 0);
-        }
-
-        private void Select_log(object sender, RoutedEventArgs e)
-        {
-            DateTime day;
-            DateTime.TryParse(picker.ToString(), out day);
-            DataSet data = mDbActions.LoadLogByDay(day);
-            LoadLogGrid(data);
-        }
+        ///<summary>
+        ///   ####################################    LOG   ####################################        
+        ///</summary>
 
         private void LoadLogGrid(DataSet data)
         {
@@ -393,7 +549,6 @@ namespace materialApp
             data.Tables[0].Columns.Add("Popis", typeof(string));
             data.Tables[0].Columns.Add("Dna", typeof(string));
             DateTime outTime;
-            
 
             foreach (DataRow row in data.Tables[0].Rows)
             {
@@ -404,33 +559,40 @@ namespace materialApp
                     row["Popis"] = "Pridanie";
                 }
                 else
-                {                   
-                    if (row["item_paid_at"].ToString() == "1/1/0001 12:00:00 AM" && row["item_sold_at"].ToString() != "1/1/0001 12:00:00 AM" && row["item_returned_at"].ToString() == "1/1/0001 12:00:00 AM")
+                {
+                    if (row["price"].ToString() != "0")
                     {
-                        row["Popis"] = "Predanie";
+                        row["Popis"] = "Zmena ceny z " + row["old_price"] + " => " + row["price"];
                     }
-                    else if (row["item_paid_at"].ToString() != "1/1/0001 12:00:00 AM" && row["item_sold_at"].ToString() == "1/1/0001 12:00:00 AM" && row["item_returned_at"].ToString() == "1/1/0001 12:00:00 AM")
-                    {
-                        row["Popis"] = "Vyplatenie";
-                    }
-                    else if (row["item_paid_at"].ToString() == "1/1/0001 12:00:00 AM" && row["item_sold_at"].ToString() == "1/1/0001 12:00:00 AM" && row["item_returned_at"].ToString() != "1/1/0001 12:00:00 AM")
+                    else if (row["item_returned_at"].ToString() != "1/1/0001 12:00:00 AM")
                     {
                         row["Popis"] = "Vratenie";
                     }
-                    else if (row["price"].ToString() == "0")
+                    else if (row["item_archived_at"].ToString() != "1/1/0001 12:00:00 AM")
                     {
-                        row["Popis"] = "Zmena ceny";
+                        row["Popis"] = "Archivovanie";
+                    }
+                    else if (row["item_sold_at"].ToString() != "1/1/0001 12:00:00 AM")
+                    {
+                        row["Popis"] = "Predaj";
+                    }
+                    else if (row["item_paid_at"].ToString() != "1/1/0001 12:00:00 AM")
+                    {
+                        row["Popis"] = "Zaplatenie";
+                    } else
+                    {
+                        row["Popis"] = "Ine upravy tovaru";
                     }
                 }
-                row["Popis"] += ", id tovaru " + row["i_id"];
             }
 
             data.Tables[0].Columns.Remove("id");
-            data.Tables[0].Columns.Remove("i_id");
             data.Tables[0].Columns.Remove("price");
+            data.Tables[0].Columns.Remove("old_price");
             data.Tables[0].Columns.Remove("item_created_at");
             data.Tables[0].Columns.Remove("created_at");
             data.Tables[0].Columns.Remove("item_paid_at");
+            data.Tables[0].Columns.Remove("item_archived_at");
             data.Tables[0].Columns.Remove("item_sold_at");
             data.Tables[0].Columns.Remove("item_returned_at");
             data.Tables[0].Columns.Remove("type");
@@ -438,88 +600,262 @@ namespace materialApp
             logDataGrid.ItemsSource = data.Tables[0].DefaultView;
         }
 
-        private void LoadItemsGrid(DataSet allItems)
+        private void Item_Log_Open(object sender, RoutedEventArgs e)
         {
-            //DataSet dSet = mDbActions.LoadData();
-            //get all items + names -> do i wanna go to uzivatel detail from here?
+            DataRowView datView = ((DataRowView)logDataGrid.SelectedItem);
+            DataSet itemRow = mDbActions.LoadSpecificItem(datView.Row.ItemArray[0].ToString());
+            DataSet userRow = mDbActions.LoadSpecificUser(itemRow.Tables[0].Rows[0]["user_year"].ToString(), itemRow.Tables[0].Rows[0]["user_numbers"].ToString());
+            Item_details mItemDWindow = new Item_details(datView.Row.ItemArray[0].ToString(), userRow.Tables[0].Rows[0]["first_name"].ToString(), userRow.Tables[0].Rows[0]["second_name"].ToString(), userRow.Tables[0].Rows[0]["year"].ToString() + "-" + userRow.Tables[0].Rows[0]["_numbers"].ToString(), mViewer, mCapture);
+            mItemDWindow.Owner = this;
+            mItemDWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            mItemDWindow.ShowDialog();
+            picker.Text = "";
+            UpdateGrids();
+        }
 
-            //DataSet allItems = mDbActions.LoadAllItems();
-            DataSet allUsers = mDbActions.LoadData();
-            itemsDataGrid.ItemsSource = null;
-            allItems.Tables[0].Columns.Add("rok-id", typeof(string));
-            allItems.Tables[0].Columns.Add("prve meno", typeof(string));
-            allItems.Tables[0].Columns.Add("druhe meno", typeof(string));
-            allItems.Tables[0].Columns.Remove("created_at");
-            allItems.Tables[0].Columns.Remove("sold_at");
-            allItems.Tables[0].Columns.Remove("paid_at");
-            allItems.Tables[0].Columns.Remove("returned_at");
+        private void Select_log(object sender, RoutedEventArgs e)
+        {
+            DateTime day;
+            DateTime.TryParse(picker.ToString(), out day);
+            DataSet data = mDbActions.LoadLogByDay(day);
+            LoadLogGrid(data);
+        }
 
-          /*  for (int i = allItems.Tables[0].Rows.Count -1; i >= 0; i--) <-- TO DO by dates if is stored
+        ///<summary>
+        ///   ####################################    HAMBURGER MENU   ####################################       
+        ///</summary>
+
+        private void Open_Hamburger(object sender, RoutedEventArgs e)
+        {
+            if (hamClosed)
             {
-                if (allItems.Tables[0].Rows[i]["is_Stored"].ToString() == "False")
-                {
-                    allItems.Tables[0].Rows[i].Delete();
-                }
+                Storyboard board = this.FindResource("OpenMenu") as Storyboard;
+                board.Begin();
             }
-            allItems.Tables[0].AcceptChanges();*/
-
-            foreach(DataRow row in allItems.Tables[0].Rows)
+            else
             {
-                row["rok-id"] = row["user_year"] + "-" + row["user_numbers"];
-
-                foreach(DataRow uRow in allUsers.Tables[0].Rows)
-                {
-                    if (row["user_year"].ToString() == uRow["year"].ToString())
-                    {
-                        if (row["user_numbers"].ToString() == uRow["_numbers"].ToString())
-                        {
-                            row["prve meno"] = uRow["first_name"].ToString();
-                            row["druhe meno"] = uRow["second_name"].ToString();
-                            break;
-                        }
-                        
-                    }
-                }
+                Storyboard board = this.FindResource("CloseMenu") as Storyboard;
+                board.Begin();
             }
-            allItems.Tables[0].Columns.Remove("user_year");
-            allItems.Tables[0].Columns.Remove("user_numbers");
-            allItems.Tables[0].Columns.Remove("description");
-            allItems.Tables[0].Columns.Remove("photo");
-            allItems.Tables[0].Columns["rok-id"].SetOrdinal(0);
-            allItems.Tables[0].Columns["prve meno"].SetOrdinal(1);
-            allItems.Tables[0].Columns["druhe meno"].SetOrdinal(2);
-            itemsDataGrid.ItemsSource = allItems.Tables[0].DefaultView;
-            itemsDataGrid.CanUserAddRows = false;
+            hamClosed = !hamClosed;
+        }
+
+        private void Users_Open(object sender, RoutedEventArgs e)
+        {
+            itemsGrid.Visibility = Visibility.Collapsed;
+            logGrid.Visibility = Visibility.Collapsed;
+            usersGrid.Visibility = Visibility.Visible;
+            btnAddUser.Visibility = Visibility.Visible;
+        }
+
+        private void Items_Open(object sender, RoutedEventArgs e)
+        {
+            usersGrid.Visibility = Visibility.Collapsed;
+            logGrid.Visibility = Visibility.Collapsed;
+            btnAddUser.Visibility = Visibility.Collapsed;
+            itemsGrid.Visibility = Visibility.Visible;
             itemsDataGrid.Items.Refresh();
             itemsDataGrid.UpdateLayout();
             dataGrid_CmbPositionUpdate(itemsDataGrid, 1);
         }
 
+        private void Log_Open(object sender, RoutedEventArgs e)
+        {
+            usersGrid.Visibility = Visibility.Collapsed;
+            itemsGrid.Visibility = Visibility.Collapsed;
+            btnAddUser.Visibility = Visibility.Collapsed;
+            logGrid.Visibility = Visibility.Visible;
+        }
+
         ///<summary>
-        ///     COMMON
+        ///   ####################################    COMMON   ####################################     
         ///</summary>
         ///
 
-
-        public static T FindVisualChild<T>(DependencyObject depObj) where T : DependencyObject
+        private void dataGrid_CmbPositionUpdate(DataGrid grid, int type)
         {
-            if (depObj != null)
+            if (type == 0)
             {
-                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+                DataGridRow gridRow = (DataGridRow)grid.ItemContainerGenerator.ContainerFromIndex(0);
+                if (gridRow == null) return;
+                DataGridCell cell = CommonActions.GetGridCell(gridRow, 0);
+                Year_numbersSearchCmb.Width = cell.ActualWidth;
+                cell = CommonActions.GetGridCell(gridRow, 1);
+                FirstNameSearchCmb.Width = cell.ActualWidth;
+                cell = CommonActions.GetGridCell(gridRow, 2);
+                SecondnameSearchCmb.Width = cell.ActualWidth;
+                cell = CommonActions.GetGridCell(gridRow, 3);
+                AddressSearchCmb.Width = cell.ActualWidth > 200 ? 200 : cell.ActualWidth;
+                cell = CommonActions.GetGridCell(gridRow, 4);
+                PhoneSearchCmb.Width = cell.ActualWidth;
+            }
+            else
+            {
+                DataGridRow gridRow = (DataGridRow)grid.ItemContainerGenerator.ContainerFromIndex(0);
+                if (gridRow == null) return;
+                itemsDataGrid.Columns[0].DisplayIndex = itemsDataGrid.Columns.Count - 1;
+                DataGridCell cell = CommonActions.GetGridCell(gridRow, 1);
+                Year_numbersItemCmb.Width = cell.ActualWidth;
+                cell = CommonActions.GetGridCell(gridRow, 2);
+                FirstNameItemCmb.Width = cell.ActualWidth;
+                cell = CommonActions.GetGridCell(gridRow, 3);
+                SecondNameItemCmb.Width = cell.ActualWidth;
+                cell = CommonActions.GetGridCell(gridRow, 5);
+                ItemNameCmb.Width = cell.ActualWidth;
+                int counter = 0;
+                foreach (var item in itemsDataGrid.Items)
                 {
-                    DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
-                    if (child != null && child is T)
+                    DataGridRow row = (DataGridRow)itemsDataGrid.ItemContainerGenerator.ContainerFromItem(item);
+                    if (row == null) continue;
+                    switch (mButtonList.ElementAt(counter))
                     {
-                        return (T)child;
+                        case 1:
+                            {
+                                cell = CommonActions.GetGridCell(row, 0);
+                                cell.Background = System.Windows.Media.Brushes.LimeGreen;
+                                cell = CommonActions.GetGridCell(row, 1);
+                                cell.Background = System.Windows.Media.Brushes.LimeGreen;
+                                cell = CommonActions.GetGridCell(row, 2);
+                                cell.Background = System.Windows.Media.Brushes.LimeGreen;
+                                cell = CommonActions.GetGridCell(row, 3);
+                                cell.Background = System.Windows.Media.Brushes.LimeGreen;
+                                cell = CommonActions.GetGridCell(row, 4);
+                                cell.Background = System.Windows.Media.Brushes.LimeGreen;
+                                cell = CommonActions.GetGridCell(row, 5);
+                                cell.Background = System.Windows.Media.Brushes.LimeGreen;
+                                cell = CommonActions.GetGridCell(row, 6);
+                                cell.Background = System.Windows.Media.Brushes.LimeGreen;
+                                cell = CommonActions.GetGridCell(row, 7);
+                                cell.Background = System.Windows.Media.Brushes.LimeGreen;
+                                break;
+                            }
+                        case 2:
+                            {
+                                cell = CommonActions.GetGridCell(row, 0);
+                                cell.Background = System.Windows.Media.Brushes.LightYellow;
+                                cell = CommonActions.GetGridCell(row, 1);
+                                cell.Background = System.Windows.Media.Brushes.LightYellow;
+                                cell = CommonActions.GetGridCell(row, 2);
+                                cell.Background = System.Windows.Media.Brushes.LightYellow;
+                                cell = CommonActions.GetGridCell(row, 3);
+                                cell.Background = System.Windows.Media.Brushes.LightYellow;
+                                cell = CommonActions.GetGridCell(row, 4);
+                                cell.Background = System.Windows.Media.Brushes.LightYellow;
+                                cell = CommonActions.GetGridCell(row, 5);
+                                cell.Background = System.Windows.Media.Brushes.LightYellow;
+                                cell = CommonActions.GetGridCell(row, 6);
+                                cell.Background = System.Windows.Media.Brushes.LightYellow;
+                                cell = CommonActions.GetGridCell(row, 7);
+                                cell.Background = System.Windows.Media.Brushes.LightYellow;
+                                break;
+                            }
+                        case 3:
+                            {
+                                cell = CommonActions.GetGridCell(row, 0);
+                                cell.Background = System.Windows.Media.Brushes.LightGray;
+                                cell = CommonActions.GetGridCell(row, 1);
+                                cell.Background = System.Windows.Media.Brushes.LightGray;
+                                cell = CommonActions.GetGridCell(row, 2);
+                                cell.Background = System.Windows.Media.Brushes.LightGray;
+                                cell = CommonActions.GetGridCell(row, 3);
+                                cell.Background = System.Windows.Media.Brushes.LightGray;
+                                cell = CommonActions.GetGridCell(row, 4);
+                                cell.Background = System.Windows.Media.Brushes.LightGray;
+                                cell = CommonActions.GetGridCell(row, 5);
+                                cell.Background = System.Windows.Media.Brushes.LightGray;
+                                cell = CommonActions.GetGridCell(row, 6);
+                                cell.Background = System.Windows.Media.Brushes.LightGray;
+                                cell = CommonActions.GetGridCell(row, 7);
+                                cell.Background = System.Windows.Media.Brushes.LightGray;
+                                break;
+                            }
+                        case 4:
+                            {
+                                cell = CommonActions.GetGridCell(row, 0);
+                                cell.Background = System.Windows.Media.Brushes.Green;
+                                cell = CommonActions.GetGridCell(row, 1);
+                                cell.Background = System.Windows.Media.Brushes.Green;
+                                cell = CommonActions.GetGridCell(row, 2);
+                                cell.Background = System.Windows.Media.Brushes.Green;
+                                cell = CommonActions.GetGridCell(row, 3);
+                                cell.Background = System.Windows.Media.Brushes.Green;
+                                cell = CommonActions.GetGridCell(row, 4);
+                                cell.Background = System.Windows.Media.Brushes.Green;
+                                cell = CommonActions.GetGridCell(row, 5);
+                                cell.Background = System.Windows.Media.Brushes.Green;
+                                cell = CommonActions.GetGridCell(row, 6);
+                                cell.Background = System.Windows.Media.Brushes.Green;
+                                cell = CommonActions.GetGridCell(row, 7);
+                                cell.Background = System.Windows.Media.Brushes.Green;
+                                break;
+                            }
+                        case 5:
+                            {
+                                cell = CommonActions.GetGridCell(row, 0);
+                                cell.Background = System.Windows.Media.Brushes.Yellow;
+                                cell = CommonActions.GetGridCell(row, 1);
+                                cell.Background = System.Windows.Media.Brushes.Yellow;
+                                cell = CommonActions.GetGridCell(row, 2);
+                                cell.Background = System.Windows.Media.Brushes.Yellow;
+                                cell = CommonActions.GetGridCell(row, 3);
+                                cell.Background = System.Windows.Media.Brushes.Yellow;
+                                cell = CommonActions.GetGridCell(row, 4);
+                                cell.Background = System.Windows.Media.Brushes.Yellow;
+                                cell = CommonActions.GetGridCell(row, 5);
+                                cell.Background = System.Windows.Media.Brushes.Yellow;
+                                cell = CommonActions.GetGridCell(row, 6);
+                                cell.Background = System.Windows.Media.Brushes.Yellow;
+                                cell = CommonActions.GetGridCell(row, 7);
+                                cell.Background = System.Windows.Media.Brushes.Yellow;
+                                break;
+                            }
+                        case 6:
+                            {
+                                cell = CommonActions.GetGridCell(row, 0);
+                                cell.Background = System.Windows.Media.Brushes.OrangeRed;
+                                cell = CommonActions.GetGridCell(row, 1);
+                                cell.Background = System.Windows.Media.Brushes.OrangeRed;
+                                cell = CommonActions.GetGridCell(row, 2);
+                                cell.Background = System.Windows.Media.Brushes.OrangeRed;
+                                cell = CommonActions.GetGridCell(row, 3);
+                                cell.Background = System.Windows.Media.Brushes.OrangeRed;
+                                cell = CommonActions.GetGridCell(row, 4);
+                                cell.Background = System.Windows.Media.Brushes.OrangeRed;
+                                cell = CommonActions.GetGridCell(row, 5);
+                                cell.Background = System.Windows.Media.Brushes.OrangeRed;
+                                cell = CommonActions.GetGridCell(row, 6);
+                                cell.Background = System.Windows.Media.Brushes.OrangeRed;
+                                cell = CommonActions.GetGridCell(row, 7);
+                                cell.Background = System.Windows.Media.Brushes.OrangeRed;
+                                break;
+                            }
                     }
-
-                    T childItem = FindVisualChild<T>(child);
-                    if (childItem != null) return childItem;
+                    counter++;
                 }
             }
-            return null;
         }
 
+
+        private void updateTooltips()
+        {
+            int max = dataGrid.Items.Count;
+            //adresa he col 3
+            for (int i = 0; i < max; i++)
+            {
+                DataGridRow gridRow = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromIndex(i);
+                if (gridRow == null) return;
+                DataGridCell cell = CommonActions.GetGridCell(gridRow, 3);
+                var cellContent = (TextBlock)cell.Content;
+                cell.ToolTip = cellContent.Text;
+            }
+        }
+
+        private void UpdateGrids()
+        {
+            LoadGrid(mDbActions.LoadAllUsers());
+            LoadItemsGrid(mDbActions.LoadAllItems());
+            LoadLogGrid(mDbActions.LoadAllLogs());
+        }
 
     }
 }

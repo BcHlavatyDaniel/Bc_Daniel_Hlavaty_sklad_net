@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace materialApp
 {
-    class EditUserStruct
+    public class EditUserStruct
     {
         public string keyy { get; set; }
         public string keyn { get; set; }

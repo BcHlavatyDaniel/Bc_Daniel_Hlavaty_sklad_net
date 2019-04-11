@@ -102,6 +102,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CommonActions.cs" />
     <Compile Include="EditItemStruct.cs" />
     <Compile Include="EditUserStruct.cs" />
     <Compile Include="Item_details.xaml.cs">
@@ -169,6 +170,17 @@
     <Resource Include="imageres\delete.png" />
     <Resource Include="imageres\profiles.png" />
     <Resource Include="imageres\unavailable.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="imageres\webImage0.png" />
+    <Resource Include="imageres\webImage1.png" />
+    <Resource Include="imageres\webImage2.png" />
+    <Resource Include="imageres\webImage3.png" />
+    <Resource Include="imageres\webImage4.png" />
+    <Resource Include="imageres\webImage5.png" />
+    <Resource Include="imageres\webImage6.png" />
+    <Resource Include="imageres\webImage7.png" />
+    <Resource Include="imageres\webImage8.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\EMGU.CV.3.4.3.3016\build\EMGU.CV.targets" Condition="Exists('..\packages\EMGU.CV.3.4.3.3016\build\EMGU.CV.targets')" />

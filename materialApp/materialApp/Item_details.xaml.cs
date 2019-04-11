@@ -26,66 +26,133 @@ namespace materialApp
     public partial class Item_details : Window
     {
         DbActions mDbActions;
+        CommonActions mCommonActions;
         string mId;
-        DataRowView mDatRow;
         string mPhotoPath = "";
-        ImageViewer viewer;
-        VideoCapture capture;
+        bool mCloseWin;
+        int mCurrState = 0;
+        int mLastSuccessState = 0;
 
-        public Item_details(DataRowView datRow, string id, string f_name, string s_name, ImageViewer view, VideoCapture cap)
+        EditItemStruct mLastSuccessStruct;
+        EditItemStruct mLastUnsuccessStruct;
+
+        ImageViewer mViewer;
+        VideoCapture mCapture;
+
+        public Item_details(string id, string f_name, string s_name, string user_id, ImageViewer view, VideoCapture cap)
         {
             InitializeComponent();
-            Init(datRow, id, f_name, s_name, view, cap);
+            Init( id, f_name, s_name, user_id, view, cap);
         }
 
-        private void Init(DataRowView datRow, string id, string f_name, string s_name, ImageViewer view, VideoCapture cap)
+        private void Init(string id, string f_name, string s_name, string user_id, ImageViewer view, VideoCapture cap)
         {
             mDbActions = new DbActions();
-            mDatRow = datRow;
+            mCommonActions = new CommonActions();
 
-            viewer = view;
-            capture = cap;
+            mViewer = view;
+            mCapture = cap;
 
-            ChangeSaveVisibility(false);
-            text_first_name.IsEnabled = false;
-            text_second_name.IsEnabled = false;
             text_first_name.Text = f_name;
             text_second_name.Text = s_name;
+            text_user_id.Text = user_id;
             mId = id;
+            cmbChangeItemState.Items.Add("Nepredany"); //0
+            cmbChangeItemState.Items.Add("Predany karta"); //1
+            cmbChangeItemState.Items.Add("Predany Hotovost"); //2
+            cmbChangeItemState.Items.Add("Vrateny"); //3
+            cmbChangeItemState.Items.Add("Zaplateny Karta"); //4
+            cmbChangeItemState.Items.Add("Zaplateny Hotovost"); //5
             LoadItem();
             icon_edit_err.Visibility = Visibility.Hidden;
+            text_edit_err.Text = "";
+        }
+
+        private void ChangeState(object sender, RoutedEventArgs e)
+        {
+            mCurrState = cmbChangeItemState.SelectedIndex;
         }
 
         private void LoadItem()
         {
-            DataRow row = mDbActions.LoadItemData(mId).Tables[0].Rows[0];
+            DataRow row = mDbActions.LoadSpecificItem(mId).Tables[0].Rows[0];
             text_description.Text = row["description"].ToString();
             text_price.Text = row["price"].ToString();
             text_size.Text = row["size"].ToString();
             text_name.Text = row["name"].ToString();
-            // image1.Source = new BitmapImage(new Uri(@"" + row["photo"].ToString(), UriKind.Relative));  
+
+            DateTime retTime;
+            DateTime paidTime;
+            DateTime soldTime;
+            DateTime createdTime;
+            int usedCard;
+            DateTime.TryParse(row["returned_at"].ToString(), out retTime);
+            DateTime.TryParse(row["paid_at"].ToString(), out paidTime);
+            DateTime.TryParse(row["sold_at"].ToString(), out soldTime);
+            DateTime.TryParse(row["created_at"].ToString(), out createdTime);
+            int.TryParse(row["used_card"].ToString(), out usedCard);
+
+            if (retTime.ToString() != "1/1/0001 12:00:00 AM")
+            {
+                cmbChangeItemState.SelectedItem = cmbChangeItemState.Items[3];
+                mCurrState = 3;
+                mLastSuccessState = 3;
+            }
+            else if (paidTime.ToString() != "1/1/0001 12:00:00 AM")
+            {
+                if (usedCard == 1)
+                {
+                    cmbChangeItemState.SelectedItem = cmbChangeItemState.Items[4];
+                    mCurrState = 4;
+                    mLastSuccessState = 4;
+                }
+                else
+                {
+                    cmbChangeItemState.SelectedItem = cmbChangeItemState.Items[5];
+                    mCurrState = 5;
+                    mLastSuccessState = 5;
+                }
+            }
+            else if (soldTime.ToString() != "1/1/0001 12:00:00 AM")
+            {
+                if (usedCard == 1)
+                {
+                    cmbChangeItemState.SelectedItem = cmbChangeItemState.Items[1];
+                    mCurrState = 1;
+                    mLastSuccessState = 1;
+                }
+                else
+                {
+                    cmbChangeItemState.SelectedItem = cmbChangeItemState.Items[2];
+                    mCurrState = 2;
+                    mLastSuccessState = 2;
+                }
+            }
+            else
+            {
+                cmbChangeItemState.SelectedItem = cmbChangeItemState.Items[0];
+                mCurrState = 0;
+                mLastSuccessState = 0;
+            }
+                
             image1.Source = new BitmapImage(new Uri(row["photo"].ToString(), UriKind.RelativeOrAbsolute));
-            if ("1/1/0001 12:00:00 AM" == row["created_at"].ToString()) text_created_at.Text = "-----";
-            else text_created_at.Text = row["created_at"].ToString();
-            if ("1/1/0001 12:00:00 AM" == row["sold_at"].ToString()) text_sold_at.Text = "-----";
-            else text_sold_at.Text = row["sold_at"].ToString();
-            if ("1/1/0001 12:00:00 AM" == row["returned_at"].ToString()) text_returned_at.Text = "-----";
-            else text_returned_at.Text = row["returned_at"].ToString();
-            if ("1/1/0001 12:00:00 AM" == row["paid_at"].ToString()) text_paid_at.Text = "-----";
-            else text_paid_at.Text = row["paid_at"].ToString();
+
+            mLastSuccessStruct = new EditItemStruct
+            {
+                description = row["description"].ToString(),
+                photo = row["photo"].ToString(),
+                name = row["name"].ToString() ,
+                size = row["size"].ToString(),
+                price = row["price"].ToString(),
+            };
         }
 
-        private void Back(object sender, RoutedEventArgs e)
-        {
-            //User_details userWindow = new User_details(mDatRow);
-            //userWindow.Show();
-            this.Close();
-        }
+
 
         private void TakeAPic(object sender, RoutedEventArgs e)
         {
-            viewer.Image = capture.QueryFrame(); //TO DO if throws err
-            viewer.Image.Save("webImage0.png"); // -> odtialto ho skopcit do imageres, nazov +id
+            mViewer.Image = mCapture.QueryFrame(); //TO DO if throws err
+            mViewer.Image.Save("webImage0.png"); // -> odtialto ho skopcit do imageres, nazov +id
             DirectoryInfo di = new DirectoryInfo("~/../../../imageres/");
             FileInfo[] currFiles = di.GetFiles("*.png");
 
@@ -124,39 +191,27 @@ namespace materialApp
             }
         }
 
-        private void Edit(object sender, RoutedEventArgs e)
-        {
-            ChangeSaveVisibility(true);
-            icon_edit_err.Visibility = Visibility.Hidden;
-            BtnEdit.Visibility = Visibility.Hidden;
-        }
-
         private void Save(object sender, RoutedEventArgs e)
         {
-            DateTime createTime;
-            DateTime.TryParse(picker_created_at.ToString(), out createTime);
-            DateTime soldTime;
-            DateTime.TryParse(picker_sold_at.ToString(), out soldTime);
-            DateTime paidTime;
-            DateTime.TryParse(picker_paid_at.ToString(), out paidTime);
-            DateTime returnedTime;
-            DateTime.TryParse(picker_returned_at.ToString(), out returnedTime);
-
             icon_edit_err.Visibility = Visibility.Visible;
 
             double num;
-        /*    if (!double.TryParse(text_size.Text, out num))
-            {
-                text_edit_err.Foreground = Brushes.Red;
-                text_edit_err.Text = "Velkost musi byt cislo!";
-                icon_edit_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
-                return;
-            }*/
+
             if (!double.TryParse(text_price.Text, out num))
             {
                 text_edit_err.Foreground = Brushes.Red;
                 text_edit_err.Text = "Cena musi byt cislo!";
                 icon_edit_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
+
+                mLastUnsuccessStruct = new EditItemStruct
+                {
+                    description = text_description.Text,
+                    photo = mPhotoPath,
+                    name = text_name.Text,
+                    size = text_size.Text,
+                    price = text_price.Text
+                };
+
                 return;
             }
 
@@ -167,17 +222,185 @@ namespace materialApp
                 price = text_price.Text,
                 size = text_size.Text,
                 name = text_name.Text,
-                created_at = createTime,
-                sold_at = soldTime,
-                paid_at = paidTime,
-                returned_at = returnedTime,
                 photo = mPhotoPath
             };
 
-            mDbActions.EditItemData(itemStruct);
-            ChangeSaveVisibility(false);
-            ClearOptions();
-            LoadItem();
+            bool change = false;
+
+            if (mLastSuccessStruct.name == text_name.Text && mLastSuccessStruct.description == text_description.Text &&
+                mLastSuccessStruct.size == text_size.Text && mLastSuccessStruct.price == text_price.Text && mLastSuccessStruct.photo == mPhotoPath)
+            {
+
+            } else
+            {
+                mDbActions.UpdateItem(itemStruct);
+                change = true;
+            }
+
+            if (mCurrState != mLastSuccessState)
+            {
+                mDbActions.UpdateItemTimes(mId, mCurrState);
+                mLastSuccessState = mCurrState;
+                change = true;
+            }
+
+            if (change)
+            {
+                mLastSuccessStruct = new EditItemStruct
+                {
+                    description = text_description.Text,
+                    photo = mPhotoPath,
+                    name = text_name.Text,
+                    size = text_size.Text,
+                    price = text_price.Text
+                };
+
+                ClearOptions();
+                LoadItem();
+            }
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            EditItemStruct compStruct = new EditItemStruct
+            {
+                name = text_name.Text,
+                size = text_size.Text,
+                price = text_price.Text,
+                description = text_description.Text,
+                photo = mPhotoPath
+            };
+
+            bool showPopup = false;
+
+            if (mLastUnsuccessStruct == null)
+            {
+                if (!CompareItemStruct(mLastSuccessStruct, compStruct))
+                {
+                    showPopup = true;
+                    e.Cancel = true;
+                }
+            }
+            else
+            {
+                if (!CompareItemStruct(mLastSuccessStruct, compStruct) && (!CompareItemStruct(mLastUnsuccessStruct, compStruct)))
+                {
+                    showPopup = true;
+                    e.Cancel = true;
+                }
+            }
+
+            if (mLastSuccessState != mCurrState)
+            {
+                showPopup = true;
+                e.Cancel = true;
+            }
+
+            if (showPopup)
+            {
+                HideGrid.Visibility = Visibility.Hidden;
+                OnClosePopup.IsOpen = true;
+            }
+
+            
+        }
+
+        private void Close_from_Popup(object sender, RoutedEventArgs e)
+        {
+            OkButton.Visibility = Visibility.Hidden;
+            text_popupFline.Text = "Zmenene udaje";
+            text_popupSline.Text = "Chcete ulozit?";
+            text_popupwarning.Text = "";
+            PopupSave.Visibility = Visibility.Visible;
+            PopupDontSave.Visibility = Visibility.Visible;
+
+            if (mCloseWin)
+            {
+                this.Close();
+            }
+            else
+            {
+                OnClosePopup.IsOpen = true;
+                HideGrid.Visibility = Visibility.Visible;
+            }
+
+        }
+
+        private void Close_Popup(object sender, RoutedEventArgs e)
+        {
+            Button caller = (Button)sender;
+            if (caller.Name == "PopupSave")
+            {
+                Save(sender, e);
+                if (icon_edit_err.Kind == MaterialDesignThemes.Wpf.PackIconKind.Error)
+                {
+                    text_popupSline.Text = "";
+                    text_popupFline.Text = "";
+                    text_popupwarning.Text = "Nespravne udaje";
+                    text_popupwarning.Foreground = Brushes.Red;
+                    PopupSave.Visibility = Visibility.Hidden;
+                    PopupDontSave.Visibility = Visibility.Hidden;
+                    OkButton.Visibility = Visibility.Visible;
+                    mCloseWin = false;
+                }
+                else
+                {
+                    text_popupSline.Text = "";
+                    text_popupFline.Text = "";
+                    text_popupwarning.Text = "Ulozene!";
+                    text_popupwarning.Foreground = Brushes.Green;
+                    PopupSave.Visibility = Visibility.Hidden;
+                    PopupDontSave.Visibility = Visibility.Hidden;
+                    OkButton.Visibility = Visibility.Visible;
+                    mCloseWin = true;
+                }
+            }
+            else
+            {
+                OnClosePopup.IsOpen = false;
+                mLastSuccessStruct.name = text_name.Text;
+                mLastSuccessStruct.description = text_description.Text;
+                mLastSuccessStruct.size = text_size.Text;
+                mLastSuccessStruct.price = text_size.Text;
+                mLastSuccessStruct.photo = mPhotoPath;
+
+                this.Close();
+            }
+        }
+
+        private new void PreviewTextInput(object sender, RoutedEventArgs e)
+        {
+            TextBox box = (TextBox)sender;
+            if (box.Text[0] == '.')
+            {
+                box.Text = box.Text.Remove(0, 1);
+                return;
+            }
+            if (box.Text[box.Text.Length - 1] == '.')
+            {
+                box.Text = box.Text.Remove(box.Text.Length - 1, 1);
+                return;
+            }
+
+            int dotCounter = 0;
+            if (!CommonActions.IsDouble(box.Text))
+            {
+                for (int i = 0; i < box.Text.Length; i++)
+                {
+                    if (!int.TryParse(box.Text[i].ToString(), out int outVar))
+                    {
+                        if (box.Text[i] != '.')
+                        {
+                            box.Text = box.Text.Remove(i, 1);
+                        }
+                        else
+                        {
+                            if (dotCounter > 0 || i == 0 || i == box.Text.Length - 1) box.Text = box.Text.Remove(i, 1);
+                            dotCounter++;
+                        }
+                    }
+                }
+            }
         }
 
         private void ClearOptions()
@@ -185,57 +408,29 @@ namespace materialApp
             text_edit_err.Text = "Uspesne zmenene";
             text_edit_err.Foreground = Brushes.Green;
             icon_edit_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Done;
-            BtnEdit.Visibility = Visibility.Visible;
-            picker_created_at.SelectedDate = null;
-            picker_paid_at.SelectedDate = null;
-            picker_returned_at.SelectedDate = null;
-            picker_sold_at.SelectedDate = null;
         }
 
-        private void ChangeSaveVisibility(bool val)
-        {
-            if (val)
-            {
-                BtnSave.Visibility = Visibility.Visible;
-                BtnAddPhotoPath.Visibility = Visibility.Visible;
-                text_edit_err.Text = "";
-                picker_created_at.Visibility = Visibility.Visible;
-                picker_paid_at.Visibility = Visibility.Visible;
-                picker_returned_at.Visibility = Visibility.Visible;
-                picker_sold_at.Visibility = Visibility.Visible;
-                text_created_at.Visibility = Visibility.Collapsed;
-                text_paid_at.Visibility = Visibility.Collapsed;
-                text_sold_at.Visibility = Visibility.Collapsed;
-                text_returned_at.Visibility = Visibility.Collapsed;
-                text_price.IsEnabled = true;
-                text_size.IsEnabled = true;
-                text_description.IsEnabled = true;
-                text_name.IsEnabled = true;
-                text_paid_at.IsEnabled = true;
-                text_created_at.IsEnabled = true;
-                text_returned_at.IsEnabled = true;
-                text_sold_at.IsEnabled = true;
 
-            } else
+        private bool CompareItemStruct(EditItemStruct first, EditItemStruct second)
+        {
+            if (first.name != second.name)
             {
-                BtnSave.Visibility = Visibility.Hidden;
-                picker_created_at.Visibility = Visibility.Collapsed;
-                picker_paid_at.Visibility = Visibility.Collapsed;
-                picker_returned_at.Visibility = Visibility.Collapsed;
-                picker_sold_at.Visibility = Visibility.Collapsed;
-                text_created_at.Visibility = Visibility.Visible;
-                text_paid_at.Visibility = Visibility.Visible;
-                text_sold_at.Visibility = Visibility.Visible;
-                text_returned_at.Visibility = Visibility.Visible;
-                text_price.IsEnabled = false;
-                text_size.IsEnabled = false;
-                text_description.IsEnabled = false;
-                text_name.IsEnabled = false;
-                text_paid_at.IsEnabled = false;
-                text_created_at.IsEnabled = false;
-                text_returned_at.IsEnabled = false;
-                text_sold_at.IsEnabled = false;
+                return false;
             }
+            if (first.description != second.description)
+            {
+                return false;
+            }
+            if (first.size != second.size)
+            {
+                return false;
+            }
+            if (first.price != second.price)
+            {
+                return false;
+            }
+
+            return true;
         }
 
     }
