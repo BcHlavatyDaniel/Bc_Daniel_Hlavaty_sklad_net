@@ -94,9 +94,9 @@ namespace materialApp
             Name_Cmb.Items.Add("");
             foreach (DataRow row in dataTable.Rows)
             {
-                if (!Name_Cmb.Items.Contains(row["name"].ToString()))
+                if (!Name_Cmb.Items.Contains(row["Nazov"].ToString()))
                 {
-                    Name_Cmb.Items.Add(row["name"].ToString());
+                    Name_Cmb.Items.Add(row["Nazov"].ToString());
                 }
             }
         }
@@ -415,8 +415,8 @@ namespace materialApp
             dataGrid.Columns[2].DisplayIndex = dataGrid.Columns.Count - 1;
             dataGrid.Columns[1].DisplayIndex = dataGrid.Columns.Count - 1;
 
-            DataGridCell cell = CommonActions.GetGridCell(gridRow, 2);  //might need +1
-            DataGridCell cell2 = CommonActions.GetGridCell(gridRow, 3);
+            DataGridCell cell = CommonActions.GetGridCell(gridRow, 3);  
+            DataGridCell cell2 = CommonActions.GetGridCell(gridRow, 4);
             //cmbMargin += cell.ActualWidth;
             Name_Cmb.Margin = new Thickness(cell.ActualWidth, 15, 0, 0);
             Name_Cmb.Width = cell2.ActualWidth;
@@ -624,6 +624,10 @@ namespace materialApp
 
             gridData.Tables[0].Columns.Remove("archived");
             gridData.Tables[0].Columns.Remove("stav");
+            gridData.Tables[0].Columns["name"].ColumnName = "Nazov";
+            gridData.Tables[0].Columns["size"].ColumnName = "Velkost";
+            gridData.Tables[0].Columns["price"].ColumnName = "Cena";
+            gridData.Tables[0].Columns["description"].ColumnName = "Popis";
             dataGrid.ItemsSource = gridData.Tables[0].DefaultView;
             dataGrid.Items.Refresh();
             dataGrid.UpdateLayout();

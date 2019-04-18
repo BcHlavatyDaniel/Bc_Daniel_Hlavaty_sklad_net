@@ -84,38 +84,38 @@ namespace materialApp
 
             foreach(DataRow row in itData.Tables[0].Rows)
             {
-                if (!ItemNameCmb.Items.Contains(row["name"].ToString()))
-                    ItemNameCmb.Items.Add(row["name"].ToString());
+                if (!ItemNameCmb.Items.Contains(row["Nazov"].ToString()))
+                    ItemNameCmb.Items.Add(row["Nazov"].ToString());
             }
 
             foreach (DataRow row in logData.Tables[0].Rows)
             {
-                if (!Year_numbersLogCmb.Items.Contains(row["user_id"].ToString()))
-                    Year_numbersLogCmb.Items.Add(row["user_id"].ToString());
-                if (!Item_idLogCmb.Items.Contains(row["item_id"].ToString()))
-                    Item_idLogCmb.Items.Add(row["item_id"].ToString());
-                if (!TypeCmb.Items.Contains(row["type"].ToString()))
-                    TypeCmb.Items.Add(row["type"].ToString());
+                if (!Year_numbersLogCmb.Items.Contains(row["id uzivatel"].ToString()))
+                    Year_numbersLogCmb.Items.Add(row["id uzivatel"].ToString());
+                if (!Item_idLogCmb.Items.Contains(row["id tovar"].ToString()))
+                    Item_idLogCmb.Items.Add(row["id tovar"].ToString());
+                if (!TypeCmb.Items.Contains(row["typ zmeny"].ToString()))
+                    TypeCmb.Items.Add(row["typ zmeny"].ToString());
             }
 
             foreach (DataRow row in dataTable.Rows)
             {
-                if (!FirstNameSearchCmb.Items.Contains(row["first_name"].ToString()))
-                    FirstNameSearchCmb.Items.Add(row["first_name"].ToString());
-                if (!FirstNameItemCmb.Items.Contains(row["first_name"].ToString()))
-                    FirstNameItemCmb.Items.Add(row["first_name"].ToString());
-                if (!SecondNameItemCmb.Items.Contains(row["second_name"].ToString()))
-                    SecondNameItemCmb.Items.Add(row["second_name"].ToString());
-                if (!SecondnameSearchCmb.Items.Contains(row["second_name"].ToString()))
-                    SecondnameSearchCmb.Items.Add(row["second_name"].ToString());
+                if (!FirstNameSearchCmb.Items.Contains(row["Prve meno"].ToString()))
+                    FirstNameSearchCmb.Items.Add(row["Prve meno"].ToString());
+                if (!FirstNameItemCmb.Items.Contains(row["Prve meno"].ToString()))
+                    FirstNameItemCmb.Items.Add(row["Prve meno"].ToString());
+                if (!SecondNameItemCmb.Items.Contains(row["Druhe meno"].ToString()))
+                    SecondNameItemCmb.Items.Add(row["Druhe meno"].ToString());
+                if (!SecondnameSearchCmb.Items.Contains(row["Druhe meno"].ToString()))
+                    SecondnameSearchCmb.Items.Add(row["Druhe meno"].ToString());
                 if (!Year_numbersSearchCmb.Items.Contains(row["rok-id"].ToString()))
                     Year_numbersSearchCmb.Items.Add(row["rok-id"].ToString());
                 if (!Year_numbersItemCmb.Items.Contains(row["rok-id"].ToString()))
                     Year_numbersItemCmb.Items.Add(row["rok-id"].ToString());
-                if (!AddressSearchCmb.Items.Contains(row["address"].ToString()))
-                    AddressSearchCmb.Items.Add(row["address"].ToString());
-                if (!PhoneSearchCmb.Items.Contains(row["telephone"].ToString()))
-                    PhoneSearchCmb.Items.Add(row["telephone"].ToString());
+                if (!AddressSearchCmb.Items.Contains(row["Adresa"].ToString()))
+                    AddressSearchCmb.Items.Add(row["Adresa"].ToString());
+                if (!PhoneSearchCmb.Items.Contains(row["Telefon"].ToString()))
+                    PhoneSearchCmb.Items.Add(row["Telefon"].ToString());
             }
         }
 
@@ -138,6 +138,11 @@ namespace materialApp
             gridData.Tables[0].Columns.Remove("_numbers");
             gridData.Tables[0].Columns["rok-id"].SetOrdinal(0);
 
+            gridData.Tables[0].Columns["first_name"].ColumnName = "Prve meno";
+            gridData.Tables[0].Columns["second_name"].ColumnName = "Druhe meno";
+            gridData.Tables[0].Columns["address"].ColumnName = "Adresa";
+            gridData.Tables[0].Columns["telephone"].ColumnName = "Telefon";
+
             dataGrid.ItemsSource = gridData.Tables[0].DefaultView;
             dataGrid.Items.Refresh();
             dataGrid.UpdateLayout();
@@ -146,9 +151,24 @@ namespace materialApp
                 dataGrid.Columns[1].MaxWidth = 150;
                 dataGrid.Columns[2].MaxWidth = 150;
                 dataGrid.Columns[3].MaxWidth = 200;
-                dataGrid.Columns[4].MaxWidth = 100;
-                dataGrid.Columns[5].MaxWidth = 50;
+                dataGrid.Columns[4].MaxWidth = 150;
+                dataGrid.Columns[5].MaxWidth = 100;
             }
+            updateTooltips();
+            dataGrid_CmbPositionUpdate(dataGrid, 0);
+
+            //rename grids
+        }
+
+        private void Datagrid_Cmb_Update(object sender, RoutedEventArgs e)
+        {
+            dataGrid.Items.Refresh();
+            dataGrid.UpdateLayout();
+            dataGrid.Columns[1].MaxWidth = 150;
+            dataGrid.Columns[2].MaxWidth = 150;
+            dataGrid.Columns[3].MaxWidth = 200;
+            dataGrid.Columns[4].MaxWidth = 150;
+            dataGrid.Columns[5].MaxWidth = 100;
             updateTooltips();
             dataGrid_CmbPositionUpdate(dataGrid, 0);
         }
@@ -231,19 +251,6 @@ namespace materialApp
             mUserDWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             mUserDWindow.ShowDialog();
             UpdateGrids();
-        }
-
-        private void Datagrid_Cmb_Update(object sender, RoutedEventArgs e)
-        {
-            dataGrid.Items.Refresh();
-            dataGrid.UpdateLayout();
-            dataGrid.Columns[1].MaxWidth = 150;
-            dataGrid.Columns[2].MaxWidth = 150;
-            dataGrid.Columns[3].MaxWidth = 200;
-            dataGrid.Columns[4].MaxWidth = 100;
-            dataGrid.Columns[5].MaxWidth = 50;
-            updateTooltips();
-            dataGrid_CmbPositionUpdate(dataGrid, 0);
         }
 
 
@@ -345,8 +352,8 @@ namespace materialApp
         {
             itemsDataGrid.ItemsSource = null;
             allItems.Tables[0].Columns.Add("rok-id", typeof(string));
-            allItems.Tables[0].Columns.Add("prve meno", typeof(string));
-            allItems.Tables[0].Columns.Add("druhe meno", typeof(string));
+            allItems.Tables[0].Columns.Add("Prve meno", typeof(string));
+            allItems.Tables[0].Columns.Add("Druhe meno", typeof(string));
 
             for ( int i = allItems.Tables[0].Rows.Count -1; i >= 0; i--)
             {
@@ -358,14 +365,14 @@ namespace materialApp
                     {
                         if (row["user_numbers"].ToString() == uRow["_numbers"].ToString())
                         {
-                            row["prve meno"] = uRow["first_name"].ToString();
-                            row["druhe meno"] = uRow["second_name"].ToString();
+                            row["Prve meno"] = uRow["first_name"].ToString();
+                            row["Druhe meno"] = uRow["second_name"].ToString();
                             break;
                         }
 
                     }
                 } //remove missing
-                if (row["prve meno"].ToString() == "")
+                if (row["Prve meno"].ToString() == "")
                 {
                     row.Delete();
                 }
@@ -393,11 +400,14 @@ namespace materialApp
             allItems.Tables[0].Columns.Remove("archived");
             allItems.Tables[0].Columns.Remove("user_year");
             allItems.Tables[0].Columns.Remove("user_numbers");
-       //     allItems.Tables[0].Columns.Remove("description");
             allItems.Tables[0].Columns.Remove("photo");
+            allItems.Tables[0].Columns["name"].ColumnName = "Nazov";
+            allItems.Tables[0].Columns["size"].ColumnName = "Velkost";
+            allItems.Tables[0].Columns["price"].ColumnName = "Cena";
+            allItems.Tables[0].Columns["description"].ColumnName = "Popis";
             allItems.Tables[0].Columns["rok-id"].SetOrdinal(0);
-            allItems.Tables[0].Columns["prve meno"].SetOrdinal(1);
-            allItems.Tables[0].Columns["druhe meno"].SetOrdinal(2);
+            allItems.Tables[0].Columns["Prve meno"].SetOrdinal(1);
+            allItems.Tables[0].Columns["Druhe meno"].SetOrdinal(2);
             itemsDataGrid.ItemsSource = allItems.Tables[0].DefaultView;
             itemsDataGrid.Items.Refresh();
             itemsDataGrid.UpdateLayout();
@@ -504,6 +514,10 @@ namespace materialApp
             logDataGrid.ItemsSource = null;
 
             data.Tables[0].Columns.Remove("id");
+            data.Tables[0].Columns["item_id"].ColumnName = "id tovar";
+            data.Tables[0].Columns["user_id"].ColumnName = "id uzivatel";
+            data.Tables[0].Columns["type"].ColumnName = "typ zmeny";
+            data.Tables[0].Columns["change_text"].ColumnName = "popis zmeny";
 
             logDataGrid.ItemsSource = data.Tables[0].DefaultView;
             logDataGrid.Items.Refresh();

@@ -151,7 +151,7 @@
                         <ComboBox x:Name="AddressSearchCmb" SelectionChanged="Search" HorizontalAlignment="Left" Margin="0, 20, 0,0" VerticalAlignment="Top" Width="200"/>
                         <ComboBox x:Name="PhoneSearchCmb" SelectionChanged="Search" HorizontalAlignment="Left" Margin="0, 20, 0,0" VerticalAlignment="Top" Width="70"/>
                     </DockPanel>
-                    <DataGrid x:Name="dataGrid" Loaded="Datagrid_Cmb_Update" Background="#E1F5FE" CanUserReorderColumns="False" MouseDoubleClick="Profile_Open" HorizontalAlignment="Left" IsReadOnly="True" Margin="0 , 50 ,00,0" VerticalAlignment="Top" Grid.ColumnSpan="2">
+                        <DataGrid x:Name="dataGrid" Background="#E1F5FE" Loaded="Datagrid_Cmb_Update" CanUserReorderColumns="False" MouseDoubleClick="Profile_Open" HorizontalAlignment="Left" IsReadOnly="True" Margin="0 , 50 ,00,0" VerticalAlignment="Top" Grid.ColumnSpan="2">
                         <DataGrid.Resources>
                             <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
                                 <Setter Property="Background" Value="#81D4FA" />
