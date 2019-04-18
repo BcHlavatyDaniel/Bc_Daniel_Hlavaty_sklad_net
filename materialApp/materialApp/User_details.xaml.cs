@@ -44,6 +44,8 @@ namespace materialApp
         List<int> mButtonList;
         bool mCloseWin;
         bool mArchived = false;
+        enum mState { Einit_state, Esold_card, Esold_cash, Ereturned, Epaid_card, Epaid_cash, Earchived };
+
 
         ImageViewer mViewer;
         VideoCapture mCapture;
@@ -349,47 +351,6 @@ namespace materialApp
             return true;
         }
 
-        private void Item_Description_Open(object sender, RoutedEventArgs e)
-        {
-            int index = dataGrid.SelectedIndex;
-            DataGridRow gridRow = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromItem(dataGrid.SelectedItem);
-            DataRowView rowView = (DataRowView)dataGrid.SelectedItem;
-
-            string id = rowView.Row.ItemArray[0].ToString();
-            if (mVisibleList.Contains(index))
-            {
-                gridRow.DetailsVisibility = Visibility.Collapsed;
-                DataGridDetailsPresenter presenter = CommonActions.FindVisualChild<DataGridDetailsPresenter>(gridRow);
-                presenter.ApplyTemplate();
-                var textbox = presenter.ContentTemplate.FindName("Descrip", presenter) as TextBox;
-                mDbActions.LoadSaveSpecificItemDescription(id, true, textbox.Text);
-                mVisibleList.Remove(index);
-            }
-            else
-            {
-                string desc = mDbActions.LoadSaveSpecificItemDescription(id, false, "");
-                mVisibleList.Add(index);
-                DataGridDetailsPresenter presenter = CommonActions.FindVisualChild<DataGridDetailsPresenter>(gridRow);
-                presenter.ApplyTemplate();
-                var textbox = presenter.ContentTemplate.FindName("Descrip", presenter) as TextBox;
-                textbox.Text = desc;
-                gridRow.DetailsVisibility = Visibility.Visible;
-            }
-        }
-
-        private void Item_Description_Save(object sender, RoutedEventArgs e)
-        {
-            int index = dataGrid.SelectedIndex;
-            DataGridRow gridRow = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromItem(dataGrid.SelectedItem);
-            DataRowView rowView = (DataRowView)dataGrid.SelectedItem;
-
-            string id = rowView.Row.ItemArray[0].ToString();
-            DataGridDetailsPresenter presenter = CommonActions.FindVisualChild<DataGridDetailsPresenter>(gridRow);
-            presenter.ApplyTemplate();
-            var textbox = presenter.ContentTemplate.FindName("Descrip", presenter) as TextBox;
-            mDbActions.LoadSaveSpecificItemDescription(id, true, textbox.Text);
-        }
-
         private void Item_Details_Open(object sender, RoutedEventArgs e)
         {
             DataRowView datView = (DataRowView)dataGrid.SelectedItem;
@@ -449,16 +410,12 @@ namespace materialApp
             dataGrid.UpdateLayout();
             DataGridRow gridRow = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromIndex(0);
             if (gridRow == null) return;
+            
             dataGrid.Columns[0].DisplayIndex = dataGrid.Columns.Count - 1;
-            dataGrid.Columns[1].DisplayIndex = dataGrid.Columns.Count - 2;
+            dataGrid.Columns[2].DisplayIndex = dataGrid.Columns.Count - 1;
+            dataGrid.Columns[1].DisplayIndex = dataGrid.Columns.Count - 1;
 
-           // DataGridCell cell = CommonActions.GetGridCell(gridRow, 0);
-           // double cmbMargin = cell.ActualWidth;
-           // cell = CommonActions.GetGridCell(gridRow, 1);
-          //  cmbMargin += cell.ActualWidth;
-           // cell = CommonActions.GetGridCell(gridRow, 2);
-          //  cmbMargin += cell.ActualWidth;
-            DataGridCell cell = CommonActions.GetGridCell(gridRow, 2);
+            DataGridCell cell = CommonActions.GetGridCell(gridRow, 2);  //might need +1
             DataGridCell cell2 = CommonActions.GetGridCell(gridRow, 3);
             //cmbMargin += cell.ActualWidth;
             Name_Cmb.Margin = new Thickness(cell.ActualWidth, 15, 0, 0);
@@ -467,22 +424,22 @@ namespace materialApp
 
         private void ButtonVisibilityEdit(DataGridRow row, int id)
         {
-            FrameworkElement element = dataGrid.Columns[1].GetCellContent(row);
+            FrameworkElement element = dataGrid.Columns[2].GetCellContent(row);
+            FrameworkElement element2 = dataGrid.Columns[0].GetCellContent(row);
             element.ApplyTemplate();
-            Button butSellCash = ((DataGridTemplateColumn)dataGrid.Columns[1]).CellTemplate.FindName("btnSellCash", element) as Button;
-            Button butSellCard = ((DataGridTemplateColumn)dataGrid.Columns[1]).CellTemplate.FindName("btnSellCard", element) as Button;
-            Button butPay = ((DataGridTemplateColumn)dataGrid.Columns[1]).CellTemplate.FindName("btnPay", element) as Button;
-            Button butRet = ((DataGridTemplateColumn)dataGrid.Columns[1]).CellTemplate.FindName("btnReturn", element) as Button;
-            TextBox text = ((DataGridTemplateColumn)dataGrid.Columns[1]).CellTemplate.FindName("text_Paid", element) as TextBox;
+            element2.ApplyTemplate();
+            Button butSellCash = ((DataGridTemplateColumn)dataGrid.Columns[2]).CellTemplate.FindName("btnSellCash", element) as Button;
+            Button butSellCard = ((DataGridTemplateColumn)dataGrid.Columns[2]).CellTemplate.FindName("btnSellCard", element) as Button;
+            Button butPay = ((DataGridTemplateColumn)dataGrid.Columns[2]).CellTemplate.FindName("btnPay", element) as Button;
+            Button butRet = ((DataGridTemplateColumn)dataGrid.Columns[2]).CellTemplate.FindName("btnReturn", element) as Button;
+            TextBox text = ((DataGridTemplateColumn)dataGrid.Columns[0]).CellTemplate.FindName("text_Paid", element2) as TextBox;
             if (id == 0) //stav 0, predat kartou, hotovostou, vratit
             {
-                butSellCard.Width = 80;
-                butSellCash.Width = 80;
-                butRet.Width = 80;
+                butSellCard.Width = 70;
+                butSellCash.Width = 100;
+                butRet.Width = 70;
 
                 butPay.Visibility = Visibility.Collapsed;
-                text.Visibility = Visibility.Collapsed;
-
                 butSellCard.Visibility = Visibility.Visible;
                 butSellCash.Visibility = Visibility.Visible;
                 butRet.Visibility = Visibility.Visible;
@@ -494,14 +451,11 @@ namespace materialApp
                 butSellCash.Visibility = Visibility.Collapsed;
                 butRet.Visibility = Visibility.Collapsed;
 
-                butPay.Width = 120;
-                text.Width = 120;
+                butPay.Width = 240;
 
                 butPay.Visibility = Visibility.Visible;
                 text.Text = "Karta";
                 text.Background = Brushes.LightGreen;
-
-                text.Visibility = Visibility.Visible;
 
             }
             else if (id == 2) //stav 2 predane hotovostou -> vyplatit
@@ -510,8 +464,7 @@ namespace materialApp
                 butSellCash.Visibility = Visibility.Collapsed;
                 butRet.Visibility = Visibility.Collapsed;
 
-                butPay.Width = 120;
-                text.Width = 120;
+                butPay.Width = 240;
 
                 butPay.Visibility = Visibility.Visible;
                 text.Text = "Hotovost";
@@ -525,7 +478,6 @@ namespace materialApp
                 butRet.Visibility = Visibility.Collapsed;
                 butPay.Visibility = Visibility.Collapsed;
                 text.Text = "Vratene";
-                text.Width = 240;
                 text.Background = Brushes.LightGray;
                 text.Visibility = Visibility.Visible;
             }
@@ -536,7 +488,6 @@ namespace materialApp
                 butRet.Visibility = Visibility.Collapsed;
                 butPay.Visibility = Visibility.Collapsed;
                 text.Text = "Vyplatene Karta";
-                text.Width = 240;
                 text.Background = Brushes.Green;
                 text.Visibility = Visibility.Visible;
             } else if (id == 5) //vyplatene cash
@@ -546,7 +497,6 @@ namespace materialApp
                 butRet.Visibility = Visibility.Collapsed;
                 butPay.Visibility = Visibility.Collapsed;
                 text.Text = "Vyplatene Hotovost";
-                text.Width = 240;
                 text.Background = Brushes.Yellow;
                 text.Visibility = Visibility.Visible;
             } else if (id == 6)
@@ -556,20 +506,21 @@ namespace materialApp
                 butRet.Visibility = Visibility.Collapsed;
                 butPay.Visibility = Visibility.Collapsed;
                 text.Text = "Archivovane";
-                text.Width = 240;
                 text.Background = Brushes.OrangeRed;
                 text.Visibility = Visibility.Visible;
             }
 
-            dataGrid.Columns[1].Width = 265;
-            dataGrid.Columns[0].Width = 265;
+            dataGrid.Columns[2].Width = 270;
+            dataGrid.Columns[1].Width = 200;
+            dataGrid.Columns[0].Width = 150;
         }
 
         private void Item_SellCash(object sender, RoutedEventArgs e)
         {
             DataGridRow gridRow = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromItem(dataGrid.SelectedItem);
             DataRowView datView = (DataRowView)dataGrid.SelectedItem;
-            mDbActions.UpdateItemTimes(datView.Row.ItemArray[0].ToString(), 2);
+            mDbActions.UpdateSpecificItem(datView.Row.ItemArray[0].ToString(), 5, "2");
+            mDbActions.AddLog(datView.Row.ItemArray[0].ToString(), mYear_key + "-" + mNumber_key, 1, "Tovar predany hotovostou");
             ButtonVisibilityEdit(gridRow, 2);
         }
 
@@ -577,25 +528,18 @@ namespace materialApp
         {
             DataGridRow gridRow = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromItem(dataGrid.SelectedItem);
             DataRowView datView = (DataRowView)dataGrid.SelectedItem;
-            mDbActions.UpdateItemTimes(datView.Row.ItemArray[0].ToString(), 1);
+            mDbActions.UpdateSpecificItem(datView.Row.ItemArray[0].ToString(), 5, "1");
+            mDbActions.AddLog(datView.Row.ItemArray[0].ToString(), mYear_key + "-" + mNumber_key, 1, "Tovar predany kartou");
             ButtonVisibilityEdit(gridRow, 1);
         }
 
-  /*      private void Item_Sell(object sender, RoutedEventArgs e)
-        {
-            //update na stav 1
-            DataGridRow gridRow = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromItem(dataGrid.SelectedItem);
-            DataRowView datView = (DataRowView)dataGrid.SelectedItem;
-            mDbActions.UpdateItemTimes(datView.Row.ItemArray[0].ToString(), 0);
-            ButtonVisibilityEdit(gridRow, 2);
-        }
-*/
         private void Item_Return(object sender, RoutedEventArgs e)
         {
             //update na stav 3
             DataGridRow gridRow = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromItem(dataGrid.SelectedItem);
             DataRowView datView = (DataRowView)dataGrid.SelectedItem;
-            mDbActions.UpdateItemTimes(datView.Row.ItemArray[0].ToString(), 3);
+            mDbActions.UpdateSpecificItem(datView.Row.ItemArray[0].ToString(), 5, "3");
+            mDbActions.AddLog(datView.Row.ItemArray[0].ToString(), mYear_key + "-" + mNumber_key, 1, "Tovar vrateny");
             ButtonVisibilityEdit(gridRow, 3);
         }
 
@@ -603,7 +547,8 @@ namespace materialApp
         {
             DataGridRow gridRow = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromItem(dataGrid.SelectedItem);
             DataRowView datView = (DataRowView)dataGrid.SelectedItem;
-            mDbActions.UpdateItemTimes(datView.Row.ItemArray[0].ToString(), 6);
+            mDbActions.UpdateSpecificItem(datView.Row.ItemArray[0].ToString(), 6, "True");
+            mDbActions.AddLog(datView.Row.ItemArray[0].ToString(), mYear_key + "-" + mNumber_key, 2, "Tovar archivovany");
             LoadGrid(mDbActions.SearchForItemsByUserkeys(mYear_key, mNumber_key));
         }
 
@@ -616,12 +561,14 @@ namespace materialApp
             if (mDbActions.LoadSpecificItemPaidType(datView.Row.ItemArray[0].ToString()))
             {
                 ButtonVisibilityEdit(gridRow, 4);
-                mDbActions.UpdateItemTimes(datView.Row.ItemArray[0].ToString(), 4);
+                mDbActions.UpdateSpecificItem(datView.Row.ItemArray[0].ToString(), 5, "4");
+                mDbActions.AddLog(datView.Row.ItemArray[0].ToString(), mYear_key + "-" + mNumber_key, 1, "Tovar zaplateny kartou");
             }
             else
             {
                 ButtonVisibilityEdit(gridRow, 5);
-                mDbActions.UpdateItemTimes(datView.Row.ItemArray[0].ToString(), 5);
+                mDbActions.UpdateSpecificItem(datView.Row.ItemArray[0].ToString(), 5, "5");
+                mDbActions.AddLog(datView.Row.ItemArray[0].ToString(), mYear_key + "-" + mNumber_key, 1, "Tovar zaplateny hotovostou");
             }
         }
 
@@ -649,7 +596,7 @@ namespace materialApp
             {
                 for (int i = 0; i < count; i++)
                 {
-                    if (gridData.Tables[0].Rows[i]["archived_at"].ToString() != "1/1/0001 12:00:00 AM")
+                    if (gridData.Tables[0].Rows[i]["archived"].ToString() != "False")
                     {
                         gridData.Tables[0].Rows[i].Delete();
                     }
@@ -658,71 +605,25 @@ namespace materialApp
             gridData.AcceptChanges();
 
             //SORT
-            count = gridData.Tables[0].Rows.Count;
-            int j;
-            DateTime key;
-            DateTime val;
-            for (int i = 1; i < count; i++)
-            {
-                DateTime.TryParse(gridData.Tables[0].Rows[i]["created_at"].ToString(), out key);
-                j = i - 1;
 
-                DateTime.TryParse(gridData.Tables[0].Rows[j]["created_at"].ToString(), out val);
-                while (j >= 0 && val > key)
-                {
-                    gridData.Tables[0].Rows[j + 1]["created_at"] = gridData.Tables[0].Rows[j];
-                    j = j - 1;
-                }
-                gridData.Tables[0].Rows[j + 1]["created_at"] = key.ToString();
-            }
-
-            DateTime retTime;
-            DateTime paidTime;
-            DateTime soldTime;
-            DateTime createdTime;
-            DateTime archTime;
-            int usedCard;
             mButtonList = new List<int>();
+            int add;
 
             foreach (DataRow row in gridData.Tables[0].Rows)    //if archive buttList.Add(6)
             {
-                DateTime.TryParse(row["returned_at"].ToString(), out retTime);
-                DateTime.TryParse(row["paid_at"].ToString(), out paidTime);
-                DateTime.TryParse(row["sold_at"].ToString(), out soldTime);
-                DateTime.TryParse(row["created_at"].ToString(), out createdTime);
-                DateTime.TryParse(row["archived_at"].ToString(), out archTime);
-                int.TryParse(row["used_card"].ToString(), out usedCard);
-
-                if (archTime.ToString() != "1/1/0001 12:00:00 AM")
+                if (row["archived"].ToString() == "True")
                 {
-                    mButtonList.Add(6);
-                }
-                else if (retTime.ToString() != "1/1/0001 12:00:00 AM")
-                {
-                    mButtonList.Add(3);
-                }
-                else if (paidTime.ToString() != "1/1/0001 12:00:00 AM")
-                {
-                    if (usedCard == 1) mButtonList.Add(4);
-                    else mButtonList.Add(5);
-                }
-                else if (soldTime.ToString() != "1/1/0001 12:00:00 AM")
-                {
-                    if (usedCard == 1) mButtonList.Add(1);
-                    else mButtonList.Add(2);
+                    mButtonList.Add((int)mState.Earchived);
                 }
                 else
-                    mButtonList.Add(0);
+                {
+                    int.TryParse(row["stav"].ToString(), out add);
+                    mButtonList.Add(add);
+                }
             }
 
-            gridData.Tables[0].Columns.Remove("description");
-            gridData.Tables[0].Columns.Remove("created_at");
-            gridData.Tables[0].Columns.Remove("returned_at");
-            gridData.Tables[0].Columns.Remove("archived_at");
-            gridData.Tables[0].Columns.Remove("sold_at");
-            gridData.Tables[0].Columns.Remove("paid_at");
-            gridData.Tables[0].Columns.Remove("used_card");
-
+            gridData.Tables[0].Columns.Remove("archived");
+            gridData.Tables[0].Columns.Remove("stav");
             dataGrid.ItemsSource = gridData.Tables[0].DefaultView;
             dataGrid.Items.Refresh();
             dataGrid.UpdateLayout();
@@ -908,3 +809,43 @@ namespace materialApp
 
     }
 
+/*  private void Item_Description_Open(object sender, RoutedEventArgs e)
+  {
+      int index = dataGrid.SelectedIndex;
+      DataGridRow gridRow = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromItem(dataGrid.SelectedItem);
+      DataRowView rowView = (DataRowView)dataGrid.SelectedItem;
+
+      string id = rowView.Row.ItemArray[0].ToString();
+      if (mVisibleList.Contains(index))
+      {
+          gridRow.DetailsVisibility = Visibility.Collapsed;
+          DataGridDetailsPresenter presenter = CommonActions.FindVisualChild<DataGridDetailsPresenter>(gridRow);
+          presenter.ApplyTemplate();
+          var textbox = presenter.ContentTemplate.FindName("Descrip", presenter) as TextBox;
+          mDbActions.LoadSaveSpecificItemDescription(id, true, textbox.Text);
+          mVisibleList.Remove(index);
+      }
+      else
+      {
+          string desc = mDbActions.LoadSaveSpecificItemDescription(id, false, "");
+          mVisibleList.Add(index);
+          DataGridDetailsPresenter presenter = CommonActions.FindVisualChild<DataGridDetailsPresenter>(gridRow);
+          presenter.ApplyTemplate();
+          var textbox = presenter.ContentTemplate.FindName("Descrip", presenter) as TextBox;
+          textbox.Text = desc;
+          gridRow.DetailsVisibility = Visibility.Visible;
+      }
+  }
+
+  private void Item_Description_Save(object sender, RoutedEventArgs e)
+  {
+      int index = dataGrid.SelectedIndex;
+      DataGridRow gridRow = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromItem(dataGrid.SelectedItem);
+      DataRowView rowView = (DataRowView)dataGrid.SelectedItem;
+
+      string id = rowView.Row.ItemArray[0].ToString();
+      DataGridDetailsPresenter presenter = CommonActions.FindVisualChild<DataGridDetailsPresenter>(gridRow);
+      presenter.ApplyTemplate();
+      var textbox = presenter.ContentTemplate.FindName("Descrip", presenter) as TextBox;
+      mDbActions.LoadSaveSpecificItemDescription(id, true, textbox.Text);
+  }*/

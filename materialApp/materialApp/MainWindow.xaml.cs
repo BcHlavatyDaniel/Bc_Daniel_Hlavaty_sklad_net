@@ -45,6 +45,7 @@ namespace materialApp
         List<int> mButtonList;
         VideoCapture mCapture = new VideoCapture();
         ImageViewer mViewer = new ImageViewer();
+        enum mState { Einit_state, Esold_card, Esold_cash, Ereturned, Epaid_card, Epaid_cash, Earchived };
 
         public MainWindow()
         {
@@ -60,8 +61,9 @@ namespace materialApp
             DataSet data = mDbActions.LoadAllUsers();
             LoadGrid(data);
             DataSet itData = mDbActions.LoadAllItems();
-            LoadItemsGrid(itData);
-            LoadLogGrid(mDbActions.LoadAllLogs());
+            LoadItemsGrid(itData, mDbActions.LoadAllUsers());
+            DataSet logData = mDbActions.LoadAllLogs();
+            LoadLogGrid(logData);
             itemsGrid.Visibility = Visibility.Collapsed;
             logGrid.Visibility = Visibility.Collapsed;
             icon_add_err.Visibility = Visibility.Hidden;
@@ -74,6 +76,9 @@ namespace materialApp
             FirstNameItemCmb.Items.Add("");
             SecondNameItemCmb.Items.Add("");
             Year_numbersItemCmb.Items.Add("");
+            Item_idLogCmb.Items.Add("");
+            Year_numbersLogCmb.Items.Add("");
+            TypeCmb.Items.Add("");
             DataTable dataTable = data.Tables[0];
             ItemNameCmb.Items.Add("");
 
@@ -81,6 +86,16 @@ namespace materialApp
             {
                 if (!ItemNameCmb.Items.Contains(row["name"].ToString()))
                     ItemNameCmb.Items.Add(row["name"].ToString());
+            }
+
+            foreach (DataRow row in logData.Tables[0].Rows)
+            {
+                if (!Year_numbersLogCmb.Items.Contains(row["user_id"].ToString()))
+                    Year_numbersLogCmb.Items.Add(row["user_id"].ToString());
+                if (!Item_idLogCmb.Items.Contains(row["item_id"].ToString()))
+                    Item_idLogCmb.Items.Add(row["item_id"].ToString());
+                if (!TypeCmb.Items.Contains(row["type"].ToString()))
+                    TypeCmb.Items.Add(row["type"].ToString());
             }
 
             foreach (DataRow row in dataTable.Rows)
@@ -326,19 +341,17 @@ namespace materialApp
         ///   ####################################    ITEMS grid   ####################################      
         ///</summary>
 
-        private void LoadItemsGrid(DataSet allItems)
+        private void LoadItemsGrid(DataSet allItems, DataSet allUsers)
         {
-            DataSet allUsers = mDbActions.LoadAllUsers();
             itemsDataGrid.ItemsSource = null;
             allItems.Tables[0].Columns.Add("rok-id", typeof(string));
             allItems.Tables[0].Columns.Add("prve meno", typeof(string));
             allItems.Tables[0].Columns.Add("druhe meno", typeof(string));
 
-
-            foreach (DataRow row in allItems.Tables[0].Rows)
+            for ( int i = allItems.Tables[0].Rows.Count -1; i >= 0; i--)
             {
+                DataRow row = allItems.Tables[0].Rows[i];
                 row["rok-id"] = row["user_year"] + "-" + row["user_numbers"];
-
                 foreach (DataRow uRow in allUsers.Tables[0].Rows)
                 {
                     if (row["user_year"].ToString() == uRow["year"].ToString())
@@ -351,63 +364,41 @@ namespace materialApp
                         }
 
                     }
+                } //remove missing
+                if (row["prve meno"].ToString() == "")
+                {
+                    row.Delete();
                 }
             }
+            allItems.AcceptChanges();
 
-            DateTime retTime;
-            DateTime paidTime;
-            DateTime soldTime;
-            DateTime createdTime;
-            DateTime archTime;
-            int usedCard;
             mButtonList = new List<int>();
+            int add;
 
             foreach (DataRow row in allItems.Tables[0].Rows)
             {
-                DateTime.TryParse(row["returned_at"].ToString(), out retTime);
-                DateTime.TryParse(row["paid_at"].ToString(), out paidTime);
-                DateTime.TryParse(row["sold_at"].ToString(), out soldTime);
-                DateTime.TryParse(row["created_at"].ToString(), out createdTime);
-                DateTime.TryParse(row["archived_at"].ToString(), out archTime);
-                int.TryParse(row["used_card"].ToString(), out usedCard);
 
-                if (archTime.ToString() != "1/1/0001 12:00:00 AM")
+                if (row["archived"].ToString() == "True")
                 {
-                    mButtonList.Add(6);
-                }
-                else if (retTime.ToString() != "1/1/0001 12:00:00 AM")
-                {
-                    mButtonList.Add(3);
-                }
-                else if (paidTime.ToString() != "1/1/0001 12:00:00 AM")
-                {
-                    if (usedCard == 1) mButtonList.Add(4);
-                    else mButtonList.Add(5);
-                }
-                else if (soldTime.ToString() != "1/1/0001 12:00:00 AM")
-                {
-                    if (usedCard == 1) mButtonList.Add(1);
-                    else mButtonList.Add(2);
+                    mButtonList.Add((int)mState.Earchived);
                 }
                 else
-                    mButtonList.Add(0);
+                {
+                    int.TryParse(row["stav"].ToString(), out add);
+                    mButtonList.Add(add);
+                }
             }
 
-            allItems.Tables[0].Columns.Remove("created_at");
-            allItems.Tables[0].Columns.Remove("sold_at");
-            allItems.Tables[0].Columns.Remove("paid_at");
-            allItems.Tables[0].Columns.Remove("returned_at");
-            allItems.Tables[0].Columns.Remove("archived_at");
+            allItems.Tables[0].Columns.Remove("stav");
+            allItems.Tables[0].Columns.Remove("archived");
             allItems.Tables[0].Columns.Remove("user_year");
             allItems.Tables[0].Columns.Remove("user_numbers");
-            allItems.Tables[0].Columns.Remove("description");
-            allItems.Tables[0].Columns.Remove("used_card");
+       //     allItems.Tables[0].Columns.Remove("description");
             allItems.Tables[0].Columns.Remove("photo");
             allItems.Tables[0].Columns["rok-id"].SetOrdinal(0);
             allItems.Tables[0].Columns["prve meno"].SetOrdinal(1);
             allItems.Tables[0].Columns["druhe meno"].SetOrdinal(2);
             itemsDataGrid.ItemsSource = allItems.Tables[0].DefaultView;
-            itemsDataGrid.CanUserAddRows = false;
             itemsDataGrid.Items.Refresh();
             itemsDataGrid.UpdateLayout();
             if (itemsDataGrid.Columns.Count > 4)
@@ -423,19 +414,25 @@ namespace materialApp
 
         private void SearchItems(object sender, RoutedEventArgs e)
         {
-            string name = "";
+            string fName = "";
             string sName = "";
             string keyy = "";
             string keyn = "";
+            string name = "";
 
             if (FirstNameItemCmb.SelectedIndex != -1)
             {
-                name = FirstNameItemCmb.SelectedItem.ToString();
+                fName = FirstNameItemCmb.SelectedItem.ToString();
             }
             if (SecondNameItemCmb.SelectedIndex != -1)
             {
                 sName = SecondNameItemCmb.SelectedItem.ToString();
             }
+            if(ItemNameCmb.SelectedIndex != -1)
+            {
+                name = ItemNameCmb.SelectedItem.ToString();
+            }
+
             if (Year_numbersItemCmb.SelectedIndex != -1)
             {
                 if (Year_numbersItemCmb.SelectedItem.ToString() != "")
@@ -445,23 +442,25 @@ namespace materialApp
                 }
             }
 
-            if (name == "" && sName == "" && keyy == "")
+            if (fName == "" && sName == "" && keyy == "" && name == "")
             {
-                LoadItemsGrid(mDbActions.LoadAllItems());
+                LoadItemsGrid(mDbActions.LoadAllItems(), mDbActions.LoadAllUsers());
                 return;
             }
 
             EditUserStruct userStruct = new EditUserStruct
             {
                 s_name = sName,
-                f_name = name,
+                f_name = fName,
                 keyy = keyy,
-                keyn = keyn
+                keyn = keyn,
+                address = name //NJ OJEBY :D
             };
 
-
-            DataSet data = mDbActions.SearchForItems(userStruct);
-            LoadItemsGrid(data);
+            DataSet userData = new DataSet();
+            DataSet data = mDbActions.SearchForItems(userStruct, ref userData);
+           // mDbActions.LoadAllUsers()
+            LoadItemsGrid(data, userData);
         }
 
         private void Profile_Item_Open(object sender, RoutedEventArgs e)
@@ -496,49 +495,6 @@ namespace materialApp
             UpdateGrids();
         }
 
-
-        private void Open_Description(object sender, RoutedEventArgs e) //DUPLICATE daff aside
-        {
-
-            int index = itemsDataGrid.SelectedIndex;
-            DataGridRow gridRow = (DataGridRow)itemsDataGrid.ItemContainerGenerator.ContainerFromItem(itemsDataGrid.SelectedItem);
-            DataRowView rowView = (DataRowView)itemsDataGrid.SelectedItem;
-
-            string id = rowView.Row.ItemArray[3].ToString();
-            if (mVisibleList.Contains(index))
-            {
-                gridRow.DetailsVisibility = Visibility.Collapsed;
-                DataGridDetailsPresenter presenter = CommonActions.FindVisualChild<DataGridDetailsPresenter>(gridRow);
-                presenter.ApplyTemplate();
-                var textbox = presenter.ContentTemplate.FindName("Descrip", presenter) as TextBox;
-                mDbActions.LoadSaveSpecificItemDescription(id, true, textbox.Text);
-                mVisibleList.Remove(index);
-            }
-            else
-            {
-                string desc = mDbActions.LoadSaveSpecificItemDescription(id, false, "");
-                mVisibleList.Add(index);
-                DataGridDetailsPresenter presenter = CommonActions.FindVisualChild<DataGridDetailsPresenter>(gridRow);// FindVisualChild<DataGridDetailsPresenter>(gridRow);
-                presenter.ApplyTemplate();
-                var textbox = presenter.ContentTemplate.FindName("Descrip", presenter) as TextBox;
-                textbox.Text = desc;
-                gridRow.DetailsVisibility = Visibility.Visible;
-            }
-        }
-
-        private void Save_Description(object sender, RoutedEventArgs e)
-        {
-            int index = itemsDataGrid.SelectedIndex;
-            DataGridRow gridRow = (DataGridRow)itemsDataGrid.ItemContainerGenerator.ContainerFromItem(itemsDataGrid.SelectedItem);
-            DataRowView rowView = (DataRowView)itemsDataGrid.SelectedItem;
-
-            string id = rowView.Row.ItemArray[3].ToString();
-            DataGridDetailsPresenter presenter = CommonActions.FindVisualChild<DataGridDetailsPresenter>(gridRow);// FindVisualChild<DataGridDetailsPresenter>(gridRow);
-            presenter.ApplyTemplate();
-            var textbox = presenter.ContentTemplate.FindName("Descrip", presenter) as TextBox;
-            mDbActions.LoadSaveSpecificItemDescription(id, true, textbox.Text);
-        }
-
         ///<summary>
         ///   ####################################    LOG   ####################################        
         ///</summary>
@@ -546,61 +502,16 @@ namespace materialApp
         private void LoadLogGrid(DataSet data)
         {
             logDataGrid.ItemsSource = null;
-            data.Tables[0].Columns.Add("Popis", typeof(string));
-            data.Tables[0].Columns.Add("Dna", typeof(string));
-            DateTime outTime;
-
-            foreach (DataRow row in data.Tables[0].Rows)
-            {
-                DateTime.TryParse(row["created_at"].ToString(), out outTime);
-                row["Dna"] = outTime.ToShortDateString();
-                if (row["type"].ToString() == "INSERT")
-                {
-                    row["Popis"] = "Pridanie";
-                }
-                else
-                {
-                    if (row["price"].ToString() != "0")
-                    {
-                        row["Popis"] = "Zmena ceny z " + row["old_price"] + " => " + row["price"];
-                    }
-                    else if (row["item_returned_at"].ToString() != "1/1/0001 12:00:00 AM")
-                    {
-                        row["Popis"] = "Vratenie";
-                    }
-                    else if (row["item_archived_at"].ToString() != "1/1/0001 12:00:00 AM")
-                    {
-                        row["Popis"] = "Archivovanie";
-                    }
-                    else if (row["item_sold_at"].ToString() != "1/1/0001 12:00:00 AM")
-                    {
-                        row["Popis"] = "Predaj";
-                    }
-                    else if (row["item_paid_at"].ToString() != "1/1/0001 12:00:00 AM")
-                    {
-                        row["Popis"] = "Zaplatenie";
-                    } else
-                    {
-                        row["Popis"] = "Ine upravy tovaru";
-                    }
-                }
-            }
 
             data.Tables[0].Columns.Remove("id");
-            data.Tables[0].Columns.Remove("price");
-            data.Tables[0].Columns.Remove("old_price");
-            data.Tables[0].Columns.Remove("item_created_at");
-            data.Tables[0].Columns.Remove("created_at");
-            data.Tables[0].Columns.Remove("item_paid_at");
-            data.Tables[0].Columns.Remove("item_archived_at");
-            data.Tables[0].Columns.Remove("item_sold_at");
-            data.Tables[0].Columns.Remove("item_returned_at");
-            data.Tables[0].Columns.Remove("type");
 
             logDataGrid.ItemsSource = data.Tables[0].DefaultView;
+            logDataGrid.Items.Refresh();
+            logDataGrid.UpdateLayout(); 
+            dataGrid_CmbPositionUpdate(logDataGrid, 2);
         }
 
-        private void Item_Log_Open(object sender, RoutedEventArgs e)
+        private void Item_Log_Open(object sender, RoutedEventArgs e)//MouseDoubleClick="Item_Log_Open"
         {
             DataRowView datView = ((DataRowView)logDataGrid.SelectedItem);
             DataSet itemRow = mDbActions.LoadSpecificItem(datView.Row.ItemArray[0].ToString());
@@ -611,14 +522,43 @@ namespace materialApp
             mItemDWindow.ShowDialog();
             picker.Text = "";
             UpdateGrids();
+            
         }
 
-        private void Select_log(object sender, RoutedEventArgs e)
+        private void SearchLogs(object sender, RoutedEventArgs e)
         {
-            DateTime day;
-            DateTime.TryParse(picker.ToString(), out day);
-            DataSet data = mDbActions.LoadLogByDay(day);
-            LoadLogGrid(data);
+            string item_id = "";
+            string user_id = "";
+            string type = "";
+            DateTime day = new DateTime();
+            bool pickerEmpty = true;
+
+            if (picker.ToString() != "")
+            {
+                DateTime.TryParse(picker.ToString(), out day);
+                pickerEmpty = false;
+            }
+
+            if (Item_idLogCmb.SelectedIndex != -1)
+            {
+                item_id = Item_idLogCmb.SelectedItem.ToString();
+            }
+            if (Year_numbersLogCmb.SelectedIndex != -1)
+            {
+                user_id = Year_numbersLogCmb.SelectedItem.ToString();
+            }
+            if (TypeCmb.SelectedIndex != -1)
+            {
+                type = TypeCmb.SelectedItem.ToString();
+            }
+
+            if (pickerEmpty && item_id == "" && user_id == "" && type == "")
+            {
+                LoadLogGrid(mDbActions.LoadAllLogs());
+                return;
+            }
+
+            LoadLogGrid(mDbActions.SearchForLogs(item_id, user_id, type, day));
         }
 
         ///<summary>
@@ -665,6 +605,9 @@ namespace materialApp
             itemsGrid.Visibility = Visibility.Collapsed;
             btnAddUser.Visibility = Visibility.Collapsed;
             logGrid.Visibility = Visibility.Visible;
+            itemsDataGrid.Items.Refresh();
+            itemsDataGrid.UpdateLayout();
+            dataGrid_CmbPositionUpdate(logDataGrid, 2);
         }
 
         ///<summary>
@@ -689,7 +632,7 @@ namespace materialApp
                 cell = CommonActions.GetGridCell(gridRow, 4);
                 PhoneSearchCmb.Width = cell.ActualWidth;
             }
-            else
+            else if (type == 1)
             {
                 DataGridRow gridRow = (DataGridRow)grid.ItemContainerGenerator.ContainerFromIndex(0);
                 if (gridRow == null) return;
@@ -709,7 +652,7 @@ namespace materialApp
                     if (row == null) continue;
                     switch (mButtonList.ElementAt(counter))
                     {
-                        case 1:
+                        case (int)mState.Esold_cash:
                             {
                                 cell = CommonActions.GetGridCell(row, 0);
                                 cell.Background = System.Windows.Media.Brushes.LimeGreen;
@@ -726,10 +669,12 @@ namespace materialApp
                                 cell = CommonActions.GetGridCell(row, 6);
                                 cell.Background = System.Windows.Media.Brushes.LimeGreen;
                                 cell = CommonActions.GetGridCell(row, 7);
+                                cell.Background = System.Windows.Media.Brushes.LimeGreen;
+                                cell = CommonActions.GetGridCell(row, 8);
                                 cell.Background = System.Windows.Media.Brushes.LimeGreen;
                                 break;
                             }
-                        case 2:
+                        case (int)mState.Esold_card:
                             {
                                 cell = CommonActions.GetGridCell(row, 0);
                                 cell.Background = System.Windows.Media.Brushes.LightYellow;
@@ -746,10 +691,12 @@ namespace materialApp
                                 cell = CommonActions.GetGridCell(row, 6);
                                 cell.Background = System.Windows.Media.Brushes.LightYellow;
                                 cell = CommonActions.GetGridCell(row, 7);
+                                cell.Background = System.Windows.Media.Brushes.LightYellow;
+                                cell = CommonActions.GetGridCell(row, 8);
                                 cell.Background = System.Windows.Media.Brushes.LightYellow;
                                 break;
                             }
-                        case 3:
+                        case (int)mState.Ereturned:
                             {
                                 cell = CommonActions.GetGridCell(row, 0);
                                 cell.Background = System.Windows.Media.Brushes.LightGray;
@@ -766,10 +713,12 @@ namespace materialApp
                                 cell = CommonActions.GetGridCell(row, 6);
                                 cell.Background = System.Windows.Media.Brushes.LightGray;
                                 cell = CommonActions.GetGridCell(row, 7);
+                                cell.Background = System.Windows.Media.Brushes.LightGray;
+                                cell = CommonActions.GetGridCell(row, 8);
                                 cell.Background = System.Windows.Media.Brushes.LightGray;
                                 break;
                             }
-                        case 4:
+                        case (int)mState.Epaid_cash:
                             {
                                 cell = CommonActions.GetGridCell(row, 0);
                                 cell.Background = System.Windows.Media.Brushes.Green;
@@ -786,10 +735,12 @@ namespace materialApp
                                 cell = CommonActions.GetGridCell(row, 6);
                                 cell.Background = System.Windows.Media.Brushes.Green;
                                 cell = CommonActions.GetGridCell(row, 7);
+                                cell.Background = System.Windows.Media.Brushes.Green;
+                                cell = CommonActions.GetGridCell(row, 8);
                                 cell.Background = System.Windows.Media.Brushes.Green;
                                 break;
                             }
-                        case 5:
+                        case (int)mState.Epaid_card:
                             {
                                 cell = CommonActions.GetGridCell(row, 0);
                                 cell.Background = System.Windows.Media.Brushes.Yellow;
@@ -806,10 +757,12 @@ namespace materialApp
                                 cell = CommonActions.GetGridCell(row, 6);
                                 cell.Background = System.Windows.Media.Brushes.Yellow;
                                 cell = CommonActions.GetGridCell(row, 7);
+                                cell.Background = System.Windows.Media.Brushes.Yellow;
+                                cell = CommonActions.GetGridCell(row, 8);
                                 cell.Background = System.Windows.Media.Brushes.Yellow;
                                 break;
                             }
-                        case 6:
+                        case (int)mState.Earchived:
                             {
                                 cell = CommonActions.GetGridCell(row, 0);
                                 cell.Background = System.Windows.Media.Brushes.OrangeRed;
@@ -826,12 +779,26 @@ namespace materialApp
                                 cell = CommonActions.GetGridCell(row, 6);
                                 cell.Background = System.Windows.Media.Brushes.OrangeRed;
                                 cell = CommonActions.GetGridCell(row, 7);
+                                cell.Background = System.Windows.Media.Brushes.OrangeRed;
+                                cell = CommonActions.GetGridCell(row, 8);
                                 cell.Background = System.Windows.Media.Brushes.OrangeRed;
                                 break;
                             }
                     }
                     counter++;
                 }
+            }
+            else if (type == 2)
+            {
+                DataGridRow gridRow = (DataGridRow)grid.ItemContainerGenerator.ContainerFromIndex(0);
+                if (gridRow == null) return;
+                logDataGrid.Columns[0].DisplayIndex = logDataGrid.Columns.Count - 1; //posunutie popisu 
+                DataGridCell cell = CommonActions.GetGridCell(gridRow, 1);
+                Item_idLogCmb.Width = cell.ActualWidth;
+                cell = CommonActions.GetGridCell(gridRow, 2);
+                Year_numbersLogCmb.Width = cell.ActualWidth;
+                cell = CommonActions.GetGridCell(gridRow, 3);
+                TypeCmb.Width = cell.ActualWidth;
             }
         }
 
@@ -853,10 +820,54 @@ namespace materialApp
         private void UpdateGrids()
         {
             LoadGrid(mDbActions.LoadAllUsers());
-            LoadItemsGrid(mDbActions.LoadAllItems());
+            LoadItemsGrid(mDbActions.LoadAllItems(), mDbActions.LoadAllUsers());
             LoadLogGrid(mDbActions.LoadAllLogs());
         }
 
     }
 }
 
+
+
+/*      private void Open_Description(object sender, RoutedEventArgs e) //DUPLICATE daff aside
+      {
+
+          int index = itemsDataGrid.SelectedIndex;
+          DataGridRow gridRow = (DataGridRow)itemsDataGrid.ItemContainerGenerator.ContainerFromItem(itemsDataGrid.SelectedItem);
+          DataRowView rowView = (DataRowView)itemsDataGrid.SelectedItem;
+
+          string id = rowView.Row.ItemArray[3].ToString();
+          if (mVisibleList.Contains(index))
+          {
+              gridRow.DetailsVisibility = Visibility.Collapsed;
+              DataGridDetailsPresenter presenter = CommonActions.FindVisualChild<DataGridDetailsPresenter>(gridRow);
+              presenter.ApplyTemplate();
+              var textbox = presenter.ContentTemplate.FindName("Descrip", presenter) as TextBox;
+              mDbActions.LoadSaveSpecificItemDescription(id, true, textbox.Text);
+              mVisibleList.Remove(index);
+          }
+          else
+          {
+              string desc = mDbActions.LoadSaveSpecificItemDescription(id, false, "");
+              mVisibleList.Add(index);
+              DataGridDetailsPresenter presenter = CommonActions.FindVisualChild<DataGridDetailsPresenter>(gridRow);// FindVisualChild<DataGridDetailsPresenter>(gridRow);
+              presenter.ApplyTemplate();
+              var textbox = presenter.ContentTemplate.FindName("Descrip", presenter) as TextBox;
+              textbox.Text = desc;
+              gridRow.DetailsVisibility = Visibility.Visible;
+          }
+      }*/
+
+/*     private void Save_Description(object sender, RoutedEventArgs e)
+     {
+         int index = itemsDataGrid.SelectedIndex;
+         DataGridRow gridRow = (DataGridRow)itemsDataGrid.ItemContainerGenerator.ContainerFromItem(itemsDataGrid.SelectedItem);
+         DataRowView rowView = (DataRowView)itemsDataGrid.SelectedItem;
+
+         string id = rowView.Row.ItemArray[3].ToString();
+         DataGridDetailsPresenter presenter = CommonActions.FindVisualChild<DataGridDetailsPresenter>(gridRow);// FindVisualChild<DataGridDetailsPresenter>(gridRow);
+         presenter.ApplyTemplate();
+         var textbox = presenter.ContentTemplate.FindName("Descrip", presenter) as TextBox;
+         mDbActions.LoadSaveSpecificItemDescription(id, true, textbox.Text);
+     }
+*/

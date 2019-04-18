@@ -275,85 +275,60 @@ namespace materialApp
             return ret;
         }
 
-        public void UpdateItemTimes(string id, int type)
+        public void UpdateSpecificItem(string id, int type, string newVal)
         {
             MySqlConnection mSql = new MySqlConnection(connMainStr);
             mSql.Open();
-            
             try
             {
                 MySqlCommand cmd = mSql.CreateCommand();
-                if (type == 0) //init
+                if (type == 0) //desription
                 {
-                    cmd.CommandText = "UPDATE item SET sold_at = @time, used_card = @card, returned_at = @ret, paid_at = @paid, archived_at = @arch WHERE id = @id";
+                    cmd.CommandText = "UPDATE item SET description = @desc WHERE id = @id";
                     cmd.Parameters.AddWithValue("@id", id);
-                    cmd.Parameters.AddWithValue("@card", 0);
-                    cmd.Parameters.AddWithValue("@time", "");
-                    cmd.Parameters.AddWithValue("@ret", "");
-                    cmd.Parameters.AddWithValue("@paid", "");
-                    cmd.Parameters.AddWithValue("@arch", "");
+                    cmd.Parameters.AddWithValue("@desc", newVal);
                 }
-                else if (type == 1) //sellCard
+                else if (type == 1) //size
                 {
-                    cmd.CommandText = "UPDATE item SET sold_at = @time, used_card = @card, archived_at = @arch, returned_at = @ret, paid_at = @paid WHERE id = @id";
+                    cmd.CommandText = "UPDATE item SET size = @size WHERE id = @id";
                     cmd.Parameters.AddWithValue("@id", id);
-                    cmd.Parameters.AddWithValue("@time", DateTime.Now);
-                    cmd.Parameters.AddWithValue("@ret", "");
-                    cmd.Parameters.AddWithValue("@card", 1);
-                    cmd.Parameters.AddWithValue("@paid", "");
-                    cmd.Parameters.AddWithValue("@arch", "");
+                    cmd.Parameters.AddWithValue("@size", newVal);
                 }
-                else if (type == 2) //sellCash
+                else if (type == 2) //price
                 {
-                    cmd.CommandText = "UPDATE item SET sold_at = @time, used_card = @card, archived_at = @arch, returned_at = @ret, paid_at = @paid WHERE id = @id";
+                    cmd.CommandText = "UPDATE item SET price = @price WHERE id = @id";
                     cmd.Parameters.AddWithValue("@id", id);
-                    cmd.Parameters.AddWithValue("@time", DateTime.Now);
-                    cmd.Parameters.AddWithValue("@ret", "");
-                    cmd.Parameters.AddWithValue("@card", 0);
-                    cmd.Parameters.AddWithValue("@paid", "");
-                    cmd.Parameters.AddWithValue("@arch", "");
+                    cmd.Parameters.AddWithValue("@price", newVal);
                 }
-                else if (type == 3)//item_return
+                else if (type == 3)//name
                 {
-                    cmd.CommandText = "UPDATE item SET returned_at = @time, archived_at = @arch, used_card = @card, paid_at = @paid, sold_at = @sold WHERE id = @id";
+                    cmd.CommandText = "UPDATE item SET name = @name WHERE id = @id";
                     cmd.Parameters.AddWithValue("@id", id);
-                    cmd.Parameters.AddWithValue("@time", DateTime.Now);
-                    cmd.Parameters.AddWithValue("@paid", "");
-                    cmd.Parameters.AddWithValue("@sold", "");
-                    cmd.Parameters.AddWithValue("@card", 0);
-                    cmd.Parameters.AddWithValue("@arch", "");
+                    cmd.Parameters.AddWithValue("@name", newVal);
                 }
-                else if (type == 4) //paidCard
+                else if (type == 4) //photo
                 {
-                    cmd.CommandText = "UPDATE item SET returned_at = @time, archived_at = @arch, used_card = @card, paid_at = @paid WHERE id = @id";
+                    cmd.CommandText = "UPDATE item SET photo = @photo WHERE id = @id";
                     cmd.Parameters.AddWithValue("@id", id);
-                    cmd.Parameters.AddWithValue("@time", "");
-                    cmd.Parameters.AddWithValue("@paid", DateTime.Now);
-                    cmd.Parameters.AddWithValue("@card", 1);
-                    cmd.Parameters.AddWithValue("@arch", "");
+                    cmd.Parameters.AddWithValue("@photo", newVal);
                 }
-                else if (type == 5) //paidCash
+                else if (type == 5) //state
                 {
-                    cmd.CommandText = "UPDATE item SET returned_at = @time, used_card = @card, archived_at = @arch, paid_at = @paid WHERE id = @id";
+                    cmd.CommandText = "UPDATE item SET stav = @state WHERE id = @id";
                     cmd.Parameters.AddWithValue("@id", id);
-                    cmd.Parameters.AddWithValue("@time", "");
-                    cmd.Parameters.AddWithValue("@paid", DateTime.Now);
-                    cmd.Parameters.AddWithValue("@card", 0);
-                    cmd.Parameters.AddWithValue("@arch", "");
+                    cmd.Parameters.AddWithValue("@state", newVal);
                 }
                 else if (type == 6) //Archivovat
                 {
-                    cmd.CommandText = "UPDATE item SET returned_at = @time, sold_at = @sold, used_card = @card, archived_at = @arch, paid_at = @paid WHERE id = @id";
+                    cmd.CommandText = "UPDATE item SET archived = @archived WHERE id = @id";
                     cmd.Parameters.AddWithValue("@id", id);
-                    cmd.Parameters.AddWithValue("@time", "");
-                    cmd.Parameters.AddWithValue("@paid", "");
-                    cmd.Parameters.AddWithValue("@card", 0);
-                    cmd.Parameters.AddWithValue("@arch", DateTime.Now);
-                    cmd.Parameters.AddWithValue("@sold", "");
+                    if (newVal == "True") newVal = "1";
+                    else newVal = "0";
+                    cmd.Parameters.AddWithValue("@archived", newVal);
                 }
                 cmd.ExecuteNonQuery();
             }
-            catch(Exception)
+            catch (Exception)
             {
                 throw;
             }
@@ -363,7 +338,7 @@ namespace materialApp
             }
         }
 
-        public bool LoadSpecificItemPaidType(string id)
+        public bool LoadSpecificItemPaidType(string id) //zistit ci ide zo stavu 1 alebo 2
         {
             MySqlConnection mSql = new MySqlConnection(connMainStr);
             mSql.Open();
@@ -380,7 +355,7 @@ namespace materialApp
                 adapter.Fill(data);
 
                 int k;
-                int.TryParse(data.Tables[0].Rows[0]["used_card"].ToString(), out k);
+                int.TryParse(data.Tables[0].Rows[0]["stav"].ToString(), out k);
                 if (k == 1) ret = true;
             }
             catch (Exception)
@@ -423,9 +398,8 @@ namespace materialApp
 
 
 
-        public DataSet SearchForItems(EditUserStruct userStruct) // TO DO  !
+        public DataSet SearchForItems(EditUserStruct userStruct, ref DataSet userSet) 
         {
-
             MySqlConnection mSql = new MySqlConnection(connMainStr);
             mSql.Open();
             DataSet data = new DataSet();
@@ -433,100 +407,101 @@ namespace materialApp
             try
             {
                 MySqlCommand cmd = mSql.CreateCommand();
-
+                cmd.CommandText = "SELECT * from user WHERE";
                 if (userStruct.keyy != "")
                 {
-                    //vrati vsetky itemy kde key a keyn == databazovym
-                    cmd.CommandText = "Select * from item WHERE user_year = @keyy AND user_numbers = @keyn";
-                    cmd.Parameters.AddWithValue("@keyy", userStruct.keyy);
-                    cmd.Parameters.AddWithValue("@keyn", userStruct.keyn);
+                    cmd.CommandText += " year = @year AND _numbers = @numbers";
+                    cmd.Parameters.AddWithValue("@year", userStruct.keyy);
+                    cmd.Parameters.AddWithValue("@numbers", userStruct.keyn);
                     count++;
                 }
-                else
+                if (userStruct.f_name != "")
                 {
-                   ;
-                    MySqlCommand uCmd = mSql.CreateCommand();
-                    uCmd.CommandText = "Select * from user WHERE ";
-                    if (userStruct.s_name != "" && userStruct.f_name != "") //TO DO Ak je zly vyber
+                    if (count > 0)
                     {
-                        uCmd.CommandText += "first_name = @fname AND second_name = @sname";
-                        uCmd.Parameters.AddWithValue("@fname", userStruct.f_name);
-                        uCmd.Parameters.AddWithValue("@sname", userStruct.s_name);
+                        cmd.CommandText += " AND";
                     }
-                    else if (userStruct.s_name != "")
+                    cmd.CommandText += " first_name = @fname";
+                    cmd.Parameters.AddWithValue("@fname", userStruct.f_name);
+                    count++;
+                }
+                if (userStruct.s_name != "")
+                {
+                    if (count > 0)
                     {
-                        uCmd.CommandText += "second_name = @sname";
-                        uCmd.Parameters.AddWithValue("@sname", userStruct.s_name);
+                        cmd.CommandText += " AND";
                     }
-                    else
-                    {
-                        uCmd.CommandText += "first_name = @fname";
-                        uCmd.Parameters.AddWithValue("@fname", userStruct.f_name);
-                    }
-
-                    MySqlDataAdapter myadapter = new MySqlDataAdapter(uCmd);
-                    DataSet userD = new DataSet();
-                    myadapter.Fill(userD);
+                    cmd.CommandText += " second_name = @sname";
+                    cmd.Parameters.AddWithValue("@sname", userStruct.s_name);
+                    count++;
+                }
+                if (count > 0)
+                {
+                    MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                    userSet = new DataSet();
+                    adapter.Fill(userSet);
+                    //list ids
                     List<string> validIds = new List<string>();
-                    string id;
-
-                    foreach (DataRow row in userD.Tables[0].Rows)
+                    foreach (DataRow row in userSet.Tables[0].Rows)
                     {
-                        if (userStruct.s_name != "" && userStruct.f_name != "")
-                        {
-                            if (row["first_name"].ToString() == userStruct.f_name && row["second_name"].ToString() == userStruct.s_name)
-                            {
-                                id = row["year"] + "-" + row["_numbers"];
-                                if (!validIds.Contains(id)) validIds.Add(id);
-                            }
-                        }
-                        else if (userStruct.s_name != "")
-                        {
-                            if (row["second_name"].ToString() == userStruct.s_name)
-                            {
-                                id = row["year"] + "-" + row["_numbers"];
-                                if (!validIds.Contains(id)) validIds.Add(id);
-                            }
-                        }
-                        else
-                        {
-                            if (row["first_name"].ToString() == userStruct.f_name)
-                            {
-                                id = row["year"] + "-" + row["_numbers"];
-                                if (!validIds.Contains(id)) validIds.Add(id);
-                            }
-                        }
+                        validIds.Add(row["year"].ToString() + "-" + row["_numbers"].ToString());
+                    }
+                    if (validIds.Count == 0)    
+                    {
+                        cmd = mSql.CreateCommand();
+                        cmd.CommandText = "SELECT * from item WHERE name = @name";
+                        cmd.Parameters.AddWithValue("@name", "audasjknasdkdsasd");
+                        adapter = new MySqlDataAdapter(cmd);
+                        adapter.Fill(data);
+                        return data;
                     }
 
-                    if (validIds.Count() == 0)
-                    {
-                        validIds.Add(userStruct.f_name + "-" + userStruct.s_name);
-                    }
-                         
-
-                    cmd.CommandText = "Select * from item WHERE ";
+                    //select all items where validIds = itemkeys
+                    cmd = mSql.CreateCommand();
+                    cmd.CommandText = "SELECT * from item WHERE";
                     count = 0;
-                    foreach (string str in validIds)
+                    foreach (string ids in validIds)
                     {
                         if (count != 0)
                         {
-                            cmd.CommandText += "OR ";
+                            cmd.CommandText += " OR";
                         }
-                        cmd.CommandText += "(user_year = @year AND user_numbers = @numbers)";
-                        cmd.Parameters.AddWithValue("@year", str.Substring(0, 2));
-                        cmd.Parameters.AddWithValue("@numbers", str.Substring(3, 3));
+                        cmd.CommandText += " (user_year = @u_year" +count +" AND user_numbers = @u_num" + count + ")";
+                        cmd.Parameters.AddWithValue("@u_year" + count, ids.Substring(0, 2));
+                        cmd.Parameters.AddWithValue("@u_num" + count, ids.Substring(3, 3));
                         count++;
                     }
-                }
 
-                if (count != 0)
+                    if (userStruct.address != "")
+                    {
+                        if (count != 0)
+                        {
+                            cmd.CommandText += " AND";
+                        }
+                        cmd.CommandText += " name = @name";
+                        cmd.Parameters.AddWithValue("@name", userStruct.address);
+                        adapter = new MySqlDataAdapter(cmd);
+                        data = new DataSet();
+                        adapter.Fill(data);
+                    }
+                    else
+                    {
+                        data = LoadAllItems();
+                    }
+                    
+                    //where name = name if name is set
+                }
+                else
                 {
-                    MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
-                    data = new DataSet();
-                    adapter.Fill(data);
-                }
-                
+                    userSet = LoadAllUsers();
 
+                    cmd = mSql.CreateCommand();
+                    cmd.CommandText += "SELECT * from item WHERE name = @name";
+                    cmd.Parameters.AddWithValue("@name", userStruct.address);
+                    MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                    adapter = new MySqlDataAdapter(cmd);
+                    adapter.Fill(data);
+                }                
             }
             catch (Exception)
             {
@@ -582,26 +557,6 @@ namespace materialApp
                 cmd.Parameters.AddWithValue("@size", itemStruct.size);
                 cmd.Parameters.AddWithValue("@price", itemStruct.price);
                 cmd.Parameters.AddWithValue("@name", itemStruct.name);
-               /* if (itemStruct.created_at.ToString() != "1/1/0001 12:00:00 AM")
-                {
-                    cmd.CommandText += ", created_at = @created_at";
-                    cmd.Parameters.AddWithValue("@created_at", itemStruct.created_at);
-                }
-                if (itemStruct.sold_at.ToString() != "1/1/0001 12:00:00 AM")
-                {
-                    cmd.CommandText += ", sold_at = @sold_at";
-                    cmd.Parameters.AddWithValue("@sold_at", itemStruct.sold_at);
-                }
-                if (itemStruct.returned_at.ToString() != "1/1/0001 12:00:00 AM")
-                {
-                    cmd.CommandText += ", returned_at = @returned_at";
-                    cmd.Parameters.AddWithValue("@returned_at", itemStruct.returned_at);
-                }
-                if (itemStruct.paid_at.ToString() != "1/1/0001 12:00:00 AM")
-                {
-                    cmd.CommandText += ", paid_at = @paid_at";
-                    cmd.Parameters.AddWithValue("@paid_at", itemStruct.paid_at);
-                } */
                 if (itemStruct.photo != "")
                 {
                     cmd.CommandText += ", photo = @photo";
@@ -730,7 +685,34 @@ namespace materialApp
             return data;
         }
 
-        public DataSet LoadLogByDay(DateTime day)
+        public void AddLog(string itemId, string userId, int type, string changeText)
+        {
+            MySqlConnection mSql = new MySqlConnection(connMainStr);
+            mSql.Open();
+
+            try
+            {
+                MySqlCommand cmd = mSql.CreateCommand();
+                cmd.CommandText = "INSERT INTO log(item_id, user_id, type, change_text, time) VALUES(@item_id, @user_id, @type, @change_text, @time)" ;
+                cmd.Parameters.AddWithValue("@item_id", itemId);
+                cmd.Parameters.AddWithValue("@user_id", userId);
+                cmd.Parameters.AddWithValue("@type", type);
+                cmd.Parameters.AddWithValue("@change_text", changeText);
+                cmd.Parameters.AddWithValue("@time", DateTime.Now);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                if (mSql.State == ConnectionState.Open) mSql.Close();
+            }
+
+        }
+
+        public DataSet SearchForLogs(string item_id, string user_id, string type, DateTime day)
         {
             MySqlConnection mSql = new MySqlConnection(connMainStr);
             mSql.Open();
@@ -739,8 +721,38 @@ namespace materialApp
             try
             {
                 MySqlCommand cmd = mSql.CreateCommand();
-                cmd.CommandText = "SELECT * FROM log WHERE created_at = @day";
-                cmd.Parameters.AddWithValue("@day", day);
+                cmd.CommandText = "SELECT * FROM log WHERE";
+                int count = 0;
+                if (item_id != "")
+                {
+                    count++;
+                    cmd.CommandText += " item_id = @i_id";
+                    cmd.Parameters.AddWithValue("@i_id", item_id);
+                }
+                if (user_id != "")
+                {
+                    if (count > 0) cmd.CommandText += " AND";
+                    cmd.CommandText += " user_id = @u_id";
+                    cmd.Parameters.AddWithValue("@u_id", user_id);
+                    count++;
+                }
+                if (type != "")
+                {
+                    if (count > 0) cmd.CommandText += " AND";
+                    cmd.CommandText += " type = @type";
+                    cmd.Parameters.AddWithValue("@type", type);
+                    count++;
+                }
+                if (day.ToShortDateString() != "1/1/0001")
+                {
+                    if (count > 0) cmd.CommandText += " AND";
+                    cmd.CommandText += " time BETWEEN @daystart AND @dayend";
+                    string[] dates = day.ToShortDateString().Split('/');
+                    string date = dates[2] + "/" + dates[0] + "/" + dates[1];
+                    cmd.Parameters.AddWithValue("@daystart", date + " 00:00:00");
+                    cmd.Parameters.AddWithValue("@dayend", date + " 23:59:59");
+                }
+
                 MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
                 data = new DataSet();
                 adapter.Fill(data);

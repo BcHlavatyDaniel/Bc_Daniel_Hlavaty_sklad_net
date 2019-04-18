@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hostiteľ: 127.0.0.1
--- Čas generovania: Po 08.Apr 2019, 17:43
+-- Čas generovania: Št 18.Apr 2019, 02:54
 -- Verzia serveru: 10.1.28-MariaDB
 -- Verzia PHP: 7.1.10
 
@@ -33,62 +33,42 @@ CREATE TABLE `item` (
   `name` varchar(500) NOT NULL,
   `user_year` int(11) NOT NULL,
   `user_numbers` int(11) NOT NULL,
-  `description` text NOT NULL,
   `size` text NOT NULL,
   `price` double NOT NULL,
+  `description` text,
   `photo` varchar(500) NOT NULL,
-  `created_at` date NOT NULL,
-  `returned_at` date NOT NULL,
-  `sold_at` date NOT NULL,
-  `paid_at` date NOT NULL
+  `stav` int(11) NOT NULL,
+  `archived` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Sťahujem dáta pre tabuľku `item`
 --
 
-INSERT INTO `item` (`id`, `name`, `user_year`, `user_numbers`, `description`, `size`, `price`, `photo`, `created_at`, `returned_at`, `sold_at`, `paid_at`) VALUES
-(23, 'Lyze', 19, 102, 'cele su posahane', 'XL', 99.99, 'C:\\Users\\Daniel\\Desktop\\available.jpg', '2019-04-07', '2019-04-08', '0000-00-00', '0000-00-00'),
-(24, 'Topankis', 19, 102, 'bagandze', '45', 59, 'C:\\Users\\Daniel\\Desktop\\unavailable.png', '2019-04-07', '2019-04-07', '2019-04-10', '2019-04-08'),
-(25, 'Klavesnica', 19, 102, 'cervena', 'XXL', 99.99, 'C:\\Users\\Daniel\\Desktop\\death.jpg', '2019-04-07', '2019-04-08', '2019-04-08', '2019-04-08'),
-(26, 'Knizka', 19, 102, 'Potrhana', '150 stranova', 13.99, 'C:\\Users\\Daniel\\Desktop\\available.jpg', '2019-04-07', '2019-04-08', '0000-00-00', '0000-00-00'),
-(34, 'ble', 19, 102, 'bleeee', '1', 1, '', '2019-04-07', '2019-04-08', '2019-04-08', '2019-04-08'),
-(35, 'Logis', 19, 102, 'Testis', 'Maximalis', 1, '', '2019-04-07', '0000-00-00', '2019-04-08', '0000-00-00'),
-(36, 'Kacicka', 19, 105, 'farebna', 'mini', 0.99, 'C:\\Users\\Daniel\\Desktop\\5123n4V63EL._SX425_.jpg', '2019-04-08', '0000-00-00', '2019-04-08', '2019-04-08'),
-(37, 'ToSomJa', 19, 107, 'zahaleny tienom', '175', 9999999, 'C://Users/Daniel/source/repos/materialApp/materialApp/imageres/webImage83.png', '2019-04-08', '0000-00-00', '2019-04-08', '0000-00-00'),
-(38, 'ToSomTiezJa', 19, 107, 'stale zahaleny tienom', '175', 9999, 'C://Users/Daniel/source/repos/materialApp/materialApp/imageres/webImage84.png', '2019-04-08', '0000-00-00', '0000-00-00', '0000-00-00'),
-(39, 'HmHm', 19, 107, 'ad', 'mhmh', 123, 'C://Users/Daniel/source/repos/materialApp/materialApp/imageres/webImage89.png', '2019-04-08', '0000-00-00', '2019-04-08', '0000-00-00');
-
---
--- Spúšťače `item`
---
-DELIMITER $$
-CREATE TRIGGER `on_insert` AFTER INSERT ON `item` FOR EACH ROW BEGIN
-INSERT INTO log(i_id, price, item_created_at, item_returned_at, item_paid_at, item_sold_at, created_at, type) VALUES (new.id, new.price , new.created_at, new.returned_at, new.paid_at, new.sold_at, NOW(), 'INSERT');
-END
-$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `on_update` AFTER UPDATE ON `item` FOR EACH ROW BEGIN
-IF new.paid_at <> old.paid_at
-THEN
-INSERT INTO log (i_id, item_paid_at, type, created_at) VALUES (new.id, new.paid_at, 'UPDATE', NOW());
-END IF;
-IF new.sold_at <> old.sold_at
-THEN
-INSERT INTO log (i_id, item_sold_at, type, created_at) VALUES (new.id, new.sold_at, 'UPDATE', NOW());
-END IF;
-IF new.returned_at <> old.returned_at
-THEN
-INSERT INTO log (i_id, item_returned_at, type, created_at) VALUES (new.id, new.returned_at, 'UPDATE', NOW());
-END IF;
-IF new.price <> old.price
-THEN
-INSERT INTO log (i_id, price, type, created_at) VALUES (new.id, new.price, 'UPDATE', NOW());
-END IF;
-END
-$$
-DELIMITER ;
+INSERT INTO `item` (`id`, `name`, `user_year`, `user_numbers`, `size`, `price`, `description`, `photo`, `stav`, `archived`) VALUES
+(23, 'Lyze', 19, 102, 'XK', 99.99, 'uz popis', 'C:\\Users\\Daniel\\Desktop\\available.jpg', 0, 0),
+(24, 'Topankis', 19, 102, '45', 59, 'Posanahne Topanky 24', 'C:\\Users\\Daniel\\Desktop\\unavailable.png', 0, 1),
+(25, 'Klavesnica', 19, 102, 'XXL', 999.99, 'cerveniak', 'C://Users/Daniel/source/repos/materialApp/materialApp/imageres/webImage100.png', 1, 0),
+(26, 'Knizka', 19, 102, '150 stranova', 13.99, 'Potrhana', 'C:\\Users\\Daniel\\Desktop\\available.jpg', 4, 1),
+(34, 'blife', 19, 102, '15', 1, 'bleeee mbhj', 'C://Users/Daniel/source/repos/materialApp/materialApp/imageres/webImage105.png', 1, 0),
+(35, 'Logis', 19, 102, 'Maximalis', 1, 'asdTestisisisis', '', 5, 0),
+(36, 'Kacicka', 19, 105, 'mini', 0.99, '', 'C:\\Users\\Daniel\\Desktop\\5123n4V63EL._SX425_.jpg', 1, 0),
+(37, 'ToSomJa', 19, 107, '175', 9999999, 'zahaleny tienom', 'C://Users/Daniel/source/repos/materialApp/materialApp/imageres/webImage83.png', 2, 1),
+(38, 'ToSomTiezJa', 19, 107, '175', 9989, 'som odhaleny lost focusom', 'C://Users/Daniel/source/repos/materialApp/materialApp/imageres/webImage84.png', 3, 0),
+(39, 'HmHm', 19, 107, 'mhmh', 123, 'ad', 'C://Users/Daniel/source/repos/materialApp/materialApp/imageres/webImage89.png', 4, 1),
+(40, 'Testis', 19, 107, 'updatis', 21, '45ble', 'C://Users/Daniel/source/repos/materialApp/materialApp/imageres/webImage93.png', 0, 0),
+(41, 'Dalsifix', 19, 102, 'Mensi', 10, 'funguj jo', '', 4, 0),
+(42, 'vdvffdsvfdss', 19, 107, 's', 514, 'dfvdvs', '', 5, 0),
+(43, 'Dlais', 19, 102, 'velksot', 123, '123kjnk12', 'C://Users/Daniel/source/repos/materialApp/materialApp/imageres/webImage94.png', 3, 0),
+(44, 'Michal', 19, 102, '125', 12453, 'poasdpj', 'C://Users/Daniel/source/repos/materialApp/materialApp/imageres/webImage95.png', 4, 0),
+(45, 'Item', 19, 101, 'velky', 2115, 'hjhbjkasdasd', 'C://Users/Daniel/source/repos/materialApp/materialApp/imageres/webImage96.png', 0, 1),
+(46, 'Dalsi', 19, 101, 'mali', 12, 'FDDCZXcx', 'C://Users/Daniel/source/repos/materialApp/materialApp/imageres/webImage97.png', 1, 0),
+(47, 'Meno', 19, 100, '45310', 64.125, 'asd', 'C://Users/Daniel/source/repos/materialApp/materialApp/imageres/webImage98.png', 5, 0),
+(48, 'Tricko', 19, 105, 's', 19, 'potrhane', 'C://Users/Daniel/source/repos/materialApp/materialApp/imageres/webImage101.png', 3, 0),
+(49, 'Nohavice', 19, 105, '19.2', 19, 'asdads', 'C://Users/Daniel/source/repos/materialApp/materialApp/imageres/webImage102.png', 4, 0),
+(50, 'Triko', 19, 102, 'XXX', 995649, 'jasjhgyan', 'C://Users/Daniel/source/repos/materialApp/materialApp/imageres/webImage104.png', 0, 1),
+(51, 'r3e432e22', 19, 102, '25', 25, 'yhthyry', '', 1, 0),
+(52, '4r4r', 19, 102, 'yj', 52, 'iukuy', '', 5, 0);
 
 -- --------------------------------------------------------
 
@@ -98,66 +78,58 @@ DELIMITER ;
 
 CREATE TABLE `log` (
   `id` int(11) NOT NULL,
-  `i_id` int(11) NOT NULL,
-  `price` double NOT NULL,
-  `item_created_at` date NOT NULL,
-  `item_paid_at` date NOT NULL,
-  `item_sold_at` date NOT NULL,
-  `item_returned_at` date NOT NULL,
-  `created_at` date NOT NULL,
-  `type` varchar(255) NOT NULL
+  `item_id` int(11) NOT NULL,
+  `user_id` varchar(500) NOT NULL,
+  `type` int(255) NOT NULL,
+  `change_text` text NOT NULL,
+  `time` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Sťahujem dáta pre tabuľku `log`
 --
 
-INSERT INTO `log` (`id`, `i_id`, `price`, `item_created_at`, `item_paid_at`, `item_sold_at`, `item_returned_at`, `created_at`, `type`) VALUES
-(7, 34, 1, '2019-04-07', '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-07', 'INSERT'),
-(8, 35, 1, '2019-04-07', '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-07', 'INSERT'),
-(12, 36, 0.99, '2019-04-08', '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-08', 'INSERT'),
-(13, 36, 0.99, '2019-04-08', '0000-00-00', '2019-04-08', '0000-00-00', '2019-04-08', 'UPDATE'),
-(15, 24, 0, '0000-00-00', '2019-04-08', '0000-00-00', '0000-00-00', '2019-04-08', 'UPDATE'),
-(16, 23, 0, '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-08', 'UPDATE'),
-(17, 23, 0, '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-08', 'UPDATE'),
-(18, 23, 0, '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-08', '2019-04-08', 'UPDATE'),
-(19, 34, 0, '0000-00-00', '0000-00-00', '2019-04-08', '0000-00-00', '2019-04-08', 'UPDATE'),
-(20, 35, 0, '0000-00-00', '0000-00-00', '2019-04-08', '0000-00-00', '2019-04-08', 'UPDATE'),
-(21, 25, 0, '0000-00-00', '2019-04-08', '0000-00-00', '0000-00-00', '2019-04-08', 'UPDATE'),
-(22, 26, 0, '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-08', 'UPDATE'),
-(23, 26, 0, '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-08', 'UPDATE'),
-(24, 26, 0, '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-08', '2019-04-08', 'UPDATE'),
-(25, 26, 13.99, '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-08', 'UPDATE'),
-(26, 26, 0, '0000-00-00', '0000-00-00', '2019-04-08', '0000-00-00', '2019-04-08', 'UPDATE'),
-(27, 26, 0, '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-08', 'UPDATE'),
-(28, 23, 0, '0000-00-00', '0000-00-00', '2019-04-08', '0000-00-00', '2019-04-08', 'UPDATE'),
-(29, 23, 0, '0000-00-00', '2019-04-08', '0000-00-00', '0000-00-00', '2019-04-08', 'UPDATE'),
-(30, 23, 0, '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-08', 'UPDATE'),
-(31, 23, 0, '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-08', 'UPDATE'),
-(32, 26, 0, '0000-00-00', '0000-00-00', '2019-04-08', '0000-00-00', '2019-04-08', 'UPDATE'),
-(33, 26, 0, '0000-00-00', '2019-04-08', '0000-00-00', '0000-00-00', '2019-04-08', 'UPDATE'),
-(34, 26, 0, '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-08', 'UPDATE'),
-(35, 26, 0, '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-08', 'UPDATE'),
-(36, 26, 0, '0000-00-00', '0000-00-00', '2019-04-08', '0000-00-00', '2019-04-08', 'UPDATE'),
-(37, 26, 0, '0000-00-00', '2019-04-08', '0000-00-00', '0000-00-00', '2019-04-08', 'UPDATE'),
-(38, 26, 0, '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-08', 'UPDATE'),
-(39, 26, 0, '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-08', 'UPDATE'),
-(40, 25, 0, '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-08', 'UPDATE'),
-(41, 25, 0, '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-08', 'UPDATE'),
-(42, 25, 0, '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-08', '2019-04-08', 'UPDATE'),
-(43, 25, 0, '0000-00-00', '0000-00-00', '2019-04-08', '0000-00-00', '2019-04-08', 'UPDATE'),
-(44, 25, 0, '0000-00-00', '2019-04-08', '0000-00-00', '0000-00-00', '2019-04-08', 'UPDATE'),
-(45, 34, 0, '0000-00-00', '2019-04-08', '0000-00-00', '0000-00-00', '2019-04-08', 'UPDATE'),
-(46, 34, 0, '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-08', 'UPDATE'),
-(47, 34, 0, '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-08', 'UPDATE'),
-(48, 34, 0, '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-08', '2019-04-08', 'UPDATE'),
-(49, 34, 0, '0000-00-00', '0000-00-00', '2019-04-08', '0000-00-00', '2019-04-08', 'UPDATE'),
-(50, 34, 0, '0000-00-00', '2019-04-08', '0000-00-00', '0000-00-00', '2019-04-08', 'UPDATE'),
-(51, 37, 9999999, '2019-04-08', '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-08', 'INSERT'),
-(52, 38, 9999, '2019-04-08', '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-08', 'INSERT'),
-(53, 37, 0, '0000-00-00', '0000-00-00', '2019-04-08', '0000-00-00', '2019-04-08', 'UPDATE'),
-(54, 39, 123, '2019-04-08', '0000-00-00', '0000-00-00', '0000-00-00', '2019-04-08', 'INSERT'),
-(55, 39, 0, '0000-00-00', '0000-00-00', '2019-04-08', '0000-00-00', '2019-04-08', 'UPDATE');
+INSERT INTO `log` (`id`, `item_id`, `user_id`, `type`, `change_text`, `time`) VALUES
+(220, 25, '19-102', 0, 'Zmena ceny tovaru z XXL na 999.99', '2019-04-17 14:08:22'),
+(221, 26, '19-102', 0, 'Zmena ceny tovaru z 150 stranova na 13.99', '2019-04-17 14:14:44'),
+(222, 26, '19-102', 2, 'Tovar archivovany', '2019-04-17 14:18:58'),
+(223, 34, '19-102', 2, 'Tovar archivovany', '2019-04-17 14:21:13'),
+(224, 25, '19-102', 2, 'Tovar archivovany', '2019-04-17 14:23:21'),
+(225, 34, '19-102', 2, 'Tovar archivovany', '2019-04-17 14:24:56'),
+(226, 34, '19-102', 2, 'Tovar archivovany', '2019-04-17 14:26:43'),
+(227, 34, '19-102', 2, 'Tovar odarchivovany', '2019-04-17 14:27:00'),
+(228, 34, '19-102', 2, 'Tovar archivovany', '2019-04-17 14:27:36'),
+(229, 34, '19-102', 2, 'Tovar odarchivovany', '2019-04-17 14:27:53'),
+(230, 34, '19-102', 1, 'Zmena stavu z 4 na 1', '2019-04-17 14:27:54'),
+(231, 34, '19-102', 1, 'Zmena stavu z 1 na 2', '2019-04-17 12:00:00'),
+(232, 34, '19-102', 1, 'Zmena stavu z 2 na 3', '2019-04-17 14:28:22'),
+(233, 34, '19-102', 3, 'Zmena nazvu tovaru z ble na blife', '2019-04-17 14:28:23'),
+(234, 34, '19-102', 3, 'Zmena velkosti tovaru z 1 na 15', '2019-04-17 14:28:23'),
+(235, 34, '19-102', 1, 'Zmena stavu z 3 na 1', '2019-04-17 14:28:52'),
+(236, 34, '19-102', 1, 'Tovar zaplateny kartou', '2019-04-17 14:54:05'),
+(237, 41, '19-102', 1, 'Tovar zaplateny kartou', '2019-04-17 14:54:08'),
+(238, 35, '19-102', 1, 'Zmena stavu z 5 na 0', '2019-04-17 14:54:12'),
+(239, 35, '19-102', 1, 'Tovar predany hotovostou', '2019-04-17 14:54:21'),
+(240, 35, '19-102', 1, 'Tovar zaplateny hotovostou', '2019-04-17 14:54:22'),
+(241, 52, '19-102', 1, 'Tovar zaplateny hotovostou', '2019-04-17 14:54:43'),
+(242, 24, '19-102', 1, 'Zmena stavu z zaplateny hotovostou na nepredany', '2019-04-17 15:01:32'),
+(243, 25, '19-102', 1, 'Zmena stavu z zaplateny kartou na predany hotovostou', '2019-04-17 15:01:38'),
+(244, 26, '19-102', 1, 'Zmena stavu z vrateny na zaplateny hotovostou', '2019-04-17 15:01:45'),
+(245, 34, '19-102', 1, 'Zmena stavu z zaplateny hotovostou na predany hotovostou', '2019-04-17 15:01:52'),
+(246, 24, '19-102', 2, 'Tovar archivovany', '2019-04-17 17:12:06'),
+(247, 26, '19-102', 2, 'Tovar archivovany', '2019-04-17 17:12:12'),
+(248, 25, '19-102', 2, 'Tovar archivovany', '2019-04-17 17:12:23'),
+(249, 25, '19-102', 2, 'Tovar odarchivovany', '2019-04-17 21:48:12'),
+(250, 25, '19-102', 1, 'Zmena stavu z predany hotovostou na nepredany', '2019-04-18 00:53:41'),
+(251, 25, '19-102', 1, 'Tovar predany hotovostou', '2019-04-18 01:19:30'),
+(252, 25, '19-102', 1, 'Tovar zaplateny hotovostou', '2019-04-18 01:19:31'),
+(253, 25, '19-102', 1, 'Zmena stavu z zaplateny kartou na predany hotovostou', '2019-04-18 01:19:44'),
+(254, 35, '19-102', 2, 'Tovar archivovany', '2019-04-18 02:12:05'),
+(255, 35, '19-102', 2, 'Tovar odarchivovany', '2019-04-18 02:12:13'),
+(256, 23, '19-102', 1, 'Zmena stavu z zaplateny hotovostou na nepredany', '2019-04-18 02:46:33'),
+(257, 23, '19-102', 1, 'Tovar predany kartou', '2019-04-18 02:46:46'),
+(258, 23, '19-102', 1, 'Tovar zaplateny kartou', '2019-04-18 02:46:47'),
+(259, 23, '19-102', 1, 'Zmena stavu z zaplateny hotovostou na nepredany', '2019-04-18 02:46:52');
 
 -- --------------------------------------------------------
 
@@ -180,7 +152,9 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`year`, `_numbers`, `first_name`, `second_name`, `address`, `telephone`, `created_at`) VALUES
-(19, 102, 'Danilael', 'Hlavaty', 'Dubova 3 Sala 927 01', 2131323, '2019-03-31'),
+(19, 100, 'Bonifac', 'rajcina', 'Rajec vo svete bla bla asdoa 4', 54556121, '2019-04-10'),
+(19, 101, 'Hugh', 'Mung5us', 'Hentak tam sem podtym 10 v pravo', 542121531, '2019-04-10'),
+(19, 102, 'Danilamasdkel', 'Hlavaty', 'Dubova 3 Sala 927 01', 213541323, '2019-03-31'),
 (19, 105, 'Martin', 'Zeleny', 'Bratislava Ulica 14 927', 996665888, '2019-03-31'),
 (19, 107, 'Palo', 'Cerveny', 'Bratislavska 15 Bratislava 45785', 905124587, '2019-03-31');
 
@@ -215,13 +189,13 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT pre tabuľku `item`
 --
 ALTER TABLE `item`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
 -- AUTO_INCREMENT pre tabuľku `log`
 --
 ALTER TABLE `log`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=260;
 
 --
 -- Obmedzenie pre exportované tabuľky

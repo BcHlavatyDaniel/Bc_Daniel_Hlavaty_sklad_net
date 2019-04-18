@@ -57,7 +57,9 @@
                     <TextBox  x:Name="text_price" TextChanged="PreviewTextInput" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0, 0 , 0, 0" materialDesign:HintAssist.Hint="Cena" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
                     </TextBox>
 
-                    <ComboBox x:Name="cmbChangeItemState" SelectionChanged="ChangeState" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,0,0,0" materialDesign:HintAssist.Hint="Zmen stav" Style="{StaticResource MaterialDesignFloatingHintComboBox}"/>
+                    <CheckBox x:Name="archiveBox"  HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Top" >Archivovane</CheckBox>
+
+                    <ComboBox x:Name="cmbChangeItemState" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,0,0,0" materialDesign:HintAssist.Hint="Zmen stav" Style="{StaticResource MaterialDesignFloatingHintComboBox}"/>
 
                     <materialDesign:PackIcon x:Name="icon_edit_err" Height="24" Width="24" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0, 20, 0, 0"/>
 

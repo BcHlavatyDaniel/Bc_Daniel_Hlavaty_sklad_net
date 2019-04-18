@@ -159,19 +159,24 @@
                                 </Style>
                             </DataGrid.CellStyle>
                             <DataGrid.Columns>
-                                <DataGridTemplateColumn Header="">
+                                <DataGridTemplateColumn Header="Stav">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                              <TextBox x:Name="text_Paid" IsReadOnly="True" TextAlignment="Center" ></TextBox>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Header="Upravy">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <DockPanel>
-                                                <Button Name="btnProfile" Content="Popis" Click="Item_Description_Open" Height="30"/>
-                                                <Button x:Name="btnEditGrid" Content="Upravit" Click="Item_Details_Open" Height="30"/>
+                                                <Button x:Name="btnEditGrid" Content="Upravit" Click="Item_Details_Open" Height="30" />
                                                 <Button x:Name="btnArchive" Content="Archivuj" Click="Item_Archive" Height="30"/>
-                                                <!--TO DO archive -->
                                             </DockPanel>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                <DataGridTemplateColumn Header="Akcia">
+                                <DataGridTemplateColumn Header="Akcie">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <DockPanel>
@@ -179,17 +184,16 @@
                                                 <Button x:Name="btnSellCard" Content="Karta" Click="Item_SellCard"></Button>
                                                 <Button x:Name="btnReturn" Content="Vratit" Click="Item_Return"></Button>
                                                 <Button x:Name="btnPay" Content="Zaplatit" Click="Item_Pay"></Button>
-                                                <TextBox x:Name="text_Paid" IsReadOnly="True" TextAlignment="Center" ></TextBox>
                                             </DockPanel>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
                             </DataGrid.Columns>
-                            <DataGrid.RowDetailsTemplate>
+                           <!-- <DataGrid.RowDetailsTemplate>
                                 <DataTemplate>
                                     <TextBox x:Name="Descrip"  Height="30" LostFocus="Item_Description_Save" TextAlignment="Center"></TextBox>
                                 </DataTemplate>
-                            </DataGrid.RowDetailsTemplate>
+                            </DataGrid.RowDetailsTemplate> -->
                         </DataGrid>
                     </Grid>
 

@@ -180,10 +180,13 @@
                         <TextBlock TextAlignment="Center" FontSize="52" FontFamily="Berlin Sans FB" TextDecorations="Underline" Text="Zaznamy"></TextBlock>
                     </DockPanel>
                     <Grid Margin="0,85,0,0">
+                        <DatePicker x:Name="picker" SelectedDateChanged="SearchLogs" HorizontalAlignment="Center" VerticalAlignment="Top" materialDesign:HintAssist.Hint="Den" Margin="0,0,0,0"></DatePicker>
                         <DockPanel>
-                            <DatePicker x:Name="picker" SelectedDateChanged="Select_log" HorizontalAlignment="Center" materialDesign:HintAssist.Hint="Den" Margin="0,0,0,0"></DatePicker>
+                            <ComboBox x:Name="Item_idLogCmb" SelectionChanged="SearchLogs" HorizontalAlignment="Left" Margin="0, 20,0,0" VerticalAlignment="Top" Width="60"/>
+                            <ComboBox x:Name="Year_numbersLogCmb" SelectionChanged="SearchLogs" HorizontalAlignment="Left" Margin="0, 20 ,0,0" VerticalAlignment="Top" Width="80"/>
+                            <ComboBox x:Name="TypeCmb" SelectionChanged ="SearchLogs" HorizontalAlignment="Left" Margin="0, 20,0,0" VerticalAlignment="Top" Width="80"/>
                         </DockPanel>
-                        <DataGrid x:Name="logDataGrid" MouseDoubleClick="Item_Log_Open" CanUserReorderColumns="False" HorizontalAlignment="Center" Background="#E1F5FE" IsReadOnly="True" Margin="0, 40, 0,0" VerticalAlignment="Top" Grid.Column="2">
+                        <DataGrid x:Name="logDataGrid" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False" HorizontalAlignment="Center" Background="#E1F5FE" IsReadOnly="True" Margin="0, 50, 0,0" VerticalAlignment="Top" Grid.Column="2">
                             <DataGrid.Resources>
                                 <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
                                     <Setter Property="Background" Value="#81D4FA" />
@@ -197,6 +200,17 @@
                                     </Style.Triggers>
                                 </Style>
                             </DataGrid.Resources>
+                            <DataGrid.Columns>
+                                <DataGridTemplateColumn Header="Detail">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <DockPanel>
+                                                <Button x:Name="btnOpenTovarLog" Content="Tovar" Click="Item_Log_Open"/>
+                                            </DockPanel>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
                             <DataGrid.CellStyle>
                                 <Style BasedOn="{StaticResource {x:Type DataGridCell}}" TargetType="{x:Type DataGridCell}">
                                     <Setter Property="BorderThickness" Value="0.3"></Setter>
@@ -240,11 +254,11 @@
                                 </Style>
                             </DataGrid.CellStyle>
                             <DataGrid.Columns>
-                                <DataGridTemplateColumn Header="Popis">
+                                <DataGridTemplateColumn Header="Detaily">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <DockPanel>
-                                                <Button Name="btnDesc" Content="Popis" Click="Open_Description"/>
+                                              <!--  <Button Name="btnDesc" Content="Popis" Click="Open_Description"/> -->
                                                 <Button x:Name="btnOpenTovar" Content="Tovar" Click="Item_Open" />
                                                 <Button x:Name="btnOpenUser" Content="Zakaznik" Click="Profile_Item_Open"/>
                                             </DockPanel>
@@ -252,11 +266,11 @@
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
                             </DataGrid.Columns>
-                            <DataGrid.RowDetailsTemplate >
+                           <!-- <DataGrid.RowDetailsTemplate >
                                 <DataTemplate >
                                     <TextBox  x:Name="Descrip" Height="30"  LostFocus="Save_Description" TextAlignment="Center"></TextBox>
                                 </DataTemplate>
-                            </DataGrid.RowDetailsTemplate>
+                            </DataGrid.RowDetailsTemplate> -->
                         </DataGrid>
                     </Grid>
                 </Grid>

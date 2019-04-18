@@ -28,10 +28,12 @@ namespace materialApp
         DbActions mDbActions;
         CommonActions mCommonActions;
         string mId;
+        string mUserId;
         string mPhotoPath = "";
         bool mCloseWin;
         int mCurrState = 0;
-        int mLastSuccessState = 0;
+        bool mCurrArch = false;
+        enum mState { Einit_state, Esold_card, Esold_cash, Ereturned, Epaid_card, Epaid_cash, Earchived }
 
         EditItemStruct mLastSuccessStruct;
         EditItemStruct mLastUnsuccessStruct;
@@ -56,6 +58,7 @@ namespace materialApp
             text_first_name.Text = f_name;
             text_second_name.Text = s_name;
             text_user_id.Text = user_id;
+            mUserId = user_id;
             mId = id;
             cmbChangeItemState.Items.Add("Nepredany"); //0
             cmbChangeItemState.Items.Add("Predany karta"); //1
@@ -68,11 +71,6 @@ namespace materialApp
             text_edit_err.Text = "";
         }
 
-        private void ChangeState(object sender, RoutedEventArgs e)
-        {
-            mCurrState = cmbChangeItemState.SelectedIndex;
-        }
-
         private void LoadItem()
         {
             DataRow row = mDbActions.LoadSpecificItem(mId).Tables[0].Rows[0];
@@ -81,61 +79,25 @@ namespace materialApp
             text_size.Text = row["size"].ToString();
             text_name.Text = row["name"].ToString();
 
-            DateTime retTime;
-            DateTime paidTime;
-            DateTime soldTime;
-            DateTime createdTime;
-            int usedCard;
-            DateTime.TryParse(row["returned_at"].ToString(), out retTime);
-            DateTime.TryParse(row["paid_at"].ToString(), out paidTime);
-            DateTime.TryParse(row["sold_at"].ToString(), out soldTime);
-            DateTime.TryParse(row["created_at"].ToString(), out createdTime);
-            int.TryParse(row["used_card"].ToString(), out usedCard);
-
-            if (retTime.ToString() != "1/1/0001 12:00:00 AM")
+            if (row["archived"].ToString() == "True")
             {
-                cmbChangeItemState.SelectedItem = cmbChangeItemState.Items[3];
-                mCurrState = 3;
-                mLastSuccessState = 3;
-            }
-            else if (paidTime.ToString() != "1/1/0001 12:00:00 AM")
-            {
-                if (usedCard == 1)
-                {
-                    cmbChangeItemState.SelectedItem = cmbChangeItemState.Items[4];
-                    mCurrState = 4;
-                    mLastSuccessState = 4;
-                }
-                else
-                {
-                    cmbChangeItemState.SelectedItem = cmbChangeItemState.Items[5];
-                    mCurrState = 5;
-                    mLastSuccessState = 5;
-                }
-            }
-            else if (soldTime.ToString() != "1/1/0001 12:00:00 AM")
-            {
-                if (usedCard == 1)
-                {
-                    cmbChangeItemState.SelectedItem = cmbChangeItemState.Items[1];
-                    mCurrState = 1;
-                    mLastSuccessState = 1;
-                }
-                else
-                {
-                    cmbChangeItemState.SelectedItem = cmbChangeItemState.Items[2];
-                    mCurrState = 2;
-                    mLastSuccessState = 2;
-                }
+                mCurrArch = true;
+                archiveBox.IsChecked = true;
             }
             else
             {
-                cmbChangeItemState.SelectedItem = cmbChangeItemState.Items[0];
-                mCurrState = 0;
-                mLastSuccessState = 0;
+                mCurrArch = false;
+                archiveBox.IsChecked = false;
             }
-                
+
+            int type;
+            int.TryParse(row["stav"].ToString(), out type);
+            cmbChangeItemState.SelectedIndex = type;
+
+            mCurrState = type;
+
             image1.Source = new BitmapImage(new Uri(row["photo"].ToString(), UriKind.RelativeOrAbsolute));
+            mPhotoPath = row["photo"].ToString();
 
             mLastSuccessStruct = new EditItemStruct
             {
@@ -146,8 +108,6 @@ namespace materialApp
                 price = row["price"].ToString(),
             };
         }
-
-
 
         private void TakeAPic(object sender, RoutedEventArgs e)
         {
@@ -193,12 +153,27 @@ namespace materialApp
 
         private void Save(object sender, RoutedEventArgs e)
         {
-            icon_edit_err.Visibility = Visibility.Visible;
-
+            
             double num;
+
+            EditItemStruct itemStruct = new EditItemStruct
+            {
+                description = text_description.Text,
+                price = text_price.Text,
+                size = text_size.Text,
+                name = text_name.Text,
+                photo = mPhotoPath
+            };
+
+            if (mLastUnsuccessStruct != null)
+            {
+                if (CompareItemStruct(itemStruct, mLastUnsuccessStruct) && mCurrArch == archiveBox.IsChecked && mCurrState == cmbChangeItemState.SelectedIndex) return;
+            }
+            if (CompareItemStruct(itemStruct, mLastSuccessStruct) && mCurrArch == archiveBox.IsChecked && mCurrState == cmbChangeItemState.SelectedIndex) return;
 
             if (!double.TryParse(text_price.Text, out num))
             {
+                icon_edit_err.Visibility = Visibility.Visible;
                 text_edit_err.Foreground = Brushes.Red;
                 text_edit_err.Text = "Cena musi byt cislo!";
                 icon_edit_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
@@ -215,37 +190,109 @@ namespace materialApp
                 return;
             }
 
-            EditItemStruct itemStruct = new EditItemStruct
-            {
-                id = mId,
-                description = text_description.Text,
-                price = text_price.Text,
-                size = text_size.Text,
-                name = text_name.Text,
-                photo = mPhotoPath
-            };
+            string changeString = "";
+            int logType = 0;
 
-            bool change = false;
-
-            if (mLastSuccessStruct.name == text_name.Text && mLastSuccessStruct.description == text_description.Text &&
-                mLastSuccessStruct.size == text_size.Text && mLastSuccessStruct.price == text_price.Text && mLastSuccessStruct.photo == mPhotoPath)
+            if (archiveBox.IsChecked != mCurrArch)
             {
-
-            } else
+                mDbActions.UpdateSpecificItem(mId, 6, archiveBox.IsChecked.ToString());
+                if (archiveBox.IsChecked == true) changeString = "Tovar archivovany";
+                else changeString = "Tovar odarchivovany";
+                logType = 2;
+                mDbActions.AddLog(mId, mUserId, logType, changeString);
+            }
+            if (cmbChangeItemState.SelectedIndex != mCurrState)
             {
-                mDbActions.UpdateItem(itemStruct);
-                change = true;
+                mDbActions.UpdateSpecificItem(mId, 5, cmbChangeItemState.SelectedIndex.ToString());
+                changeString = "Zmena stavu z ";   
+                if (mCurrState == 0)
+                {
+                    changeString += "nepredany";
+                } else if (mCurrState == 1)
+                {
+                    changeString += "predany hotovostou";
+                } else if (mCurrState == 2)
+                {
+                    changeString += "predany kartou";
+                } else if (mCurrState == 3)
+                {
+                    changeString += "vrateny";
+                } else if (mCurrState == 4)
+                {
+                    changeString += "zaplateny hotovostou";
+                } else if (mCurrState == 5)
+                {
+                    changeString += "zaplateny kartou";
+                }
+                changeString += " na ";
+                if (cmbChangeItemState.SelectedIndex == 0)
+                {
+                    changeString += "nepredany";
+                }
+                else if (cmbChangeItemState.SelectedIndex == 1)
+                {
+                    changeString += "predany hotovostou";
+                }
+                else if (cmbChangeItemState.SelectedIndex == 2)
+                {
+                    changeString += "predany kartou";
+                }
+                else if (cmbChangeItemState.SelectedIndex == 3)
+                {
+                    changeString += "vrateny";
+                }
+                else if (cmbChangeItemState.SelectedIndex == 4)
+                {
+                    changeString += "zaplateny hotovostou";
+                }
+                else if (cmbChangeItemState.SelectedIndex == 5)
+                {
+                    changeString += "zaplateny kartou";
+                }
+
+                logType = 1;
+                mDbActions.AddLog(mId, mUserId, logType, changeString);
+            }
+            if (mPhotoPath != mLastSuccessStruct.photo)
+            {
+                mDbActions.UpdateSpecificItem(mId, 4, mPhotoPath);
+                changeString = "Zmena obrazku z " + mLastSuccessStruct.photo + " na " + mPhotoPath;
+                logType = 3;
+                mDbActions.AddLog(mId, mUserId, logType, changeString);
+            }
+            if (text_name.Text != mLastSuccessStruct.name)
+            {
+                mDbActions.UpdateSpecificItem(mId, 3, text_name.Text);
+                changeString = "Zmena nazvu tovaru z " + mLastSuccessStruct.name + " na " + text_name.Text;
+                logType = 3;
+                mDbActions.AddLog(mId, mUserId, logType, changeString);
+            }
+            if (text_price.Text != mLastSuccessStruct.price)
+            {
+                mDbActions.UpdateSpecificItem(mId, 2, text_price.Text);
+                changeString = "Zmena ceny tovaru z " + mLastSuccessStruct.price + " na " + text_price.Text;
+                logType = 0;
+                mDbActions.AddLog(mId, mUserId, logType, changeString);
+            }
+            if (text_size.Text != mLastSuccessStruct.size)
+            {
+                mDbActions.UpdateSpecificItem(mId, 1, text_size.Text);
+                changeString = "Zmena velkosti tovaru z " + mLastSuccessStruct.size + " na " + text_size.Text;
+                logType = 3;
+                mDbActions.AddLog(mId, mUserId, logType, changeString);
+            }
+            if (text_description.Text != mLastSuccessStruct.description)
+            {
+                mDbActions.UpdateSpecificItem(mId, 0, text_description.Text);
+                changeString = "Zmena popisu z " + mLastSuccessStruct.description + " na " + text_description.Text;
+                logType = 3;
+                mDbActions.AddLog(mId, mUserId, logType, changeString);
             }
 
-            if (mCurrState != mLastSuccessState)
+            if (changeString != "")
             {
-                mDbActions.UpdateItemTimes(mId, mCurrState);
-                mLastSuccessState = mCurrState;
-                change = true;
-            }
+                icon_edit_err.Visibility = Visibility.Visible;
 
-            if (change)
-            {
                 mLastSuccessStruct = new EditItemStruct
                 {
                     description = text_description.Text,
@@ -255,9 +302,15 @@ namespace materialApp
                     price = text_price.Text
                 };
 
+                mCurrState = cmbChangeItemState.SelectedIndex;
+
+                if (archiveBox.IsChecked == true) mCurrArch = true;
+                else mCurrArch = false;
+
                 ClearOptions();
                 LoadItem();
             }
+
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -290,12 +343,18 @@ namespace materialApp
                 }
             }
 
-            if (mLastSuccessState != mCurrState)
+            if (cmbChangeItemState.SelectedIndex != mCurrState)
             {
                 showPopup = true;
                 e.Cancel = true;
             }
 
+            if (archiveBox.IsChecked != mCurrArch)
+            {
+                showPopup = true;
+                e.Cancel = true;
+            }
+            
             if (showPopup)
             {
                 HideGrid.Visibility = Visibility.Hidden;
@@ -357,12 +416,15 @@ namespace materialApp
             }
             else
             {
-                OnClosePopup.IsOpen = false;
+                OnClosePopup.IsOpen = false;    //TO DO isnt closing 
                 mLastSuccessStruct.name = text_name.Text;
                 mLastSuccessStruct.description = text_description.Text;
                 mLastSuccessStruct.size = text_size.Text;
-                mLastSuccessStruct.price = text_size.Text;
+                mLastSuccessStruct.price = text_price.Text;
                 mLastSuccessStruct.photo = mPhotoPath;
+                mCurrState = cmbChangeItemState.SelectedIndex;
+                if (archiveBox.IsChecked == true) mCurrArch = true;
+                else mCurrArch = false;
 
                 this.Close();
             }
@@ -426,6 +488,10 @@ namespace materialApp
                 return false;
             }
             if (first.price != second.price)
+            {
+                return false;
+            }
+            if (first.photo != second.photo)
             {
                 return false;
             }
