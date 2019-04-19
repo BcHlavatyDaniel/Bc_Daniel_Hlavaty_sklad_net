@@ -148,29 +148,19 @@ namespace materialApp
             dataGrid.UpdateLayout();
             if (dataGrid.Columns.Count != 0)
             {
-                dataGrid.Columns[1].MaxWidth = 150;
-                dataGrid.Columns[2].MaxWidth = 150;
-                dataGrid.Columns[3].MaxWidth = 200;
-                dataGrid.Columns[4].MaxWidth = 150;
-                dataGrid.Columns[5].MaxWidth = 100;
+                UpdateColumnsWidths(0);
             }
             updateTooltips();
-            dataGrid_CmbPositionUpdate(dataGrid, 0);
-
-            //rename grids
+         //   dataGrid_CmbPositionUpdate(dataGrid, 0);
         }
 
         private void Datagrid_Cmb_Update(object sender, RoutedEventArgs e)
         {
             dataGrid.Items.Refresh();
             dataGrid.UpdateLayout();
-            dataGrid.Columns[1].MaxWidth = 150;
-            dataGrid.Columns[2].MaxWidth = 150;
-            dataGrid.Columns[3].MaxWidth = 200;
-            dataGrid.Columns[4].MaxWidth = 150;
-            dataGrid.Columns[5].MaxWidth = 100;
+            UpdateColumnsWidths(0);
             updateTooltips();
-            dataGrid_CmbPositionUpdate(dataGrid, 0);
+         //   dataGrid_CmbPositionUpdate(dataGrid, 0);
         }
 
         private void Search(object sender, SelectionChangedEventArgs e)
@@ -250,7 +240,7 @@ namespace materialApp
             mUserDWindow.Owner = this;
             mUserDWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             mUserDWindow.ShowDialog();
-            resetUserCmbs();
+            ResetCmbs(0);
             UpdateGrids();
         }
 
@@ -271,7 +261,7 @@ namespace materialApp
             DialogHost.IsOpen = false;
             //DataSet data = mDbActions.LoadAllUsers();
             //LoadGrid(data);
-            resetUserCmbs();
+            ResetCmbs(0);
         }
 
 
@@ -321,7 +311,7 @@ namespace materialApp
             };
 
             mDbActions.AddUser(userStruct);
-            resetUserCmbs();
+            ResetCmbs(0);
             text_add_err.Text = "Uspesne pridane.";
             text_add_err.Foreground = System.Windows.Media.Brushes.Green;
             icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Done;
@@ -425,11 +415,12 @@ namespace materialApp
             itemsDataGrid.UpdateLayout();
             if (itemsDataGrid.Columns.Count > 4)
             {
-                itemsDataGrid.Columns[1].MaxWidth = 150;
-                itemsDataGrid.Columns[2].MaxWidth = 150;
-                itemsDataGrid.Columns[4].MaxWidth = 150;
-                itemsDataGrid.Columns[5].MaxWidth = 150;
-                itemsDataGrid.Columns[6].MaxWidth = 150;
+                UpdateColumnsWidths(1);
+                /*  itemsDataGrid.Columns[1].MaxWidth = 150;
+                  itemsDataGrid.Columns[2].MaxWidth = 150;
+                  itemsDataGrid.Columns[4].MaxWidth = 150;
+                  itemsDataGrid.Columns[5].MaxWidth = 150;
+                  itemsDataGrid.Columns[6].MaxWidth = 150; */
             }
             dataGrid_CmbPositionUpdate(itemsDataGrid, 1);
         }
@@ -504,7 +495,7 @@ namespace materialApp
             mUserDWindow.Owner = this;
             mUserDWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             mUserDWindow.ShowDialog();
-            resetItemsCmbs();
+            ResetCmbs(1);
             UpdateGrids();
         }
 
@@ -515,7 +506,7 @@ namespace materialApp
             mItemDWindow.Owner = this;
             mItemDWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             mItemDWindow.ShowDialog();
-            resetItemsCmbs();
+            ResetCmbs(1);
             UpdateGrids();
         }
 
@@ -535,7 +526,11 @@ namespace materialApp
 
             logDataGrid.ItemsSource = data.Tables[0].DefaultView;
             logDataGrid.Items.Refresh();
-            logDataGrid.UpdateLayout(); 
+            logDataGrid.UpdateLayout();
+            if (logDataGrid.Columns.Count > 4)
+            {
+                UpdateColumnsWidths(2);
+            }
             dataGrid_CmbPositionUpdate(logDataGrid, 2);
         }
 
@@ -549,7 +544,7 @@ namespace materialApp
             mItemDWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             mItemDWindow.ShowDialog();
             picker.Text = "";
-            resetLogCmbs();
+            ResetCmbs(2);
             UpdateGrids();
             
         }
@@ -625,6 +620,10 @@ namespace materialApp
             itemsGrid.Visibility = Visibility.Visible;
             itemsDataGrid.Items.Refresh();
             itemsDataGrid.UpdateLayout();
+            if (itemsDataGrid.Columns.Count > 4)
+            {
+                UpdateColumnsWidths(1);
+            }
             dataGrid_CmbPositionUpdate(itemsDataGrid, 1);
         }
 
@@ -636,6 +635,10 @@ namespace materialApp
             logGrid.Visibility = Visibility.Visible;
             itemsDataGrid.Items.Refresh();
             itemsDataGrid.UpdateLayout();
+            if (logDataGrid.Columns.Count > 4)
+            {
+                UpdateColumnsWidths(2);
+            }
             dataGrid_CmbPositionUpdate(logDataGrid, 2);
         }
 
@@ -666,14 +669,15 @@ namespace materialApp
                 DataGridRow gridRow = (DataGridRow)grid.ItemContainerGenerator.ContainerFromIndex(0);
                 if (gridRow == null) return;
                 itemsDataGrid.Columns[0].DisplayIndex = itemsDataGrid.Columns.Count - 1;
-                DataGridCell cell = CommonActions.GetGridCell(gridRow, 1);
-                Year_numbersItemCmb.Width = cell.ActualWidth;
-                cell = CommonActions.GetGridCell(gridRow, 2);
-                FirstNameItemCmb.Width = cell.ActualWidth;
-                cell = CommonActions.GetGridCell(gridRow, 3);
-                SecondNameItemCmb.Width = cell.ActualWidth;
-                cell = CommonActions.GetGridCell(gridRow, 5);
-                ItemNameCmb.Width = cell.ActualWidth;
+                //   DataGridCell cell = CommonActions.GetGridCell(gridRow, 1);
+                //   Year_numbersItemCmb.Width = cell.ActualWidth;
+                //   cell = CommonActions.GetGridCell(gridRow, 2);
+                //   FirstNameItemCmb.Width = cell.ActualWidth;
+                //   cell = CommonActions.GetGridCell(gridRow, 3);
+                //   SecondNameItemCmb.Width = cell.ActualWidth;
+                //   cell = CommonActions.GetGridCell(gridRow, 5);
+                //   ItemNameCmb.Width = cell.ActualWidth;
+                DataGridCell cell;
                 int counter = 0;
                 foreach (var item in itemsDataGrid.Items)
                 {
@@ -822,12 +826,12 @@ namespace materialApp
                 DataGridRow gridRow = (DataGridRow)grid.ItemContainerGenerator.ContainerFromIndex(0);
                 if (gridRow == null) return;
                 logDataGrid.Columns[0].DisplayIndex = logDataGrid.Columns.Count - 1; //posunutie popisu 
-                DataGridCell cell = CommonActions.GetGridCell(gridRow, 1);
-                Item_idLogCmb.Width = cell.ActualWidth;
-                cell = CommonActions.GetGridCell(gridRow, 2);
-                Year_numbersLogCmb.Width = cell.ActualWidth;
-                cell = CommonActions.GetGridCell(gridRow, 3);
-                TypeCmb.Width = cell.ActualWidth;
+             //   DataGridCell cell = CommonActions.GetGridCell(gridRow, 1);
+             //   Item_idLogCmb.Width = cell.ActualWidth;
+             //   cell = CommonActions.GetGridCell(gridRow, 2);
+             //   Year_numbersLogCmb.Width = cell.ActualWidth;
+             //  cell = CommonActions.GetGridCell(gridRow, 3);
+             //   TypeCmb.Width = cell.ActualWidth;
             }
         }
 
@@ -853,31 +857,76 @@ namespace materialApp
             LoadLogGrid(mDbActions.LoadAllLogs());
         }
 
-        public void resetUserCmbs()
+        private void ResetCmbs(int type)
         {
-            Year_numbersSearchCmb.SelectedIndex = 0;
-            FirstNameSearchCmb.SelectedIndex = 0;
-            SecondnameSearchCmb.SelectedIndex = 0;
-            AddressSearchCmb.SelectedIndex = 0;
-            PhoneSearchCmb.SelectedIndex = 0;
+            if (type == 0)
+            {
+                if (Year_numbersSearchCmb.SelectedIndex != 0)
+                    Year_numbersSearchCmb.SelectedIndex = 0;
+                if (FirstNameSearchCmb.SelectedIndex != 0)
+                    FirstNameSearchCmb.SelectedIndex = 0;
+                if (SecondnameSearchCmb.SelectedIndex != 0)
+                    SecondnameSearchCmb.SelectedIndex = 0;
+                if (AddressSearchCmb.SelectedIndex != 0)
+                    AddressSearchCmb.SelectedIndex = 0;
+                if (PhoneSearchCmb.SelectedIndex != 0)
+                    PhoneSearchCmb.SelectedIndex = 0;
+            }
+            else if (type == 1)
+            {
+                if (Year_numbersItemCmb.SelectedIndex != 0)
+                    Year_numbersItemCmb.SelectedIndex = 0;
+                if (FirstNameItemCmb.SelectedIndex != 0)
+                    FirstNameItemCmb.SelectedIndex = 0;
+                if (SecondNameItemCmb.SelectedIndex != 0)
+                    SecondNameItemCmb.SelectedIndex = 0;
+                if (ItemNameCmb.SelectedIndex != 0)
+                    ItemNameCmb.SelectedIndex = 0;
+            }
+            else if (type == 2)
+            {
+                if (Item_idLogCmb.SelectedIndex != 0)
+                    Item_idLogCmb.SelectedIndex = 0;
+                if (Year_numbersLogCmb.SelectedIndex != 0)
+                    Year_numbersLogCmb.SelectedIndex = 0;
+                if (TypeCmb.SelectedIndex != 0)
+                    TypeCmb.SelectedIndex = 0;
+            }
         }
 
-        public void resetItemsCmbs()
+        private void UpdateColumnsWidths(int type)
         {
-            Year_numbersItemCmb.SelectedIndex = 0;
-            FirstNameItemCmb.SelectedIndex = 0;
-            SecondNameItemCmb.SelectedIndex = 0;
-            ItemNameCmb.SelectedIndex = 0;
+            if (type == 0)
+            {
+                dataGrid.Columns[0].Width = 150;
+                dataGrid.Columns[1].Width = 250;
+                dataGrid.Columns[2].Width = 250;
+                dataGrid.Columns[3].Width = 475;
+                dataGrid.Columns[4].Width = 250;
+                dataGrid.Columns[5].Width = 125;
+            }
+            else if (type == 1)
+            {
+                itemsDataGrid.Columns[0].Width = 200;
+                itemsDataGrid.Columns[1].Width = 75;
+                itemsDataGrid.Columns[2].Width = 150;
+                itemsDataGrid.Columns[3].Width = 150;
+                itemsDataGrid.Columns[4].Width = 75;
+                itemsDataGrid.Columns[5].Width = 150;
+                itemsDataGrid.Columns[6].Width = 100;
+                itemsDataGrid.Columns[7].Width = 100;
+                itemsDataGrid.Columns[8].Width = 500;
+            }
+            else if (type == 2)
+            {
+                logDataGrid.Columns[0].Width = 150;
+                logDataGrid.Columns[1].Width = 150;
+                logDataGrid.Columns[2].Width = 150;
+                logDataGrid.Columns[3].Width = 150;
+                logDataGrid.Columns[4].Width = 650;
+                logDataGrid.Columns[5].Width = 250;
+            }
         }
-
-        public void resetLogCmbs()
-        {
-            Item_idLogCmb.SelectedIndex = 0;
-            Year_numbersLogCmb.SelectedIndex = 0;
-            TypeCmb.SelectedIndex = 0;
-        }
-
-
     }
 }
 

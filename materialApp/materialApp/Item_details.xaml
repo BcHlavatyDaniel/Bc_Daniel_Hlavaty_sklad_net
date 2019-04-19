@@ -13,7 +13,7 @@
         FontFamily="{DynamicResource MaterialDesignFont}"
         ResizeMode="NoResize"
         Closing="Window_Closing"
-        Title="Item_details" Height="700" Width="500">
+        Title="Detail tovaru" Height="550" Width="500">
     <Grid Background="WhiteSmoke">
         <Grid>
             <Popup Name="OnClosePopup"
@@ -34,54 +34,66 @@
                 </Border>
             </Popup>
             <Grid x:Name="HideGrid">
-                <StackPanel VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,20,0,0">
-                    <DockPanel VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,0,0,0">
-                        <TextBox  x:Name="text_first_name" Margin="0,0,0,25" HorizontalAlignment="Left" IsEnabled="False" VerticalAlignment="Top" materialDesign:HintAssist.Hint="Prve meno" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
-                        </TextBox>
-                        <TextBox x:Name="text_user_id" Margin="25,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" IsEnabled="False"  materialDesign:HintAssist.Hint="Id" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                
+                <DockPanel VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,20,0,0" Width="400">
+                    <TextBlock  x:Name="text_first_name" Margin="0,0,0,25" FontSize="18" HorizontalAlignment="Left"  VerticalAlignment="Top" Style="{StaticResource MaterialDesignSubheadingTextBlock}">
+                    </TextBlock>
+                    <TextBlock  x:Name="text_second_name" HorizontalAlignment="Right" FontSize="18" VerticalAlignment="Top" Margin="25, 0 , 0, 0" Style="{StaticResource MaterialDesignSubheadingTextBlock}">
+                    </TextBlock>
+                </DockPanel>
 
-                        </TextBox>
-                        <TextBox  x:Name="text_second_name" HorizontalAlignment="Left" VerticalAlignment="Top" IsEnabled="False" Margin="25, 0 , 0, 0" materialDesign:HintAssist.Hint="Druhe meno" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
-                        </TextBox>
-                    </DockPanel>
+                <TextBlock x:Name="text_user_id" Margin="0,20,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" FontSize="18" Style="{StaticResource MaterialDesignSubheadingTextBlock}">
 
-                    <TextBox  x:Name="text_name" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0, 0 ,0, 0" materialDesign:HintAssist.Hint="Meno" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                </TextBlock>
+
+                <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left" Margin="60,80,0,0">
+
+                    <TextBox  x:Name="text_name" HorizontalAlignment="Center" FontSize="16" VerticalAlignment="Top" Margin="0, 0 ,0, 0" materialDesign:HintAssist.Hint="Meno" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
                     </TextBox>
 
-                    <TextBox  x:Name="text_size" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0, 0 , 0, 0" materialDesign:HintAssist.Hint="Velkost" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                    <TextBox  x:Name="text_size" HorizontalAlignment="Center" FontSize="16" VerticalAlignment="Top" Margin="0, 0 , 0, 0" materialDesign:HintAssist.Hint="Velkost" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
                     </TextBox>
 
-                    <TextBox  x:Name="text_description" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0, 0 ,0, 0" materialDesign:HintAssist.Hint="Popis" Style="{StaticResource MaterialDesignFloatingHintTextBox}" >
+                    <TextBox  x:Name="text_description" HorizontalAlignment="Center" FontSize="16" VerticalAlignment="Top" Margin="0, 0 ,0, 0" materialDesign:HintAssist.Hint="Popis" Style="{StaticResource MaterialDesignFloatingHintTextBox}" >
                     </TextBox>
 
-                    <TextBox  x:Name="text_price" TextChanged="PreviewTextInput" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0, 0 , 0, 0" materialDesign:HintAssist.Hint="Cena" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                    <TextBox  x:Name="text_price" TextChanged="PreviewTextInput" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0, 0 , 0, 0" materialDesign:HintAssist.Hint="Cena" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
                     </TextBox>
 
-                    <CheckBox x:Name="archiveBox"  HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Top" >Archivovane</CheckBox>
+                    <CheckBox x:Name="archiveBox"  HorizontalAlignment="Center" Margin="0,0,0,0" FontSize="16" VerticalAlignment="Top" >Archivovane</CheckBox>
 
-                    <ComboBox x:Name="cmbChangeItemState" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,0,0,0" materialDesign:HintAssist.Hint="Zmen stav" Style="{StaticResource MaterialDesignFloatingHintComboBox}"/>
+                    <ComboBox x:Name="cmbChangeItemState" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="16" Margin="0,0,0,0" materialDesign:HintAssist.Hint="Zmen stav" Style="{StaticResource MaterialDesignFloatingHintComboBox}"/>
+
+                </StackPanel>
+
+                <StackPanel VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,100,80,0" Width="150">
+
+                    <Button x:Name="BtnAddPhotoPath" HorizontalAlignment="Center" Margin="0 ,00, 0,0" VerticalAlignment="Top" Click="AddPhotoPath" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
+                 Width="75" Height="75" ToolTip="Pridaj foto z pc">
+                        <materialDesign:PackIcon Kind="InsertPhoto" Height="24" Width="24" />
+                    </Button>
+
+                    <Button x:Name="BtnAddWebCamPhoto" HorizontalAlignment="Center"  Margin="00,20,0,0" VerticalAlignment="Top" Click="TakeAPic" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
+                                        Width="75" Height="75" ToolTip="Pridaj foto webkamerou">
+                        <materialDesign:PackIcon Kind="AddToPhotos" Height="24" Width="24" />
+                    </Button>
 
                     <materialDesign:PackIcon x:Name="icon_edit_err" Height="24" Width="24" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0, 20, 0, 0"/>
 
-                    <TextBox x:Name="text_edit_err" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0, 20 ,0,0">
+                    <TextBox x:Name="text_edit_err" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="16" Margin="0, 20 ,0,0">
                     </TextBox>
-
-                    <Button x:Name="BtnSave" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" Click="Save" Width="100" Height="40">
-                        Ulozit
-                    </Button>
                 </StackPanel>
 
-                <Button x:Name="BtnAddPhotoPath" HorizontalAlignment="Left" Margin="50 ,400, 0,0" VerticalAlignment="Top" Click="AddPhotoPath" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
-                 Width="75" Height="75" ToolTip="MaterialDesignFloatingActionMiniLightButton">
-                    <materialDesign:PackIcon Kind="InsertPhoto" Height="24" Width="24" />
-                </Button>
+                <DockPanel VerticalAlignment="Top" HorizontalAlignment="Left" Margin="250,450,0,0">
+                    <Button x:Name="BtnSave" Click="Save" Width="100" Height="40">
+                        Ulozit
+                    </Button>
+                    <Button x:Name="BtnCancel" Click="Close" Width="100" Height="40">
+                        Zatvorit
+                    </Button>
+                </DockPanel>
 
-                <Button x:Name="BtnAddWebCamPhoto" HorizontalAlignment="Left"  Margin="50,520,0,0" VerticalAlignment="Top" Click="TakeAPic" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
-                                        Width="75" Height="75" ToolTip="MaterialDesignFloatingActionMiniLightButton">
-                    <materialDesign:PackIcon Kind="AddToPhotos" Height="24" Width="24" />
-                </Button>
-
-                <Image x:Name="image1" HorizontalAlignment="Right" Height="150" VerticalAlignment="Top" Width="150" Margin="0,425, 50,0"/>
+                <Image x:Name="image1" HorizontalAlignment="Left" Height="150" VerticalAlignment="Top" Width="150" Margin="50,320, 00,0"/>
             </Grid>
         </Grid>
     </Grid>

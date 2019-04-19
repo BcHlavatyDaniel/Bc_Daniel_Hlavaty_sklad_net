@@ -433,7 +433,8 @@ namespace materialApp
             Button butSellCard = ((DataGridTemplateColumn)dataGrid.Columns[2]).CellTemplate.FindName("btnSellCard", element) as Button;
             Button butPay = ((DataGridTemplateColumn)dataGrid.Columns[2]).CellTemplate.FindName("btnPay", element) as Button;
             Button butRet = ((DataGridTemplateColumn)dataGrid.Columns[2]).CellTemplate.FindName("btnReturn", element) as Button;
-            TextBox text = ((DataGridTemplateColumn)dataGrid.Columns[0]).CellTemplate.FindName("text_Paid", element2) as TextBox;
+            //TextBox text = ((DataGridTemplateColumn)dataGrid.Columns[0]).CellTemplate.FindName("text_Paid", element2) as TextBox;
+            TextBlock text = ((DataGridTemplateColumn)dataGrid.Columns[0]).CellTemplate.FindName("text_Paid", element2) as TextBlock;
             if (id == 0) //stav 0, predat kartou, hotovostou, vratit
             {
                 butSellCard.Width = 70;
@@ -513,7 +514,18 @@ namespace materialApp
 
             dataGrid.Columns[2].Width = 270;
             dataGrid.Columns[1].Width = 200;
-            dataGrid.Columns[0].Width = 150;
+            dataGrid.Columns[0].Width = 200;
+            dataGrid.Columns[3].Width = 80;
+            dataGrid.Columns[4].Width = 150;
+            dataGrid.Columns[5].Width = 100;
+            dataGrid.Columns[6].Width = 100;
+            dataGrid.Columns[7].Width = 400;
+
+        }
+
+        private void Close_Window(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
 
         private void Item_SellCash(object sender, RoutedEventArgs e)

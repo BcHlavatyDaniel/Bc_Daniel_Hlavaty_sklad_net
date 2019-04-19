@@ -465,6 +465,11 @@ namespace materialApp
             }
         }
 
+        private void Close(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
         private void ClearOptions()
         {
             text_edit_err.Text = "Uspesne zmenene";
