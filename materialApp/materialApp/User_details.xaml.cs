@@ -362,7 +362,8 @@ namespace materialApp
             mItemDWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             mItemDWindow.ShowDialog();
 
-            LoadGrid(mDbActions.SearchForItemsByUserkeys(mYear_key, mNumber_key));
+         //   LoadGrid(mDbActions.SearchForItemsByUserkeys(mYear_key, mNumber_key));
+            Name_Cmb.SelectedIndex = 0;
         }
 
         private void SearchItems(object sender, RoutedEventArgs e)
@@ -550,6 +551,7 @@ namespace materialApp
             mDbActions.UpdateSpecificItem(datView.Row.ItemArray[0].ToString(), 6, "True");
             mDbActions.AddLog(datView.Row.ItemArray[0].ToString(), mYear_key + "-" + mNumber_key, 2, "Tovar archivovany");
             LoadGrid(mDbActions.SearchForItemsByUserkeys(mYear_key, mNumber_key));
+
         }
 
         private void Item_Pay(object sender, RoutedEventArgs e)
@@ -795,12 +797,13 @@ namespace materialApp
             };
 
             mDbActions.AddItem(itemStruct);
-            DataSet data = mDbActions.SearchForItemsByUserkeys(mYear_key, mNumber_key);
-            LoadGrid(data);
+           // DataSet data = mDbActions.SearchForItemsByUserkeys(mYear_key, mNumber_key);
+           // LoadGrid(data);
             text_add_err.Text = "Uspesne pridane.";
             text_add_err.Foreground = Brushes.Green;
             icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Done;
             mPhoto_path = "";
+            Name_Cmb.SelectedIndex = 0;
             image1.Source = null;
             text_size.Text = "";
             text_price.Text = "";

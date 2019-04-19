@@ -523,7 +523,7 @@ namespace materialApp
             try
             {
                 MySqlCommand cmd = mSql.CreateCommand();
-                cmd.CommandText = "INSERT INTO item(user_year, user_numbers, name, description, size, price, photo, created_at) VALUES (@user_year, @user_numbers, @name, @description, @size, @price, @photo, @created_at)";
+                cmd.CommandText = "INSERT INTO item(user_year, user_numbers, name, description, size, price, photo) VALUES (@user_year, @user_numbers, @name, @description, @size, @price, @photo)";
                 cmd.Parameters.AddWithValue("@user_year", itemStruct.keyy);
                 cmd.Parameters.AddWithValue("@user_numbers", itemStruct.keyn);
                 cmd.Parameters.AddWithValue("@description", itemStruct.description);
@@ -531,7 +531,7 @@ namespace materialApp
                 cmd.Parameters.AddWithValue("@price", itemStruct.price);
                 cmd.Parameters.AddWithValue("@name", itemStruct.name);
                 cmd.Parameters.AddWithValue("@photo", itemStruct.photo);
-                cmd.Parameters.AddWithValue("@created_at", DateTime.Now);
+              //  cmd.Parameters.AddWithValue("@created_at", DateTime.Now);
                 cmd.ExecuteNonQuery();
             }
             catch(Exception)

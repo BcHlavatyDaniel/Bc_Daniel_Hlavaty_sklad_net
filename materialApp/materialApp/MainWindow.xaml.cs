@@ -250,9 +250,9 @@ namespace materialApp
             mUserDWindow.Owner = this;
             mUserDWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             mUserDWindow.ShowDialog();
+            resetUserCmbs();
             UpdateGrids();
         }
-
 
         ///<summary>
         ///    ------------------------------------    USER_MODAL    ------------------------------------   
@@ -261,6 +261,7 @@ namespace materialApp
         public void ModalUserAddInit(object sender, RoutedEventArgs e)
         {
             DialogHost.IsOpen = true;
+           
         }
 
         public void ModalBack(object sender, RoutedEventArgs e)
@@ -319,6 +320,7 @@ namespace materialApp
             };
 
             mDbActions.AddUser(userStruct);
+            resetUserCmbs();
             text_add_err.Text = "Uspesne pridane.";
             text_add_err.Foreground = System.Windows.Media.Brushes.Green;
             icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Done;
@@ -492,6 +494,7 @@ namespace materialApp
             mUserDWindow.Owner = this;
             mUserDWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             mUserDWindow.ShowDialog();
+            resetItemsCmbs();
             UpdateGrids();
         }
 
@@ -502,6 +505,7 @@ namespace materialApp
             mItemDWindow.Owner = this;
             mItemDWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             mItemDWindow.ShowDialog();
+            resetItemsCmbs();
             UpdateGrids();
         }
 
@@ -535,6 +539,7 @@ namespace materialApp
             mItemDWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             mItemDWindow.ShowDialog();
             picker.Text = "";
+            resetLogCmbs();
             UpdateGrids();
             
         }
@@ -837,6 +842,31 @@ namespace materialApp
             LoadItemsGrid(mDbActions.LoadAllItems(), mDbActions.LoadAllUsers());
             LoadLogGrid(mDbActions.LoadAllLogs());
         }
+
+        public void resetUserCmbs()
+        {
+            Year_numbersSearchCmb.SelectedIndex = 0;
+            FirstNameSearchCmb.SelectedIndex = 0;
+            SecondnameSearchCmb.SelectedIndex = 0;
+            AddressSearchCmb.SelectedIndex = 0;
+            PhoneSearchCmb.SelectedIndex = 0;
+        }
+
+        public void resetItemsCmbs()
+        {
+            Year_numbersItemCmb.SelectedIndex = 0;
+            FirstNameItemCmb.SelectedIndex = 0;
+            SecondNameItemCmb.SelectedIndex = 0;
+            ItemNameCmb.SelectedIndex = 0;
+        }
+
+        public void resetLogCmbs()
+        {
+            Item_idLogCmb.SelectedIndex = 0;
+            Year_numbersLogCmb.SelectedIndex = 0;
+            TypeCmb.SelectedIndex = 0;
+        }
+
 
     }
 }

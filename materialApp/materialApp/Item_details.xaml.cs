@@ -256,7 +256,7 @@ namespace materialApp
             if (mPhotoPath != mLastSuccessStruct.photo)
             {
                 mDbActions.UpdateSpecificItem(mId, 4, mPhotoPath);
-                changeString = "Zmena obrazku z " + mLastSuccessStruct.photo + " na " + mPhotoPath;
+                changeString = "Zmena obrazku.";
                 logType = 3;
                 mDbActions.AddLog(mId, mUserId, logType, changeString);
             }
