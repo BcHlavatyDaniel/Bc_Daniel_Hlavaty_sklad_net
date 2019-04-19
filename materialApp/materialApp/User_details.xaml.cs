@@ -809,6 +809,15 @@ namespace materialApp
             text_price.Text = "";
             text_name.Text = "";
             text_description.Text = "";
+            CloseModalAfterAdd();
+        }
+
+        private async void CloseModalAfterAdd()
+        {
+            await Task.Delay(1000);
+            icon_add_err.Visibility = Visibility.Hidden;
+            text_add_err.Text = "";
+            DialogHost.IsOpen = false;
         }
 
     }

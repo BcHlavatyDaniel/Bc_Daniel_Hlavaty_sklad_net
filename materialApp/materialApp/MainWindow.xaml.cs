@@ -269,8 +269,9 @@ namespace materialApp
             icon_add_err.Visibility = Visibility.Hidden;
             text_add_err.Text = "";
             DialogHost.IsOpen = false;
-            DataSet data = mDbActions.LoadAllUsers();
-            LoadGrid(data);
+            //DataSet data = mDbActions.LoadAllUsers();
+            //LoadGrid(data);
+            resetUserCmbs();
         }
 
 
@@ -328,6 +329,15 @@ namespace materialApp
             text_tel.Text = "";
             text_first_name.Text = "";
             text_second_name.Text = "";
+            CloseModalAfterAdd();                                   
+        }
+
+        private async void CloseModalAfterAdd()
+        {
+            await Task.Delay(1000);
+            icon_add_err.Visibility = Visibility.Hidden;
+            text_add_err.Text = "";
+            DialogHost.IsOpen = false;
         }
 
         private new void PreviewTextInput(object sender, RoutedEventArgs e)
