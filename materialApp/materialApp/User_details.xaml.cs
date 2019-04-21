@@ -25,6 +25,8 @@ using System.Management;
 using System.Drawing.Printing;
 using System.Text.RegularExpressions;
 using System.ComponentModel;
+using System.Net;
+using WinSCP;
 
 namespace materialApp
 {
@@ -106,7 +108,13 @@ namespace materialApp
             PdfDocument pdf = new PdfDocument();
             if (File.Exists("~/../../../imageres/zmluva.pdf"))
                 pdf.LoadFromFile("~/../../../imageres/zmluva.pdf");
-
+            else
+            {
+                WebClient client = new WebClient();
+                client.Credentials = new NetworkCredential("test", "test");
+                client.DownloadFile("ftp://dokelu.kst.fri.uniza.sk" + "/imageres/zmluva.pdf", "~/../../../imageres/zmluva.pdf");
+                pdf.LoadFromFile("~/../../../imageres/zmluva.pdf");
+            }
             PdfPageBase page = pdf.Pages[0];
             PdfFont font = new PdfFont(PdfFontFamily.Courier, 14f);
             PdfFont fontSmall = new PdfFont(PdfFontFamily.Courier, 10f);
@@ -189,7 +197,7 @@ namespace materialApp
                 err = true;
             }
 
-            if (mLastSuccesfulUser.f_name == text_first_name.Text && mLastSuccesfulUser.s_name == text_second_name.Text 
+            if (mLastSuccesfulUser.f_name == text_first_name.Text && mLastSuccesfulUser.s_name == text_second_name.Text
                 && mLastSuccesfulUser.address == text_address.Text && mLastSuccesfulUser.tel == text_tel_number.Text)
             {
                 icon_edit_err.Visibility = Visibility.Hidden;
@@ -323,10 +331,10 @@ namespace materialApp
                 mLastSuccesfulUser.s_name = text_second_name.Text;
                 mLastSuccesfulUser.address = text_address.Text;
                 mLastSuccesfulUser.tel = text_tel_number.Text;
-               
+
                 this.Close();
             }
-            
+
         }
 
         private bool CompareUserStruct(EditUserStruct first, EditUserStruct second)
@@ -357,12 +365,12 @@ namespace materialApp
 
             string userId = mYear_key + "-" + mNumber_key;
 
-            Item_details mItemDWindow = new Item_details(datView.Row.ItemArray[0].ToString(), text_first_name.Text, text_second_name.Text, userId,  mViewer, mCapture); 
+            Item_details mItemDWindow = new Item_details(datView.Row.ItemArray[0].ToString(), text_first_name.Text, text_second_name.Text, userId, mViewer, mCapture);
             mItemDWindow.Owner = this;
             mItemDWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             mItemDWindow.ShowDialog();
 
-         //   LoadGrid(mDbActions.SearchForItemsByUserkeys(mYear_key, mNumber_key));
+            //   LoadGrid(mDbActions.SearchForItemsByUserkeys(mYear_key, mNumber_key));
             Name_Cmb.SelectedIndex = 0;
         }
 
@@ -372,7 +380,8 @@ namespace materialApp
             if (Name_Cmb.SelectedItem.ToString() == "")
             {
                 data = mDbActions.SearchForItemsByUserkeys(mYear_key, mNumber_key);
-            } else
+            }
+            else
             {
                 data = mDbActions.SearchForItemsByName(Name_Cmb.SelectedItem.ToString());
             }
@@ -396,7 +405,7 @@ namespace materialApp
 
         private void UpdateButtons()
         {
-           // dataGrid.Items.Refresh();
+            // dataGrid.Items.Refresh();
             dataGrid.UpdateLayout();
 
             int counter = 0;
@@ -411,12 +420,12 @@ namespace materialApp
             dataGrid.UpdateLayout();
             DataGridRow gridRow = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromIndex(0);
             if (gridRow == null) return;
-            
+
             dataGrid.Columns[0].DisplayIndex = dataGrid.Columns.Count - 1;
             dataGrid.Columns[2].DisplayIndex = dataGrid.Columns.Count - 1;
             dataGrid.Columns[1].DisplayIndex = dataGrid.Columns.Count - 1;
 
-            DataGridCell cell = CommonActions.GetGridCell(gridRow, 3);  
+            DataGridCell cell = CommonActions.GetGridCell(gridRow, 3);
             DataGridCell cell2 = CommonActions.GetGridCell(gridRow, 4);
             //cmbMargin += cell.ActualWidth;
             Name_Cmb.Margin = new Thickness(cell.ActualWidth, 15, 0, 0);
@@ -445,10 +454,12 @@ namespace materialApp
                 butSellCard.Visibility = Visibility.Visible;
                 butSellCash.Visibility = Visibility.Visible;
                 butRet.Visibility = Visibility.Visible;
+                text.Text = "Skladom";
+                text.Background = Brushes.LightBlue;
             }
 
             else if (id == 1) //stav 1 predane kartou  -> vyplatit 
-            { 
+            {
                 butSellCard.Visibility = Visibility.Collapsed;
                 butSellCash.Visibility = Visibility.Collapsed;
                 butRet.Visibility = Visibility.Collapsed;
@@ -492,7 +503,8 @@ namespace materialApp
                 text.Text = "Vyplatene Karta";
                 text.Background = Brushes.Green;
                 text.Visibility = Visibility.Visible;
-            } else if (id == 5) //vyplatene cash
+            }
+            else if (id == 5) //vyplatene cash
             {
                 butSellCash.Visibility = Visibility.Collapsed;
                 butSellCard.Visibility = Visibility.Collapsed;
@@ -501,7 +513,8 @@ namespace materialApp
                 text.Text = "Vyplatene Hotovost";
                 text.Background = Brushes.Yellow;
                 text.Visibility = Visibility.Visible;
-            } else if (id == 6)
+            }
+            else if (id == 6)
             {
                 butSellCash.Visibility = Visibility.Collapsed;
                 butSellCard.Visibility = Visibility.Collapsed;
@@ -604,7 +617,7 @@ namespace materialApp
             gridData.Tables[0].Columns.Remove("photo");
             gridData.Tables[0].Columns.Remove("user_year");
             gridData.Tables[0].Columns.Remove("user_numbers");
- 
+
             int count = gridData.Tables[0].Rows.Count;
             if (!mArchived)
             {
@@ -676,7 +689,7 @@ namespace materialApp
                         }
                         else
                         {
-                            if (dotCounter > 0 || i == 0 || i == box.Text.Length-1) box.Text = box.Text.Remove(i, 1);
+                            if (dotCounter > 0 || i == 0 || i == box.Text.Length - 1) box.Text = box.Text.Remove(i, 1);
                             dotCounter++;
                         }
                     }
@@ -705,25 +718,55 @@ namespace materialApp
         {
 
             mViewer.Image = mCapture.QueryFrame(); //TO DO if throws err
-            mViewer.Image.Save("webImage0.png"); 
-            DirectoryInfo di = new DirectoryInfo("~/../../../imageres/");
-            FileInfo[] currFiles = di.GetFiles("*.png");
+            mViewer.Image.Save("webImage0.png");
+            //find available name
 
+            SessionOptions sesOptions = new SessionOptions
+            {
+                Protocol = Protocol.Ftp,
+                HostName = "dokelu.kst.fri.uniza.sk",
+                UserName = "test",
+                Password = "test",
+            };
+            Session ses = new Session();
+            ses.Open(sesOptions);
+
+            //if file exists, until it does not. choose that name.
             string imgName = "webImage0.png";
             int id = 0;
-            while (File.Exists("~/../../../imageres/" + imgName))
+            while (ses.FileExists(imgName))
             {
                 imgName = new String(imgName.Where(c => c != '-' && (c < '0' || c > '9')).ToArray());
                 id++;
                 imgName = imgName.Insert(8, id.ToString());
             }
-            
             string getImage = "webImage0.png";
-            
             string saveImage = "~/../../../imageres/" + imgName;
+            if (File.Exists(saveImage))
+            {
+                File.Delete(saveImage);
+            }
             File.Copy(getImage, saveImage);
-            mPhoto_path = "C://Users/Daniel/source/repos/materialApp/materialApp/imageres/" + imgName;   //TO DO this directory path to config
+
+            mPhoto_path = System.IO.Path.GetFullPath("../../imageres/" + imgName);
             image1.Source = new BitmapImage(new Uri(mPhoto_path, UriKind.RelativeOrAbsolute));
+            /* DirectoryInfo di = new DirectoryInfo("~/../../../imageres/");
+             FileInfo[] currFiles = di.GetFiles("*.png");
+
+             string imgName = "webImage0.png";
+             int id = 0;
+             while (File.Exists("~/../../../imageres/" + imgName))
+             {
+                 imgName = new String(imgName.Where(c => c != '-' && (c < '0' || c > '9')).ToArray());
+                 id++;
+                 imgName = imgName.Insert(8, id.ToString());
+             }
+
+             string getImage = "webImage0.png";
+
+             string saveImage = "~/../../../imageres/" + imgName;
+             File.Copy(getImage, saveImage);
+             mPhoto_path = "C://Users/Daniel/source/repos/materialApp/materialApp/imageres/" + imgName;   //TO DO this directory path to config */
 
             /*        System.Windows.Forms.FolderBrowserDialog filedlg = new System.Windows.Forms.FolderBrowserDialog();
                     System.Windows.Forms.DialogResult result = filedlg.ShowDialog();
@@ -796,6 +839,19 @@ namespace materialApp
             }
 
             if (err) return;
+            //TO DO Cut imagename from imagePath, store only that, + upload it
+            Ftp_Upload(mPhoto_path); //TO DO if not empty
+            string[] split = mPhoto_path.Split('/');
+            string fileName;
+            if (split.Length == 1)
+            {
+                split = mPhoto_path.Split('\\');
+                fileName = split[split.Length - 1];
+            }
+            else
+            {
+                fileName = split[split.Length - 1];
+            }
 
             EditItemStruct itemStruct = new EditItemStruct
             {
@@ -805,12 +861,10 @@ namespace materialApp
                 description = text_description.Text,
                 price = text_price.Text,
                 size = text_size.Text,
-                photo = mPhoto_path
+                photo = fileName,
             };
 
             mDbActions.AddItem(itemStruct);
-           // DataSet data = mDbActions.SearchForItemsByUserkeys(mYear_key, mNumber_key);
-           // LoadGrid(data);
             text_add_err.Text = "Uspesne pridane.";
             text_add_err.Foreground = Brushes.Green;
             icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Done;
@@ -832,9 +886,27 @@ namespace materialApp
             DialogHost.IsOpen = false;
         }
 
+        private void Ftp_Upload(string path)
+        {
+            using (WebClient client = new WebClient())
+            {
+                client.Credentials = new NetworkCredential("test", "test");
+                string[] split = path.Split('/');
+                string fileName;
+                if (split.Length == 1)
+                {
+                    split = path.Split('\\');
+                    fileName = split[split.Length - 1];
+                }
+                else
+                {
+                    fileName = split[split.Length - 1];
+                }
+
+                client.UploadFile("ftp://dokelu.kst.fri.uniza.sk/" + fileName, path);
+            }
+        }
     }
-
-
     }
 
 /*  private void Item_Description_Open(object sender, RoutedEventArgs e)

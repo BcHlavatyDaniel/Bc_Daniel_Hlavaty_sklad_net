@@ -12,7 +12,6 @@
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
         WindowState="Maximized"
-        ResizeMode="NoResize"
         Title="Sklad">
     <!-- Height="1000" Width="1200"-->
     <Window.Resources>
@@ -155,6 +154,12 @@
                         <Button x:Name="btnAddUser" Click="ModalUserAddInit" Margin="50,0,0,0" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
                                     Width="75" Height="75" ToolTip="Pridat">
                             <materialDesign:PackIcon Kind="AddCircleOutline" Height="50" Width="50" />
+                        </Button>
+                        <Button x:Name="btnFtpDownload" Click="Ftp_Download" Height="40" Width="100">
+                            Download
+                        </Button>
+                        <Button x:Name="btnFtpUpload" Click="Ftp_Upload" Height="40" Width="100">
+                            Upload
                         </Button>
                         
                     </DockPanel>

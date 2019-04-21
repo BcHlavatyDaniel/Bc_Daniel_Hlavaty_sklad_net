@@ -18,6 +18,8 @@ using Emgu.CV;
 using Emgu.CV.UI;
 using Emgu.CV.Structure;
 using System.IO;
+using System.Net;
+using WinSCP;
 namespace materialApp
 {
     /// <summary>
@@ -96,8 +98,15 @@ namespace materialApp
 
             mCurrState = type;
 
-            image1.Source = new BitmapImage(new Uri(row["photo"].ToString(), UriKind.RelativeOrAbsolute));
+            //if file does not exist locally, download it
             mPhotoPath = row["photo"].ToString();
+            if (!File.Exists("~/../../../imageres/" + mPhotoPath))
+            {
+                Ftp_Download(mPhotoPath);
+            }
+
+            string uri = System.IO.Path.GetFullPath("../../imageres/" + mPhotoPath);
+            image1.Source = new BitmapImage(new Uri(uri, UriKind.RelativeOrAbsolute));
 
             mLastSuccessStruct = new EditItemStruct
             {
@@ -113,26 +122,55 @@ namespace materialApp
         {
             mViewer.Image = mCapture.QueryFrame(); //TO DO if throws err
             mViewer.Image.Save("webImage0.png"); // -> odtialto ho skopcit do imageres, nazov +id
-            DirectoryInfo di = new DirectoryInfo("~/../../../imageres/");
-            FileInfo[] currFiles = di.GetFiles("*.png");
+            //find available name
 
+            SessionOptions sesOptions = new SessionOptions
+            {
+                Protocol = Protocol.Ftp,
+                HostName = "dokelu.kst.fri.uniza.sk",
+                UserName = "test",
+                Password = "test",
+            };
+            Session ses = new Session();
+            ses.Open(sesOptions);
+
+            //if file exists, until it does not. choose that name.
             string imgName = "webImage0.png";
             int id = 0;
-            while (File.Exists("~/../../../imageres/" + imgName))
+            while(ses.FileExists(imgName))
             {
                 imgName = new String(imgName.Where(c => c != '-' && (c < '0' || c > '9')).ToArray());
                 id++;
                 imgName = imgName.Insert(8, id.ToString());
             }
-
             string getImage = "webImage0.png";
-
             string saveImage = "~/../../../imageres/" + imgName;
+            if (File.Exists(saveImage))
+            {
+                File.Delete(saveImage);
+            }
             File.Copy(getImage, saveImage);
-            //photo_path = "/imageres/" +imgName;
-            mPhotoPath = "C://Users/Daniel/source/repos/materialApp/materialApp/imageres/" + imgName;   //TO DO this directory path to config
-                                                                                                        // image1.Source = new BitmapImage(new Uri(photo_path, UriKind.RelativeOrAbsolute));
+
+            mPhotoPath = System.IO.Path.GetFullPath("../../imageres/" + mPhotoPath);
             image1.Source = new BitmapImage(new Uri(mPhotoPath, UriKind.RelativeOrAbsolute));
+            /*  DirectoryInfo di = new DirectoryInfo("~/../../../imageres/");
+              FileInfo[] currFiles = di.GetFiles("*.png");
+
+              string imgName = "webImage0.png";
+              int id = 0;
+              while (File.Exists("~/../../../imageres/" + imgName))
+              {
+                  imgName = new String(imgName.Where(c => c != '-' && (c < '0' || c > '9')).ToArray());
+                  id++;
+                  imgName = imgName.Insert(8, id.ToString());
+              }
+
+              string getImage = "webImage0.png";
+
+              string saveImage = "~/../../../imageres/" + imgName;
+              File.Copy(getImage, saveImage);
+              mPhotoPath = "C://Users/Daniel/source/repos/materialApp/materialApp/imageres/" + imgName;   //TO DO this directory path to config
+              */                                                                                            // image1.Source = new BitmapImage(new Uri(photo_path, UriKind.RelativeOrAbsolute));
         }
 
         private void AddPhotoPath(object sender, RoutedEventArgs s)
@@ -255,7 +293,21 @@ namespace materialApp
             }
             if (mPhotoPath != mLastSuccessStruct.photo)
             {
-                mDbActions.UpdateSpecificItem(mId, 4, mPhotoPath);
+                //photoPath to ftp, + fpt link to photoPath 
+                Ftp_Upload(mPhotoPath);
+                string[] split = mPhotoPath.Split('/');
+                string fileName;
+                if (split.Length == 1)
+                {
+                    split = mPhotoPath.Split('\\');
+                    fileName = split[split.Length - 1];
+                }
+                else
+                {
+                    fileName = split[split.Length - 1];
+                }
+
+                mDbActions.UpdateSpecificItem(mId, 4, fileName);
                 changeString = "Zmena obrazku.";
                 logType = 3;
                 mDbActions.AddLog(mId, mUserId, logType, changeString);
@@ -477,6 +529,35 @@ namespace materialApp
             icon_edit_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Done;
         }
 
+        private void Ftp_Upload(string path)
+        {
+            using (WebClient client = new WebClient())
+            {
+                client.Credentials = new NetworkCredential("test", "test");
+                string[] split = path.Split('/');
+                string fileName;
+                if (split.Length == 1)
+                {
+                    split = path.Split('\\');
+                    fileName = split[split.Length - 1];
+                }
+                else
+                {
+                    fileName = split[split.Length - 1];
+                }
+                
+                client.UploadFile("ftp://dokelu.kst.fri.uniza.sk/" + fileName, path);
+            }
+        }
+
+        private void Ftp_Download(string imgName)
+        {
+            WebClient client = new WebClient();
+            client.Credentials = new NetworkCredential("test", "test");
+            //string[] split = path.Split('/');
+            //string fileName = split[split.Length - 1];
+            client.DownloadFile("ftp://dokelu.kst.fri.uniza.sk/" + imgName, "~/../../../imageres/" + imgName);
+        }
 
         private bool CompareItemStruct(EditItemStruct first, EditItemStruct second)
         {

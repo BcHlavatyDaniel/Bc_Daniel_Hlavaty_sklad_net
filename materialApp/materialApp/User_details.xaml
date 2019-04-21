@@ -12,11 +12,11 @@
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
         ResizeMode="NoResize"
-        WindowState="Maximized"
         Closing="Window_Closing"
-        
+        WindowState="Maximized"
         Title="Detail uzivatela">
     <Grid Background="WhiteSmoke">
+        <!--  WindowState="Maximized" -->
         <materialDesign:DialogHost x:Name="DialogHost" IsOpen="{Binding IsDialogOpen}">
             <materialDesign:DialogHost.DialogContent>
                 <Grid Margin="20">
@@ -84,9 +84,8 @@
                 <Grid x:Name="HideGrid">
                     <StackPanel VerticalAlignment="Top" HorizontalAlignment="Center">
                         <DockPanel VerticalAlignment="Top" HorizontalAlignment="Center" Width="1200">
-                            <TextBox  x:Name="text_user_id" FontSize="16" Width="100" HorizontalAlignment="Left" IsReadOnly="True" Margin="30, 0 ,0, 0" materialDesign:HintAssist.Hint="Id" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
-                            </TextBox>
-                            <TextBox  x:Name="text_first_name" FontSize="16" Width="200"  HorizontalAlignment="Center" Margin="200, 0 ,0, 0" materialDesign:HintAssist.Hint="Prve meno" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                            <TextBlock FontSize="16" HorizontalAlignment="Left" Margin="100,40,0,0" Width="100" Text="ID:"></TextBlock>
+                            <TextBox  x:Name="text_first_name" FontSize="16" Width="200"  HorizontalAlignment="Center" Margin="100, 0 ,0, 0" materialDesign:HintAssist.Hint="Prve meno" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
                             </TextBox>
                             <TextBox  x:Name="text_second_name"  FontSize="16"  Width="200" HorizontalAlignment="Center" Margin="150, 0 ,0, 0" materialDesign:HintAssist.Hint="Druhe meno" Style="{StaticResource MaterialDesignFloatingHintTextBox}" >
                             </TextBox>
@@ -98,10 +97,13 @@
                             </StackPanel>
                         </DockPanel>
                         <DockPanel VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,10,0,0" Width="1200">
-                            <TextBox x:Name="text_address"  HorizontalAlignment="Left" Width="300" FontSize="16"  Margin="130, 0 ,0, 0" materialDesign:HintAssist.Hint="Adresa" Style="{StaticResource MaterialDesignFloatingHintTextBox}" >
+                            <TextBlock  x:Name="text_user_id" FontSize="16" Width="100" HorizontalAlignment="Left" Margin="100, 0 ,0, 0">
+                            </TextBlock>
+                            
+                            <TextBox x:Name="text_address"  HorizontalAlignment="Center" Width="200" FontSize="16"  Margin="100, 0 ,0, 0" materialDesign:HintAssist.Hint="Adresa" Style="{StaticResource MaterialDesignFloatingHintTextBox}" >
                             </TextBox>
 
-                            <TextBox TextChanged="PreviewTextInput"  HorizontalAlignment="Center" Width="200" FontSize="16" x:Name="text_tel_number"  Margin="100, 0 ,0, 0" materialDesign:HintAssist.Hint="Tel. cislo" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                            <TextBox TextChanged="PreviewTextInput"  HorizontalAlignment="Center" Width="200" FontSize="16" x:Name="text_tel_number"  Margin="150, 0 ,0, 0" materialDesign:HintAssist.Hint="Tel. cislo" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
                             </TextBox>
                             
                             <Button x:Name="BtnSave" HorizontalAlignment="Right" Margin="00,0,100,0" VerticalAlignment="Center" Click="Save" Width="100" Height="40">
@@ -110,39 +112,35 @@
                         </DockPanel> 
                     </StackPanel>
 
-                    <DockPanel VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,120,0,0" Width="1200">
+                    <DockPanel VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,125,0,0" Width="1200">
                         <Border BorderThickness="0.5" BorderBrush="Black">
                         </Border>
                     </DockPanel>
 
-                    <StackPanel VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,130,0,0">
+                    <StackPanel VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,150,0,0">
                         <TextBlock TextAlignment="Center" FontSize="52" Style="{StaticResource MaterialDesignHeadlineTextBlock}" Text="Zoznam Tovaru"></TextBlock>
                     </StackPanel>
+                    
+                    <DockPanel VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,30,30">
+                        
+                        <CheckBox x:Name="ArchiveBox" Checked="Show_Archived" Unchecked="Dont_show_Archived" Margin="0,0,15,0" FontSize="16" VerticalAlignment="Center" >Archivovane</CheckBox>
 
-                    <StackPanel HorizontalAlignment="Right" Margin="0, 350, 50,0" VerticalAlignment="Top">
-               <!--         <Button Name="btnPrint" Content="Tlac" Click="Print" Width="100" Height="40"/>
-                        <Button x:Name="BtnAdd" Click="ModalItemAddInit" Width="100" Height="40">
-                            Pridaj
-                        </Button> -->
                         <Button x:Name="btnPrint" Click="Print" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
                                     Width="75" Height="75" ToolTip="Tlacit">
                             <materialDesign:PackIcon Kind="Printer" Height="50" Width="50" />
                         </Button>
-                        <Button x:Name="btnAdd" Click="ModalItemAddInit" Margin="0,20,0,0" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
+                        <Button x:Name="btnAdd" Click="ModalItemAddInit" Margin="10,0,0,0" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
                                     Width="75" Height="75" ToolTip="Pridat">
                             <materialDesign:PackIcon Kind="AddCircleOutline" Height="50" Width="50" />
                         </Button>
-                    </StackPanel>
+                        <Button x:Name="BtnClose" Click="Close_Window" Margin="10,0,0,0" Width="100" Height="40">
+                            Zatvorit
+                        </Button>
+                    </DockPanel>
+                    <Grid VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,220,0,120">
+                        <ComboBox x:Name="Name_Cmb" SelectionChanged="SearchItems" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,30,0,0" Width="80"/>
 
-                    <Button x:Name="BtnClose" Click="Close_Window" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,30,50" Width="100" Height="40">
-                        Zatvorit
-                    </Button>
-
-                    <Grid VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,280,0,0">
-                        <CheckBox x:Name="ArchiveBox"  HorizontalAlignment="Center" Checked="Show_Archived" Unchecked="Dont_show_Archived" Margin="0,15,0,0" VerticalAlignment="Top" >Archivovane</CheckBox>
-                        <ComboBox x:Name="Name_Cmb" SelectionChanged="SearchItems" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,15,0,0" Width="80"/>
-
-                        <DataGrid x:Name="dataGrid" TextBlock.FontSize="16" TextBlock.TextAlignment="Center" VirtualizingPanel.IsVirtualizing="False" HorizontalAlignment="Center" CanUserSortColumns="False" Loaded="MkayUpdate" CanUserReorderColumns="False" Background="#E1F5FE" Margin="0 ,50 ,0,50" IsReadOnly="True" VerticalAlignment="Top" Grid.ColumnSpan="2">
+                        <DataGrid x:Name="dataGrid" TextBlock.FontSize="16" TextBlock.TextAlignment="Center" VirtualizingPanel.IsVirtualizing="False" HorizontalAlignment="Center" CanUserSortColumns="False" Loaded="MkayUpdate" CanUserReorderColumns="False" Background="#E1F5FE" Margin="0 ,50 ,0,0" IsReadOnly="True" VerticalAlignment="Top" Grid.ColumnSpan="2">
                             <!--MouseDoubleClick="Item_Details_Open"-->
                             <DataGrid.Resources>
                                 <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
