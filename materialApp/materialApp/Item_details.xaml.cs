@@ -100,13 +100,16 @@ namespace materialApp
 
             //if file does not exist locally, download it
             mPhotoPath = row["photo"].ToString();
-            if (!File.Exists("~/../../../imageres/" + mPhotoPath))
+            if (mPhotoPath != "")
             {
-                Ftp_Download(mPhotoPath);
+                if (!File.Exists("~/../../../imageres/" + mPhotoPath))
+                {
+                    Ftp_Download(mPhotoPath);
+                }
+                string uri = System.IO.Path.GetFullPath("../../imageres/" + mPhotoPath);
+                image1.Source = new BitmapImage(new Uri(uri, UriKind.RelativeOrAbsolute));
             }
 
-            string uri = System.IO.Path.GetFullPath("../../imageres/" + mPhotoPath);
-            image1.Source = new BitmapImage(new Uri(uri, UriKind.RelativeOrAbsolute));
 
             mLastSuccessStruct = new EditItemStruct
             {
@@ -151,7 +154,7 @@ namespace materialApp
             }
             File.Copy(getImage, saveImage);
 
-            mPhotoPath = System.IO.Path.GetFullPath("../../imageres/" + mPhotoPath);
+            mPhotoPath = System.IO.Path.GetFullPath("../../imageres/" + imgName);
             image1.Source = new BitmapImage(new Uri(mPhotoPath, UriKind.RelativeOrAbsolute));
             /*  DirectoryInfo di = new DirectoryInfo("~/../../../imageres/");
               FileInfo[] currFiles = di.GetFiles("*.png");

@@ -875,6 +875,7 @@ namespace materialApp
             text_price.Text = "";
             text_name.Text = "";
             text_description.Text = "";
+            LoadGrid(mDbActions.SearchForItemsByUserkeys(mYear_key, mNumber_key));
             CloseModalAfterAdd();
         }
 
@@ -888,22 +889,25 @@ namespace materialApp
 
         private void Ftp_Upload(string path)
         {
-            using (WebClient client = new WebClient())
+            if (path != "")
             {
-                client.Credentials = new NetworkCredential("test", "test");
-                string[] split = path.Split('/');
-                string fileName;
-                if (split.Length == 1)
+                using (WebClient client = new WebClient())
                 {
-                    split = path.Split('\\');
-                    fileName = split[split.Length - 1];
-                }
-                else
-                {
-                    fileName = split[split.Length - 1];
-                }
+                    client.Credentials = new NetworkCredential("test", "test");
+                    string[] split = path.Split('/');
+                    string fileName;
+                    if (split.Length == 1)
+                    {
+                        split = path.Split('\\');
+                        fileName = split[split.Length - 1];
+                    }
+                    else
+                    {
+                        fileName = split[split.Length - 1];
+                    }
 
-                client.UploadFile("ftp://dokelu.kst.fri.uniza.sk/" + fileName, path);
+                    client.UploadFile("ftp://dokelu.kst.fri.uniza.sk/" + fileName, path);
+                }
             }
         }
     }

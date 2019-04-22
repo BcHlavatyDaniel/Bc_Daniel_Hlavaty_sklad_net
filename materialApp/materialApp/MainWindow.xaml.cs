@@ -836,23 +836,6 @@ namespace materialApp
             }
         }
 
-        private void Ftp_Download(object sender, RoutedEventArgs e)
-        {
-            WebClient client = new WebClient();
-            client.Credentials = new NetworkCredential("test", "test");
-            client.DownloadFile("ftp://dokelu.kst.fri.uniza.sk" + "/imageres/muaha.png", "~/../../../imageres/muaha.png");
-        }
-
-        private void Ftp_Upload(object sender, RoutedEventArgs e)
-        {
-            using (WebClient client = new WebClient())
-            {
-                client.Credentials = new NetworkCredential("test", "test");
-                // client.UploadFile("ftp://dokelu.kst.fri.uniza.sk", WebRequestMethods.Ftp.UploadFile, "~/../../../imageres/zmluva.pdf");
-                client.UploadFile("ftp://dokelu.kst.fri.uniza.sk" + "/imageres/zmluva.pdf", "~/../../../imageres/zmluva.pdf");
-            }
-        }
-
 
         private void updateTooltips()
         {

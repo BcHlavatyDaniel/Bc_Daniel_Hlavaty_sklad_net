@@ -155,13 +155,7 @@
                                     Width="75" Height="75" ToolTip="Pridat">
                             <materialDesign:PackIcon Kind="AddCircleOutline" Height="50" Width="50" />
                         </Button>
-                        <Button x:Name="btnFtpDownload" Click="Ftp_Download" Height="40" Width="100">
-                            Download
-                        </Button>
-                        <Button x:Name="btnFtpUpload" Click="Ftp_Upload" Height="40" Width="100">
-                            Upload
-                        </Button>
-                        
+
                     </DockPanel>
                     <Grid Margin="0,85,0,0">
                     <DockPanel>
