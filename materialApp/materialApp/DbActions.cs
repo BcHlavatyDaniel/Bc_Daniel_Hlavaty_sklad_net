@@ -16,7 +16,8 @@ namespace materialApp
 
         public DbActions()
         {
-            connMainStr = "Server=127.0.0.1; port = 3306; Database=wpfdata;Uid=root;Convert Zero Datetime=True";
+            //connMainStr = "Server=127.0.0.1; port = 3306; Database=wpfdata;Uid=root;Convert Zero Datetime=True";
+            connMainStr = "Server=dokelu.kst.fri.uniza.sk; port = 3306; Database=wpfdata; Uid=root; password=root; Convert Zero Datetime=True";
         }
         /// <summary>
         ///         USER

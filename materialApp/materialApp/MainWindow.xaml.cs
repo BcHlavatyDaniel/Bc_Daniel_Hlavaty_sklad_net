@@ -69,11 +69,6 @@ namespace materialApp
             logGrid.Visibility = Visibility.Collapsed;
             icon_add_err.Visibility = Visibility.Hidden;
 
-            FirstNameSearchCmb.Items.Add("");
-            SecondnameSearchCmb.Items.Add("");
-            Year_numbersSearchCmb.Items.Add("");
-            AddressSearchCmb.Items.Add("");
-            PhoneSearchCmb.Items.Add("");
             FirstNameItemCmb.Items.Add("");
             SecondNameItemCmb.Items.Add("");
             Year_numbersItemCmb.Items.Add("");
@@ -99,7 +94,7 @@ namespace materialApp
                     TypeCmb.Items.Add(row["typ zmeny"].ToString());
             }
 
-            foreach (DataRow row in dataTable.Rows)
+         /*   foreach (DataRow row in dataTable.Rows)
             {
                 if (!FirstNameSearchCmb.Items.Contains(row["Prve meno"].ToString()))
                     FirstNameSearchCmb.Items.Add(row["Prve meno"].ToString());
@@ -117,7 +112,7 @@ namespace materialApp
                     AddressSearchCmb.Items.Add(row["Adresa"].ToString());
                 if (!PhoneSearchCmb.Items.Contains(row["Telefon"].ToString()))
                     PhoneSearchCmb.Items.Add(row["Telefon"].ToString());
-            }
+            } */
         }
 
         ///<summary>                                                 
@@ -152,7 +147,45 @@ namespace materialApp
                 UpdateColumnsWidths(0);
             }
             updateTooltips();
+            UpdateCmbox_items(gridData, 0);
          //   dataGrid_CmbPositionUpdate(dataGrid, 0);
+        }
+
+        private void UpdateCmbox_items(DataSet data, int type)  //prolly will have to remove content b4 adding, this way old ones will stay as option
+        {
+            if (type == 0)
+            {
+                if (!FirstNameSearchCmb.Items.Contains(""))
+                    FirstNameSearchCmb.Items.Add("");
+                if (!SecondnameSearchCmb.Items.Contains(""))
+                    SecondnameSearchCmb.Items.Add("");
+                if (!Year_numbersSearchCmb.Items.Contains(""))
+                    Year_numbersSearchCmb.Items.Add("");
+                if (!AddressSearchCmb.Items.Contains(""))
+                    AddressSearchCmb.Items.Add("");
+                if (!PhoneSearchCmb.Items.Contains(""))
+                    PhoneSearchCmb.Items.Add("");
+
+                foreach (DataRow row in data.Tables[0].Rows)
+                {
+                    if (!FirstNameSearchCmb.Items.Contains(row["Prve meno"].ToString()))
+                        FirstNameSearchCmb.Items.Add(row["Prve meno"].ToString());
+                    if (!FirstNameItemCmb.Items.Contains(row["Prve meno"].ToString()))
+                        FirstNameItemCmb.Items.Add(row["Prve meno"].ToString());
+                    if (!SecondNameItemCmb.Items.Contains(row["Druhe meno"].ToString()))
+                        SecondNameItemCmb.Items.Add(row["Druhe meno"].ToString());
+                    if (!SecondnameSearchCmb.Items.Contains(row["Druhe meno"].ToString()))
+                        SecondnameSearchCmb.Items.Add(row["Druhe meno"].ToString());
+                    if (!Year_numbersSearchCmb.Items.Contains(row["rok-id"].ToString()))
+                        Year_numbersSearchCmb.Items.Add(row["rok-id"].ToString());
+                    if (!Year_numbersItemCmb.Items.Contains(row["rok-id"].ToString()))
+                        Year_numbersItemCmb.Items.Add(row["rok-id"].ToString());
+                    if (!AddressSearchCmb.Items.Contains(row["Adresa"].ToString()))
+                        AddressSearchCmb.Items.Add(row["Adresa"].ToString());
+                    if (!PhoneSearchCmb.Items.Contains(row["Telefon"].ToString()))
+                        PhoneSearchCmb.Items.Add(row["Telefon"].ToString());
+                }
+            }
         }
 
         private void Datagrid_Cmb_Update(object sender, RoutedEventArgs e)
@@ -897,35 +930,36 @@ namespace materialApp
 
         private void UpdateColumnsWidths(int type)
         {
+           // double actWidth = this.ActualWidth - 250;
             if (type == 0)
             {
-                dataGrid.Columns[0].Width = 150;
-                dataGrid.Columns[1].Width = 250;
-                dataGrid.Columns[2].Width = 250;
-                dataGrid.Columns[3].Width = 475;
-                dataGrid.Columns[4].Width = 250;
-                dataGrid.Columns[5].Width = 125;
+                dataGrid.Columns[0].Width = 150; //actWidth / 10; //150;   
+                dataGrid.Columns[1].Width = 250; // actWidth / 6;//250;
+                dataGrid.Columns[2].Width = 250; //actWidth / 6;//250;
+                dataGrid.Columns[3].Width = 475; //actWidth / 3.15;//475;
+                dataGrid.Columns[4].Width = 250; //actWidth / 6;//250;
+                dataGrid.Columns[5].Width = 125; //actWidth / 12;//125;
             }
             else if (type == 1)
             {
-                itemsDataGrid.Columns[0].Width = 200;
-                itemsDataGrid.Columns[1].Width = 75;
-                itemsDataGrid.Columns[2].Width = 150;
-                itemsDataGrid.Columns[3].Width = 150;
-                itemsDataGrid.Columns[4].Width = 75;
-                itemsDataGrid.Columns[5].Width = 150;
-                itemsDataGrid.Columns[6].Width = 100;
-                itemsDataGrid.Columns[7].Width = 100;
-                itemsDataGrid.Columns[8].Width = 500;
+                itemsDataGrid.Columns[0].Width = 200; //actWidth / 7.5; //200;
+                itemsDataGrid.Columns[1].Width = 75; //actWidth / 20; //75;
+                itemsDataGrid.Columns[2].Width = 150; //actWidth / 10; //150;
+                itemsDataGrid.Columns[3].Width = 150; //actWidth / 10; //150;
+                itemsDataGrid.Columns[4].Width = 75; //actWidth / 20; //75;
+                itemsDataGrid.Columns[5].Width = 150; //actWidth / 10; //150;
+                itemsDataGrid.Columns[6].Width = 100; //actWidth / 15;//100;
+                itemsDataGrid.Columns[7].Width = 100; //actWidth / 15;//100;
+                itemsDataGrid.Columns[8].Width = 500; //actWidth / 3; //500;
             }
             else if (type == 2)
             {
-                logDataGrid.Columns[0].Width = 150;
-                logDataGrid.Columns[1].Width = 150;
-                logDataGrid.Columns[2].Width = 150;
-                logDataGrid.Columns[3].Width = 150;
-                logDataGrid.Columns[4].Width = 650;
-                logDataGrid.Columns[5].Width = 250;
+                logDataGrid.Columns[0].Width = 150; //actWidth / 10;//150;
+                logDataGrid.Columns[1].Width = 150; //actWidth / 10;//150;
+                logDataGrid.Columns[2].Width = 150; //actWidth / 10;//150;
+                logDataGrid.Columns[3].Width = 150; //actWidth / 10;//150;
+                logDataGrid.Columns[4].Width = 650; //actWidth / 2.3;//650;
+                logDataGrid.Columns[5].Width = 250; //actWidth / 6;//250;
             }
         }
     }
