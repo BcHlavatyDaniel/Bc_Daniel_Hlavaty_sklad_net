@@ -20,6 +20,8 @@ using Emgu.CV.Structure;
 using System.IO;
 using System.Net;
 using WinSCP;
+using DatabaseProj;
+
 namespace materialApp
 {
     /// <summary>

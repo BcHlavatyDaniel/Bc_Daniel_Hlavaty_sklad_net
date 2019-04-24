@@ -1,0 +1,128 @@
+﻿@model IEnumerable<DatabaseProj.PrehladTable>
+
+@{
+    ViewData["Title"] = "TableView";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Prehlad</h1>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+    <link href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+
+    <div class="container">
+        <input type="text" id="filter" />
+        <div id="content">
+            <table id="datatable" class="table table-hover table-bordered">
+                <thead>
+                    <tr>
+                        <th>id zakaznik</th>
+                        <th>Prve meno</th>
+                        <th>Druhe meno</th>
+                        <th>id tovar</th>
+                        <th>Nazov</th>
+                        <th>Cena</th>
+                        <th>Velkost</th>
+                        <th>stav</th>
+                        <th>foto</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr id="@("but"+item.id_item)">
+                            <td>
+                                @Html.DisplayFor(modelItem => item.id_user)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.f_name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.s_name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.id_item)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.item_name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.price)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.size)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.state)
+                            </td>
+                            <td>
+                                <input type="button" id="@("in"+item.id_item)" onclick="openclose(@item.id_item)" value="Otvor" />
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    var table;
+    $(document).ready(function () {
+        table = $("#datatable").DataTable({
+            info: false,
+            paging: false,
+            "sDom": 'ltipr'
+        });
+    });
+
+    $("#filter").keyup(function () {
+        table.search(this.value).draw();
+    });
+    
+    function format(path) {
+        var image = "<img src='" + path + "'/>" //tu vytvori novy riadok v tabulke, z nacitanou fotkou
+        return "<table style=margin-left:auto;margin-right:auto>" + "<tr>" +
+            "<td>Foto:</td>" +
+            "<td>" + image + "</td>" +
+            "</tr>" +
+            "</table>";
+    }
+
+    function noImage() {
+        return "<table style=margin-left:auto;margin-right:auto>" + "<tr>" +
+            "<td>Foto:</td>" +
+            "<td>" + "bez obrazku" + "</td>" +
+            "</tr>" +
+            "</table>";
+    }
+
+    function openclose(num) {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("LoadImage","Table")', //tu vola prislusny kontroler
+            dataType: 'json',
+            data: {datat: num},
+            success: function (response) {
+                tr = $("#but" + num);
+                row = table.row(tr);
+
+                if (row.child.isShown()) {
+                    $("#in" + num).val('Otvor');
+                    row.child.hide();
+                    tr.removeClass('shown');
+                }
+                else {
+                    $("#in" + num).val('Zatvor');
+                    if (response == "No image") row.child(noImage).show();
+                    else row.child(format(response)).show();
+                    tr.addClass('shown');
+                }
+            },
+        });
+    }
+
+</script>

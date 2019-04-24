@@ -29,6 +29,7 @@ using Emgu.CV.UI;
 using Emgu.CV.Structure;
 using System.IO;
 using System.Net;
+using DatabaseProj;
 
 namespace materialApp
 {
