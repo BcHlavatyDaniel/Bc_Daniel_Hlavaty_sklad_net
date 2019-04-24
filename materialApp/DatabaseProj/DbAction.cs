@@ -677,6 +677,32 @@ namespace DatabaseProj
             return data;
         }
 
+        public int GetLastItemId()
+        {
+            MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);
+            mSql.Open();
+
+            DataSet data;
+            try
+            {
+                MySqlCommand cmd = mSql.CreateCommand();
+                cmd.CommandText = "SELECT * from item ORDER BY id DESC LIMIT 0, 1";
+                MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                data = new DataSet();
+                adapter.Fill(data);
+                return Convert.ToInt32(data.Tables[0].Rows[0]["id"]);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                if (mSql.State == ConnectionState.Open) mSql.Close();
+            }
+
+        }
+
         public void AddLog(string itemId, string userId, int type, string changeText)
         {
             MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);

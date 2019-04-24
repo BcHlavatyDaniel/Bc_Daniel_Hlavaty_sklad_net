@@ -64,7 +64,7 @@ namespace materialApp
             text_user_id.Text = user_id;
             mUserId = user_id;
             mId = id;
-            cmbChangeItemState.Items.Add("Nepredany"); //0
+            cmbChangeItemState.Items.Add("Nepredany"); //0 
             cmbChangeItemState.Items.Add("Predany karta"); //1
             cmbChangeItemState.Items.Add("Predany Hotovost"); //2
             cmbChangeItemState.Items.Add("Vrateny"); //3

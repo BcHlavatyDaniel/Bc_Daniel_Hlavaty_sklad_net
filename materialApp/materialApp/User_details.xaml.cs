@@ -866,6 +866,7 @@ namespace materialApp
             };
 
             mDbActions.AddItem(itemStruct);
+            mDbActions.AddLog(mDbActions.GetLastItemId().ToString(), mYear_key + "-" + mNumber_key, 4, "Tovar pridaný");
             text_add_err.Text = "Uspesne pridane.";
             text_add_err.Foreground = Brushes.Green;
             icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Done;
