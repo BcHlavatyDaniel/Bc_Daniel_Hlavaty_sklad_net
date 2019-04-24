@@ -34,7 +34,13 @@ namespace WebApplication3.Controllers
 
             if (!System.IO.File.Exists(path))
             {
-                ftp_download(name);
+                if (!System.IO.Directory.Exists("wwwroot/resources"))
+                {
+                    System.IO.Directory.CreateDirectory("wwwroot/resources");
+                }
+                if (!(name == null) && !(name == ""))
+                    ftp_download(name);
+                else return new JsonResult("No image");
             }
 
             JsonResult jresult = new JsonResult("resources/" + name);

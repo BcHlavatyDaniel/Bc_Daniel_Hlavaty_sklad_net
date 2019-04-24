@@ -82,12 +82,20 @@
     $("#filter").keyup(function () {
         table.search(this.value).draw();
     });
-
+    
     function format(path) {
-        var image = "<img src='" + path + "'/>"
-        return "<table>" + "<tr>" +
+        var image = "<img src='" + path + "'/>" //tu vytvori novy riadok v tabulke, z nacitanou fotkou
+        return "<table style=margin-left:auto;margin-right:auto>" + "<tr>" +
             "<td>Foto:</td>" +
             "<td>" + image + "</td>" +
+            "</tr>" +
+            "</table>";
+    }
+
+    function noImage() {
+        return "<table style=margin-left:auto;margin-right:auto>" + "<tr>" +
+            "<td>Foto:</td>" +
+            "<td>" + "bez obrazku" + "</td>" +
             "</tr>" +
             "</table>";
     }
@@ -95,7 +103,7 @@
     function openclose(num) {
         $.ajax({
             type: "POST",
-            url: '@Url.Action("LoadImage","Table")',
+            url: '@Url.Action("LoadImage","Table")', //tu vola prislusny kontroler
             dataType: 'json',
             data: {datat: num},
             success: function (response) {
@@ -108,8 +116,9 @@
                     tr.removeClass('shown');
                 }
                 else {
-                    $("#in"+num).val('Zatvor');
-                    row.child(format(response)).show();
+                    $("#in" + num).val('Zatvor');
+                    if (response == "No image") row.child(noImage).show();
+                    else row.child(format(response)).show();
                     tr.addClass('shown');
                 }
             },
