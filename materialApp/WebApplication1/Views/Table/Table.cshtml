@@ -13,7 +13,7 @@
     <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 
     <div class="container">
-        <input type="text" id="filter" />
+        <input type="text" id="filter" style="margin-bottom:20px"/>
         <div id="content">
             <table id="datatable" class="table table-hover table-bordered">
                 <thead>
@@ -75,14 +75,33 @@
         table = $("#datatable").DataTable({
             info: false,
             paging: false,
-            "sDom": 'ltipr'
+            "sDom": 'ltipr',
+            "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                switch (aData[7]) {
+                    case 'Predane karta':
+                        $(nRow).css('background-color', 'limeGreen')
+                        break;
+                    case 'Predane hotovost':
+                        $(nRow).css('background-color', 'lightyellow')
+                        break;
+                    case 'Vratene':
+                        $(nRow).css('background-color', 'lightgrey')
+                        break;
+                    case 'Zaplatene karta':
+                        $(nRow).css('background-color', 'green')
+                        break;
+                    case 'Zaplatene hotovost':
+                        $(nRow).css('background-color', 'yellow')
+                        break;
+                }
+            }
         });
     });
 
     $("#filter").keyup(function () {
         table.search(this.value).draw();
-    });
-    
+    });    
+
     function format(path) {
         var image = "<img src='" + path + "'/>" //tu vytvori novy riadok v tabulke, z nacitanou fotkou
         return "<table style=margin-left:auto;margin-right:auto>" + "<tr>" +
