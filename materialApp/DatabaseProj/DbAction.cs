@@ -1,31 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 using System.Data;
 
-namespace materialApp
+namespace DatabaseProj
 {
-    class DbActions
+
+    public class DbActions
     {
-
-        private string connMainStr;
-        
-
         public DbActions()
         {
-            //connMainStr = "Server=127.0.0.1; port = 3306; Database=wpfdata;Uid=root;Convert Zero Datetime=True";
-            connMainStr = "Server=dokelu.kst.fri.uniza.sk; port = 3306; Database=wpfdata; Uid=root; password=root; Convert Zero Datetime=True";
         }
-        /// <summary>
-        ///         USER
-        /// </summary>
 
         public DataSet LoadAllUsers()
         {
-            MySqlConnection mSql = new MySqlConnection(connMainStr);
+            MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);
             mSql.Open();
             DataSet data;
 
@@ -53,7 +42,7 @@ namespace materialApp
         {
             string year = DateTime.Now.Year.ToString().Substring(2, 2);
 
-            MySqlConnection mSql = new MySqlConnection(connMainStr);
+            MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);
             mSql.Open();
 
             try
@@ -105,7 +94,7 @@ namespace materialApp
 
         public DataSet LoadSpecificUser(string keyy, string keyn)
         {
-            MySqlConnection mSql = new MySqlConnection(connMainStr);
+            MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);
             mSql.Open();
             DataSet data;
 
@@ -133,7 +122,7 @@ namespace materialApp
 
         public void UpdateUser(EditUserStruct userStruct)
         {
-            MySqlConnection mSql = new MySqlConnection(connMainStr);
+            MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);
             mSql.Open();
 
             try
@@ -161,7 +150,7 @@ namespace materialApp
 
         public DataSet SearchForUserNames(EditUserStruct userStruct)
         {
-            MySqlConnection mSql = new MySqlConnection(connMainStr);
+            MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);
             mSql.Open();
             DataSet data;
             int counter = 0;
@@ -228,7 +217,7 @@ namespace materialApp
         ///
         public string LoadSaveSpecificItemDescription(string id, bool val, string desc)
         {
-            MySqlConnection mSql = new MySqlConnection(connMainStr);
+            MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);
             mSql.Open();
 
             string ret = "";
@@ -278,7 +267,7 @@ namespace materialApp
 
         public void UpdateSpecificItem(string id, int type, string newVal)
         {
-            MySqlConnection mSql = new MySqlConnection(connMainStr);
+            MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);
             mSql.Open();
             try
             {
@@ -341,7 +330,7 @@ namespace materialApp
 
         public bool LoadSpecificItemPaidType(string id) //zistit ci ide zo stavu 1 alebo 2
         {
-            MySqlConnection mSql = new MySqlConnection(connMainStr);
+            MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);
             mSql.Open();
             DataSet data;
             bool ret = false;
@@ -373,7 +362,7 @@ namespace materialApp
 
         public DataSet LoadAllItems()
         {
-            MySqlConnection mSql = new MySqlConnection(connMainStr);
+            MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);
             mSql.Open();
             DataSet data;
 
@@ -401,7 +390,7 @@ namespace materialApp
 
         public DataSet SearchForItems(EditUserStruct userStruct, ref DataSet userSet) 
         {
-            MySqlConnection mSql = new MySqlConnection(connMainStr);
+            MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);
             mSql.Open();
             DataSet data = new DataSet();
             int count = 0;
@@ -519,7 +508,7 @@ namespace materialApp
 
         public void AddItem(EditItemStruct itemStruct)
         {
-            MySqlConnection mSql = new MySqlConnection(connMainStr);
+            MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);
             mSql.Open();
             try
             {
@@ -549,7 +538,7 @@ namespace materialApp
 
         public void UpdateItem(EditItemStruct itemStruct)
         {
-            MySqlConnection mSql = new MySqlConnection(connMainStr);
+            MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);
             mSql.Open();
 
             try
@@ -581,7 +570,7 @@ namespace materialApp
 
         public DataSet LoadSpecificItem(string key)
         {
-            MySqlConnection mSql = new MySqlConnection(connMainStr);
+            MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);
             mSql.Open();
             DataSet data;
 
@@ -609,7 +598,7 @@ namespace materialApp
 
         public DataSet SearchForItemsByName(string name)
         {
-            MySqlConnection mSql = new MySqlConnection(connMainStr);
+            MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);
             mSql.Open();
             DataSet data;
 
@@ -636,7 +625,7 @@ namespace materialApp
 
         public DataSet SearchForItemsByUserkeys(string keyy, string keyn)
         {
-            MySqlConnection mSql = new MySqlConnection(connMainStr);
+            MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);
             mSql.Open();
             DataSet data;
 
@@ -664,7 +653,7 @@ namespace materialApp
 
         public DataSet LoadAllLogs()
         {
-            MySqlConnection mSql = new MySqlConnection(connMainStr);
+            MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);
             mSql.Open();
             DataSet data;
 
@@ -690,7 +679,7 @@ namespace materialApp
 
         public void AddLog(string itemId, string userId, int type, string changeText)
         {
-            MySqlConnection mSql = new MySqlConnection(connMainStr);
+            MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);
             mSql.Open();
 
             try
@@ -717,7 +706,7 @@ namespace materialApp
 
         public DataSet SearchForLogs(string item_id, string user_id, string type, DateTime day)
         {
-            MySqlConnection mSql = new MySqlConnection(connMainStr);
+            MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);
             mSql.Open();
             DataSet data;
 
@@ -774,7 +763,7 @@ namespace materialApp
 
         public int GetNumberOfItemsForUser(string year, string numbers)
         {
-            MySqlConnection mSql = new MySqlConnection(connMainStr);
+            MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);
             mSql.Open();
             DataSet data;
 

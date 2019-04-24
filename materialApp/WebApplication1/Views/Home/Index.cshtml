@@ -1,0 +1,22 @@
+﻿@model IEnumerable<DatabaseProj.PrehladTable>
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+
+<link rel="stylesheet" href="~/css/uctystyle.css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+
+<div class="text-center">
+    <!--id="blocik"-->
+    <h1 class="display-1" style="margin-top:400px">Vitajte</h1>
+</div>
+
+<script>
+    $(document).click(function () {
+        window.location.href = '/Table';
+    });
+</script>
