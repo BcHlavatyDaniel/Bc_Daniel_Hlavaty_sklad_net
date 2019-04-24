@@ -490,16 +490,6 @@ namespace materialApp
         private new void PreviewTextInput(object sender, RoutedEventArgs e)
         {
             TextBox box = (TextBox)sender;
-            if (box.Text[0] == '.')
-            {
-                box.Text = box.Text.Remove(0, 1);
-                return;
-            }
-            if (box.Text[box.Text.Length - 1] == '.')
-            {
-                box.Text = box.Text.Remove(box.Text.Length - 1, 1);
-                return;
-            }
 
             int dotCounter = 0;
             if (!CommonActions.IsDouble(box.Text))

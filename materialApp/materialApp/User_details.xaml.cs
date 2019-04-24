@@ -197,7 +197,7 @@ namespace materialApp
             {
                 text_edit_err.Foreground = Brushes.Red;
                 icon_edit_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
-                text_edit_err.Text = "Telefonne cislo musi byt cislo";
+                text_edit_err.Text = "Zly format tel. cisla";
                 err = true;
             }
 
@@ -688,7 +688,7 @@ namespace materialApp
         {
             TextBox box = (TextBox)sender;
             if (box.Text == "") return;
-            if (box.Text[0] == '.')
+       /*     if (box.Text[0] == '.')
             {
                 box.Text = box.Text.Remove(0, 1);
                 return;
@@ -698,7 +698,7 @@ namespace materialApp
                 box.Text = box.Text.Remove(box.Text.Length - 1, 1);
                 return;
             }
-
+            */
             int dotCounter = 0;
             if (!CommonActions.IsDouble(box.Text))
             {

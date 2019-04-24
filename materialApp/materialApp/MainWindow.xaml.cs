@@ -312,6 +312,14 @@ namespace materialApp
                 icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
                 text_add_err.Text = "Dopln tel. cislo";
             }
+            int num;
+            if (!int.TryParse(text_tel.Text, out num))
+            {
+                err = true;
+                text_add_err.Foreground = System.Windows.Media.Brushes.Red;
+                icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
+                text_add_err.Text = "Tel. cislo moc dlhe";
+            }
 
             if (err) return;
 
