@@ -164,18 +164,13 @@
     <Resource Include="License-LGPL.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="imageres\add.png" />
-    <Resource Include="imageres\change.png" />
-    <Resource Include="imageres\database.png" />
-    <Resource Include="imageres\delete.png" />
-    <Resource Include="imageres\profiles.png" />
-    <Resource Include="imageres\unavailable.png" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\DatabaseProj\DatabaseProj.csproj">
       <Project>{e18f8400-846d-41f8-9ee8-d0398b12fccb}</Project>
       <Name>DatabaseProj</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="imageres\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\EMGU.CV.3.4.3.3016\build\EMGU.CV.targets" Condition="Exists('..\packages\EMGU.CV.3.4.3.3016\build\EMGU.CV.targets')" />
