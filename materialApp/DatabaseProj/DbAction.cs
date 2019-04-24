@@ -596,7 +596,7 @@ namespace DatabaseProj
         }
 
 
-        public DataSet SearchForItemsByName(string name)
+        public DataSet SearchForItemsByName(string name, string year, string number)
         {
             MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);
             mSql.Open();
@@ -605,8 +605,10 @@ namespace DatabaseProj
             try
             {
                 MySqlCommand cmd = mSql.CreateCommand();
-                cmd.CommandText = "SELECT * FROM item WHERE name = @name";
+                cmd.CommandText = "SELECT * FROM item WHERE name = @name AND user_year = @year AND user_numbers = @numbers";
                 cmd.Parameters.AddWithValue("@name", name);
+                cmd.Parameters.AddWithValue("@year", year);
+                cmd.Parameters.AddWithValue("@numbers", number);
                 MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
                 data = new DataSet();
                 adapter.Fill(data);

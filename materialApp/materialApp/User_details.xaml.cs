@@ -92,16 +92,19 @@ namespace materialApp
 
             DataSet data = mDbActions.SearchForItemsByUserkeys(mYear_key, mNumber_key);
             LoadGrid(data);
-            DataTable dataTable = data.Tables[0];
+            Name_Cmb.Items.Insert(0, "");
 
-            Name_Cmb.Items.Add("");
-            foreach (DataRow row in dataTable.Rows)
-            {
-                if (!Name_Cmb.Items.Contains(row["Nazov"].ToString()))
-                {
-                    Name_Cmb.Items.Add(row["Nazov"].ToString());
-                }
-            }
+            /*     DataTable dataTable = data.Tables[0];
+
+                 Name_Cmb.Items.Add("");
+
+                 foreach (DataRow row in dataTable.Rows)
+                 {
+                     if (!Name_Cmb.Items.Contains(row["Nazov"].ToString()))
+                     {
+                         Name_Cmb.Items.Add(row["Nazov"].ToString());
+                     }
+                 }*/
         }
 
         private void Print(object sender, RoutedEventArgs e)
@@ -372,7 +375,15 @@ namespace materialApp
             mItemDWindow.ShowDialog();
 
             //   LoadGrid(mDbActions.SearchForItemsByUserkeys(mYear_key, mNumber_key));
-            Name_Cmb.SelectedIndex = 0;
+            if (Name_Cmb.SelectedIndex != 0)
+            {
+                Name_Cmb.SelectedIndex = 0;
+            } else
+            {
+                //remove old name in case it changed
+                LoadGrid(mDbActions.SearchForItemsByUserkeys(mYear_key, mNumber_key));
+            }
+            
         }
 
         private void SearchItems(object sender, RoutedEventArgs e)
@@ -384,7 +395,7 @@ namespace materialApp
             }
             else
             {
-                data = mDbActions.SearchForItemsByName(Name_Cmb.SelectedItem.ToString());
+                data = mDbActions.SearchForItemsByName(Name_Cmb.SelectedItem.ToString(), mYear_key, mNumber_key);
             }
 
             LoadGrid(data);
@@ -656,6 +667,17 @@ namespace materialApp
             gridData.Tables[0].Columns["size"].ColumnName = "Velkost";
             gridData.Tables[0].Columns["price"].ColumnName = "Cena";
             gridData.Tables[0].Columns["description"].ColumnName = "Popis";
+
+        //    Name_Cmb.Items.Clear();
+
+            foreach (DataRow row in gridData.Tables[0].Rows)
+            {
+                if (!Name_Cmb.Items.Contains(row["Nazov"].ToString()))
+                {
+                    Name_Cmb.Items.Add(row["Nazov"].ToString());
+                }
+            }
+
             dataGrid.ItemsSource = gridData.Tables[0].DefaultView;
             dataGrid.Items.Refresh();
             dataGrid.UpdateLayout();

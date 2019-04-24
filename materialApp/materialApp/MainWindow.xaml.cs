@@ -70,50 +70,18 @@ namespace materialApp
             logGrid.Visibility = Visibility.Collapsed;
             icon_add_err.Visibility = Visibility.Hidden;
 
-            FirstNameItemCmb.Items.Add("");
-            SecondNameItemCmb.Items.Add("");
-            Year_numbersItemCmb.Items.Add("");
-            Item_idLogCmb.Items.Add("");
-            Year_numbersLogCmb.Items.Add("");
-            TypeCmb.Items.Add("");
-            DataTable dataTable = data.Tables[0];
-            ItemNameCmb.Items.Add("");
-
-            foreach(DataRow row in itData.Tables[0].Rows)
-            {
-                if (!ItemNameCmb.Items.Contains(row["Nazov"].ToString()))
-                    ItemNameCmb.Items.Add(row["Nazov"].ToString());
-            }
-
-            foreach (DataRow row in logData.Tables[0].Rows)
-            {
-                if (!Year_numbersLogCmb.Items.Contains(row["id uzivatel"].ToString()))
-                    Year_numbersLogCmb.Items.Add(row["id uzivatel"].ToString());
-                if (!Item_idLogCmb.Items.Contains(row["id tovar"].ToString()))
-                    Item_idLogCmb.Items.Add(row["id tovar"].ToString());
-                if (!TypeCmb.Items.Contains(row["typ zmeny"].ToString()))
-                    TypeCmb.Items.Add(row["typ zmeny"].ToString());
-            }
-
-         /*   foreach (DataRow row in dataTable.Rows)
-            {
-                if (!FirstNameSearchCmb.Items.Contains(row["Prve meno"].ToString()))
-                    FirstNameSearchCmb.Items.Add(row["Prve meno"].ToString());
-                if (!FirstNameItemCmb.Items.Contains(row["Prve meno"].ToString()))
-                    FirstNameItemCmb.Items.Add(row["Prve meno"].ToString());
-                if (!SecondNameItemCmb.Items.Contains(row["Druhe meno"].ToString()))
-                    SecondNameItemCmb.Items.Add(row["Druhe meno"].ToString());
-                if (!SecondnameSearchCmb.Items.Contains(row["Druhe meno"].ToString()))
-                    SecondnameSearchCmb.Items.Add(row["Druhe meno"].ToString());
-                if (!Year_numbersSearchCmb.Items.Contains(row["rok-id"].ToString()))
-                    Year_numbersSearchCmb.Items.Add(row["rok-id"].ToString());
-                if (!Year_numbersItemCmb.Items.Contains(row["rok-id"].ToString()))
-                    Year_numbersItemCmb.Items.Add(row["rok-id"].ToString());
-                if (!AddressSearchCmb.Items.Contains(row["Adresa"].ToString()))
-                    AddressSearchCmb.Items.Add(row["Adresa"].ToString());
-                if (!PhoneSearchCmb.Items.Contains(row["Telefon"].ToString()))
-                    PhoneSearchCmb.Items.Add(row["Telefon"].ToString());
-            } */
+            FirstNameItemCmb.Items.Insert(0,"");
+            SecondNameItemCmb.Items.Insert(0,"");
+            Year_numbersItemCmb.Items.Insert(0,"");
+            Item_idLogCmb.Items.Insert(0,"");
+            Year_numbersLogCmb.Items.Insert(0,"");
+            TypeCmb.Items.Insert(0,"");
+            ItemNameCmb.Items.Insert(0,"");
+            FirstNameSearchCmb.Items.Insert(0,"");
+            SecondnameSearchCmb.Items.Insert(0,"");
+            Year_numbersSearchCmb.Items.Insert(0,"");
+            AddressSearchCmb.Items.Insert(0,"");
+            PhoneSearchCmb.Items.Insert(0,"");
         }
 
         ///<summary>                                                 
@@ -154,19 +122,9 @@ namespace materialApp
 
         private void UpdateCmbox_items(DataSet data, int type)  //prolly will have to remove content b4 adding, this way old ones will stay as option
         {
+            
             if (type == 0)
             {
-                if (!FirstNameSearchCmb.Items.Contains(""))
-                    FirstNameSearchCmb.Items.Add("");
-                if (!SecondnameSearchCmb.Items.Contains(""))
-                    SecondnameSearchCmb.Items.Add("");
-                if (!Year_numbersSearchCmb.Items.Contains(""))
-                    Year_numbersSearchCmb.Items.Add("");
-                if (!AddressSearchCmb.Items.Contains(""))
-                    AddressSearchCmb.Items.Add("");
-                if (!PhoneSearchCmb.Items.Contains(""))
-                    PhoneSearchCmb.Items.Add("");
-
                 foreach (DataRow row in data.Tables[0].Rows)
                 {
                     if (!FirstNameSearchCmb.Items.Contains(row["Prve meno"].ToString()))
@@ -185,6 +143,26 @@ namespace materialApp
                         AddressSearchCmb.Items.Add(row["Adresa"].ToString());
                     if (!PhoneSearchCmb.Items.Contains(row["Telefon"].ToString()))
                         PhoneSearchCmb.Items.Add(row["Telefon"].ToString());
+                }
+            }
+            if (type == 1)
+            {
+                foreach (DataRow row in data.Tables[0].Rows)
+                {
+                    if (!ItemNameCmb.Items.Contains(row["Nazov"].ToString()))
+                        ItemNameCmb.Items.Add(row["Nazov"].ToString());
+                }
+            }
+            if (type == 2)
+            {
+                foreach (DataRow row in data.Tables[0].Rows)
+                {
+                    if (!Year_numbersLogCmb.Items.Contains(row["id uzivatel"].ToString()))
+                        Year_numbersLogCmb.Items.Add(row["id uzivatel"].ToString());
+                    if (!Item_idLogCmb.Items.Contains(row["id tovar"].ToString()))
+                        Item_idLogCmb.Items.Add(row["id tovar"].ToString());
+                    if (!TypeCmb.Items.Contains(row["typ zmeny"].ToString()))
+                        TypeCmb.Items.Add(row["typ zmeny"].ToString());
                 }
             }
         }
@@ -346,7 +324,8 @@ namespace materialApp
             };
 
             mDbActions.AddUser(userStruct);
-            ResetCmbs(0);
+            if (!ResetCmbs(0))
+                LoadGrid(mDbActions.LoadAllUsers());
             text_add_err.Text = "Uspesne pridane.";
             text_add_err.Foreground = System.Windows.Media.Brushes.Green;
             icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Done;
@@ -445,6 +424,7 @@ namespace materialApp
             allItems.Tables[0].Columns["rok-id"].SetOrdinal(0);
             allItems.Tables[0].Columns["Prve meno"].SetOrdinal(1);
             allItems.Tables[0].Columns["Druhe meno"].SetOrdinal(2);
+            UpdateCmbox_items(allItems,1);
             itemsDataGrid.ItemsSource = allItems.Tables[0].DefaultView;
             itemsDataGrid.Items.Refresh();
             itemsDataGrid.UpdateLayout();
@@ -530,8 +510,8 @@ namespace materialApp
             mUserDWindow.Owner = this;
             mUserDWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             mUserDWindow.ShowDialog();
-            ResetCmbs(1);
-            UpdateGrids();
+            if(!ResetCmbs(1))
+                UpdateGrids();
         }
 
         private void Item_Open(object sender, RoutedEventArgs e)
@@ -541,8 +521,8 @@ namespace materialApp
             mItemDWindow.Owner = this;
             mItemDWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             mItemDWindow.ShowDialog();
-            ResetCmbs(1);
-            UpdateGrids();
+            if(!ResetCmbs(1))
+                UpdateGrids();
         }
 
         ///<summary>
@@ -559,6 +539,7 @@ namespace materialApp
             data.Tables[0].Columns["type"].ColumnName = "typ zmeny";
             data.Tables[0].Columns["change_text"].ColumnName = "popis zmeny";
 
+            UpdateCmbox_items(data, 2);
             logDataGrid.ItemsSource = data.Tables[0].DefaultView;
             logDataGrid.Items.Refresh();
             logDataGrid.UpdateLayout();
@@ -892,41 +873,80 @@ namespace materialApp
             LoadLogGrid(mDbActions.LoadAllLogs());
         }
 
-        private void ResetCmbs(int type)
+        private bool ResetCmbs(int type)
         {
+            bool changed = false;
             if (type == 0)
             {
                 if (Year_numbersSearchCmb.SelectedIndex != 0)
+                {
+                    changed = true;
                     Year_numbersSearchCmb.SelectedIndex = 0;
+                }
                 if (FirstNameSearchCmb.SelectedIndex != 0)
+                {
+                    changed = true;
                     FirstNameSearchCmb.SelectedIndex = 0;
+                }
                 if (SecondnameSearchCmb.SelectedIndex != 0)
+                {
+                    changed = true;
                     SecondnameSearchCmb.SelectedIndex = 0;
+                }
                 if (AddressSearchCmb.SelectedIndex != 0)
+                {
+                    changed = true;
                     AddressSearchCmb.SelectedIndex = 0;
+                }
                 if (PhoneSearchCmb.SelectedIndex != 0)
+                {
+                    changed = true;
                     PhoneSearchCmb.SelectedIndex = 0;
+                }
             }
             else if (type == 1)
             {
                 if (Year_numbersItemCmb.SelectedIndex != 0)
+                {
+                    changed = true;
                     Year_numbersItemCmb.SelectedIndex = 0;
+                }
                 if (FirstNameItemCmb.SelectedIndex != 0)
+                {
+                    changed = true;
                     FirstNameItemCmb.SelectedIndex = 0;
+                }
                 if (SecondNameItemCmb.SelectedIndex != 0)
+                {
+                    changed = true;
                     SecondNameItemCmb.SelectedIndex = 0;
+                }
                 if (ItemNameCmb.SelectedIndex != 0)
+                {
+                    changed = true;
                     ItemNameCmb.SelectedIndex = 0;
+                }
             }
             else if (type == 2)
             {
                 if (Item_idLogCmb.SelectedIndex != 0)
+                {
+                    changed = true;
                     Item_idLogCmb.SelectedIndex = 0;
+                }
                 if (Year_numbersLogCmb.SelectedIndex != 0)
+                {
+                    changed = true;
                     Year_numbersLogCmb.SelectedIndex = 0;
+                }
                 if (TypeCmb.SelectedIndex != 0)
+                {
+                    changed = true;
                     TypeCmb.SelectedIndex = 0;
+                }
             }
+
+            return changed;
         }
 
         private void UpdateColumnsWidths(int type)
