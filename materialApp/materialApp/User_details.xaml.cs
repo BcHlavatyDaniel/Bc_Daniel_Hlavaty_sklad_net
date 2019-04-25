@@ -94,17 +94,6 @@ namespace materialApp
             LoadGrid(data);
             Name_Cmb.Items.Insert(0, "");
 
-            /*     DataTable dataTable = data.Tables[0];
-
-                 Name_Cmb.Items.Add("");
-
-                 foreach (DataRow row in dataTable.Rows)
-                 {
-                     if (!Name_Cmb.Items.Contains(row["Nazov"].ToString()))
-                     {
-                         Name_Cmb.Items.Add(row["Nazov"].ToString());
-                     }
-                 }*/
         }
 
         private void Print(object sender, RoutedEventArgs e)
@@ -125,13 +114,25 @@ namespace materialApp
 
             DataRowView datView = (DataRowView)dataGrid.SelectedItem;
             page.Canvas.DrawString(text_first_name.Text, font, PdfBrushes.Black, new System.Drawing.PointF(40, 80f));
-            page.Canvas.DrawString(text_second_name.Text, font, PdfBrushes.Black, new System.Drawing.PointF(200, 80f));
-            if (text_address.Text.Length > 30) page.Canvas.DrawString(text_address.Text, fontSmall, PdfBrushes.Black, new System.Drawing.PointF(300, 85f));
+            page.Canvas.DrawString(text_second_name.Text, font, PdfBrushes.Black, new System.Drawing.PointF(160, 80f));
+            if (text_address.Text.Length > 25) page.Canvas.DrawString(text_address.Text, fontSmall, PdfBrushes.Black, new System.Drawing.PointF(300, 85f));
             else page.Canvas.DrawString(text_address.Text, font, PdfBrushes.Black, new System.Drawing.PointF(300, 80f));
-            page.Canvas.DrawString(mYear_key + "-" + mNumber_key, font, PdfBrushes.Black, new System.Drawing.PointF(530, 80f));
+            page.Canvas.DrawString(mYear_key + "-" + mNumber_key, font, PdfBrushes.Black, new System.Drawing.PointF(520, 80f));
             //    page.Canvas.DrawString(datView.Row.ItemArray[0].ToString(), font, PdfBrushes.Black, new System.Drawing.PointF(400, 130f));
-            //     page.Canvas.DrawString(datView.Row.ItemArray[1].ToString(), font, PdfBrushes.Black, new System.Drawing.PointF(220, 150f));
-            //     page.Canvas.DrawString(datView.Row.ItemArray[3].ToString(), font, PdfBrushes.Black, new System.Drawing.PointF(520, 150f));
+            var itemSource = dataGrid.ItemsSource as IEnumerable;
+            double fullPrice = 0;
+            float marginTop = 167f;
+            foreach(var item in dataGrid.ItemsSource)
+            {
+                // DataRowView rowView = (DataRowView)dataGrid.ItemContainerGenerator.ContainerFromItem(item);
+                DataGridRow gridRow = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromItem(item);
+                DataRowView rowView = (DataRowView)gridRow.Item;
+                page.Canvas.DrawString(rowView.Row.ItemArray[1].ToString(), font, PdfBrushes.Black, new System.Drawing.PointF(200, marginTop));
+                page.Canvas.DrawString(rowView.Row.ItemArray[3].ToString(), font, PdfBrushes.Black, new System.Drawing.PointF(520, marginTop));
+                fullPrice += Convert.ToDouble(rowView.Row.ItemArray[3].ToString());
+                marginTop += 23f;
+            }
+            page.Canvas.DrawString(fullPrice.ToString(), font, PdfBrushes.Black, new System.Drawing.PointF(520, 147f));
             page.Canvas.DrawString(DateTime.Now.ToShortDateString(), font, PdfBrushes.Black, new System.Drawing.PointF(300, 795f));
             pdf.SaveToFile("doesitwork.pdf");
 
