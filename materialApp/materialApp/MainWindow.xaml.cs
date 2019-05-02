@@ -22,17 +22,23 @@ namespace materialApp
 	public partial class MainWindow : Window
     {
         bool hamClosed = true;
-        enum mState { Einit_state, Esold_card, Esold_cash, Ereturned, Epaid_card, Epaid_cash, Earchived };
+		private DbActions mDbActions;
+
+		enum mState { Einit_state, Esold_card, Esold_cash, Ereturned, Epaid_card, Epaid_cash, Earchived };
 
         public MainWindow()
         {
             InitializeComponent();
         }
+		protected override void OnInitialized(EventArgs e)
+		{
+			base.OnInitialized(e);
+            mDbActions = new DbActions();
+		}
 		/*
         private void Init()
         {
            
-            mDbActions = new DbActions();
             mCommonActions = new CommonActions();
             DataSet data = mDbActions.LoadAllUsers();
             LoadGrid(data);
@@ -588,7 +594,7 @@ namespace materialApp
         ///</summary>
 
 		*/
-        private void Open_Hamburger(object sender, RoutedEventArgs e)
+		private void Open_Hamburger(object sender, RoutedEventArgs e)
         {
             if (hamClosed)
             {
@@ -604,17 +610,17 @@ namespace materialApp
         }
         private void Users_Open(object sender, RoutedEventArgs e)
         {
-			Content.Content = new UsersWindow();
+			Content.Content = new UsersPage(mDbActions);
         }
 
         private void Items_Open(object sender, RoutedEventArgs e)
         {
-			Content.Content = new ItemsWindow();
+			Content.Content = new ItemsPage(mDbActions);
         }
 
         private void Log_Open(object sender, RoutedEventArgs e)
         {
-			Content.Content = new LogWindow();
+			Content.Content = new LogPage(mDbActions);
         }
 		/*
         ///<summary>

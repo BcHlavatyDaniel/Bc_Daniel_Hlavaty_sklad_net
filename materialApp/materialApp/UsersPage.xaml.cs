@@ -40,9 +40,12 @@ namespace materialApp
 
     public partial class UsersPage : Page
     {
-        public UsersWindow()
+        private DbActions mDbActions;
+
+        public UsersPage(DbActions mDbActions)
         {
             InitializeComponent();
+			this.mDbActions = mDbActions;
         }
         private void Datagrid_Cmb_Update(object sender, RoutedEventArgs e)
 		{ }

@@ -36,9 +36,12 @@ namespace materialApp
 
     public partial class LogPage : Page
     {
-        public LogWindow()
+		private DbActions mDbActions;
+
+        public LogPage(DbActions mDbActions)
         {
             InitializeComponent();
+			this.mDbActions = mDbActions;
         }
         private void Item_Log_Open(object sender, RoutedEventArgs e)//MouseDoubleClick="Item_Log_Open"
 		{ }

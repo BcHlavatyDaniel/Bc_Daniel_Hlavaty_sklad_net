@@ -1,5 +1,6 @@
 ﻿//using Syncfusion.Pdf;
 //using Syncfusion.Pdf.Graphics;
+using DatabaseProj;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -12,10 +13,13 @@ namespace materialApp
 
 	public partial class ItemsPage : Page
 	{
+		
+        private DbActions mDbActions;
 
-		public ItemsWindow()
-		{
-			InitializeComponent();
+        public ItemsPage(DbActions mDbActions)
+        {
+            InitializeComponent();
+			this.mDbActions = mDbActions;
 		}
 
 		private void Item_Open(object sender, RoutedEventArgs e)
