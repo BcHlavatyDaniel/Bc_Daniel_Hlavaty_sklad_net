@@ -133,9 +133,6 @@
                                     Width="75" Height="75" ToolTip="Pridat">
                             <materialDesign:PackIcon Kind="AddCircleOutline" Height="50" Width="50" />
                         </Button>
-                        <Button x:Name="BtnClose" Click="Close_Window" Margin="10,0,0,0" Width="100" Height="40">
-                            Zatvorit
-                        </Button>
                     </DockPanel>
                     <Grid VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,220,0,120">
                         <ComboBox x:Name="Name_Cmb" SelectionChanged="SearchItems" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,30,0,0" Width="80"/>
