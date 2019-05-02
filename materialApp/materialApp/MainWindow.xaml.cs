@@ -1,60 +1,34 @@
 ﻿//using Syncfusion.Pdf;
 //using Syncfusion.Pdf.Graphics;
 using System;
-using Spire.Pdf;
-using Spire.Pdf.Graphics;
-using System.ComponentModel;
-using System.Drawing;
 using System.Windows;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Controls.Primitives;
-using System.Windows.Threading;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Collections;
 using System.Data;
-using MySql.Data.MySqlClient;
 using Emgu.CV;
 using Emgu.CV.UI;
-using Emgu.CV.Structure;
-using System.IO;
-using System.Net;
 using DatabaseProj;
 
 namespace materialApp
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    /// 
+	/// <summary>
+	/// Interaction logic for MainWindow.xaml
+	/// </summary>
+	/// 
 
-    public partial class MainWindow : Window
+	public partial class MainWindow : Window
     {
-        DbActions mDbActions;
-        CommonActions mCommonActions;
         bool hamClosed = true;
-        List<int> mVisibleList = new List<int>();
-        List<int> mButtonList;
-        VideoCapture mCapture = new VideoCapture();
-        ImageViewer mViewer = new ImageViewer();
         enum mState { Einit_state, Esold_card, Esold_cash, Ereturned, Epaid_card, Epaid_cash, Earchived };
 
         public MainWindow()
         {
             InitializeComponent();
-            Init();
         }
-
+		/*
         private void Init()
         {
            
@@ -439,11 +413,11 @@ namespace materialApp
             if (itemsDataGrid.Columns.Count > 4)
             {
                 UpdateColumnsWidths(1);
-                /*  itemsDataGrid.Columns[1].MaxWidth = 150;
-                  itemsDataGrid.Columns[2].MaxWidth = 150;
-                  itemsDataGrid.Columns[4].MaxWidth = 150;
-                  itemsDataGrid.Columns[5].MaxWidth = 150;
-                  itemsDataGrid.Columns[6].MaxWidth = 150; */
+                  //itemsDataGrid.Columns[1].MaxWidth = 150;
+                  //itemsDataGrid.Columns[2].MaxWidth = 150;
+                  //itemsDataGrid.Columns[4].MaxWidth = 150;
+                  //itemsDataGrid.Columns[5].MaxWidth = 150;
+                  //itemsDataGrid.Columns[6].MaxWidth = 150;
             }
             dataGrid_CmbPositionUpdate(itemsDataGrid, 1);
         }
@@ -613,6 +587,7 @@ namespace materialApp
         ///   ####################################    HAMBURGER MENU   ####################################       
         ///</summary>
 
+		*/
         private void Open_Hamburger(object sender, RoutedEventArgs e)
         {
             if (hamClosed)
@@ -627,45 +602,21 @@ namespace materialApp
             }
             hamClosed = !hamClosed;
         }
-
         private void Users_Open(object sender, RoutedEventArgs e)
         {
-            itemsGrid.Visibility = Visibility.Collapsed;
-            logGrid.Visibility = Visibility.Collapsed;
-            usersGrid.Visibility = Visibility.Visible;
-            btnAddUser.Visibility = Visibility.Visible;
+			Content.Content = new UsersWindow();
         }
 
         private void Items_Open(object sender, RoutedEventArgs e)
         {
-            usersGrid.Visibility = Visibility.Collapsed;
-            logGrid.Visibility = Visibility.Collapsed;
-            btnAddUser.Visibility = Visibility.Collapsed;
-            itemsGrid.Visibility = Visibility.Visible;
-            itemsDataGrid.Items.Refresh();
-            itemsDataGrid.UpdateLayout();
-            if (itemsDataGrid.Columns.Count > 4)
-            {
-                UpdateColumnsWidths(1);
-            }
-            dataGrid_CmbPositionUpdate(itemsDataGrid, 1);
+			Content.Content = new ItemsWindow();
         }
 
         private void Log_Open(object sender, RoutedEventArgs e)
         {
-            usersGrid.Visibility = Visibility.Collapsed;
-            itemsGrid.Visibility = Visibility.Collapsed;
-            btnAddUser.Visibility = Visibility.Collapsed;
-            logGrid.Visibility = Visibility.Visible;
-            itemsDataGrid.Items.Refresh();
-            itemsDataGrid.UpdateLayout();
-            if (logDataGrid.Columns.Count > 4)
-            {
-                UpdateColumnsWidths(2);
-            }
-            dataGrid_CmbPositionUpdate(logDataGrid, 2);
+			Content.Content = new LogWindow();
         }
-
+		/*
         ///<summary>
         ///   ####################################    COMMON   ####################################     
         ///</summary>
@@ -991,6 +942,7 @@ namespace materialApp
                 logDataGrid.Columns[5].Width = 250; //actWidth / 6;//250;
             }
         }
+*/
     }
 }
 
