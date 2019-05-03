@@ -271,8 +271,96 @@ namespace materialApp
 
         public void ModalUserAddInit(object sender, RoutedEventArgs e)
         {
-            //DialogHost.IsOpen = true;
+            DialogHost.IsOpen = true;
         }
+
+        public void ModalBack(object sender, RoutedEventArgs e)
+        {
+            icon_add_err.Visibility = Visibility.Hidden;
+            text_add_err.Text = "";
+            DialogHost.IsOpen = false;
+            ResetCmbs(0);
+        }
+
+        public void ModalAdd(object sender, RoutedEventArgs e)
+        {
+            bool err = false;
+            icon_add_err.Visibility = Visibility.Visible;
+
+            if (text_first_name.Text == "")
+            {
+                err = true;
+                text_add_err.Foreground = System.Windows.Media.Brushes.Red;
+                icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
+                text_add_err.Text = "Dopln prve meno";
+            }
+            if (text_second_name.Text == "")
+            {
+                err = true;
+                text_add_err.Foreground = System.Windows.Media.Brushes.Red;
+                icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
+                text_add_err.Text = "Dopln druhe meno";
+            }
+            if (text_address.Text == "")
+            {
+                err = true;
+                text_add_err.Foreground = System.Windows.Media.Brushes.Red;
+                icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
+                text_add_err.Text = "Dopln adresu";
+            }
+            if (text_tel.Text == "")
+            {
+                err = true;
+                text_add_err.Foreground = System.Windows.Media.Brushes.Red;
+                icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
+                text_add_err.Text = "Dopln tel. cislo";
+            }
+
+            if (err) return;
+
+            EditUserStruct userStruct = new EditUserStruct
+            {
+                f_name = text_first_name.Text,
+                s_name = text_second_name.Text,
+                address = text_address.Text,
+                tel = text_tel.Text
+            };
+
+            mDbActions.AddUser(userStruct);
+            ResetCmbs(0);
+            text_add_err.Text = "Uspesne pridane.";
+            text_add_err.Foreground = System.Windows.Media.Brushes.Green;
+            icon_add_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Done;
+            text_address.Text = "";
+            text_tel.Text = "";
+            text_first_name.Text = "";
+            text_second_name.Text = "";
+            CloseModalAfterAdd();
+        }
+        private async void CloseModalAfterAdd()
+        {
+            await Task.Delay(1000);
+            icon_add_err.Visibility = Visibility.Hidden;
+            text_add_err.Text = "";
+            DialogHost.IsOpen = false;
+        }
+
+        private new void PreviewTextInput(object sender, RoutedEventArgs e)
+        {
+            TextBox box = (TextBox)sender;
+
+            if (!CommonActions.IsNumeric(box.Text))
+            {
+                for (int i = 0; i < box.Text.Length; i++)
+                {
+                    if (!int.TryParse(box.Text[i].ToString(), out int outVar))
+                    {
+                        box.Text = box.Text.Remove(i, 1);
+                    }
+                }
+            }
+        }
+
     }
 }
 

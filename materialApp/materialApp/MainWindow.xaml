@@ -110,6 +110,6 @@
                     </StackPanel>
                 </Button>
             </Grid>
-            <Frame NavigationUIVisibility="Hidden" Grid.Column="1" x:Name="Content" Margin="20" />
+        <Frame NavigationUIVisibility="Hidden" Grid.Column="1" x:Name="Content" Margin="20" />
     </Grid>
 </Window>
