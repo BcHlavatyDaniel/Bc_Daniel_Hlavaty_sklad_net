@@ -23,6 +23,8 @@ namespace materialApp
     {
         bool hamClosed = true;
 		private DbActions mDbActions;
+        VideoCapture mCapture = new VideoCapture();
+        ImageViewer mViewer = new ImageViewer();
 
 		enum mState { Einit_state, Esold_card, Esold_cash, Ereturned, Epaid_card, Epaid_cash, Earchived };
 
@@ -35,7 +37,35 @@ namespace materialApp
 			base.OnInitialized(e);
             mDbActions = new DbActions();
 		}
-		/*
+        private void Open_Hamburger(object sender, RoutedEventArgs e)
+        {
+            if (hamClosed)
+            {
+                Storyboard board = this.FindResource("OpenMenu") as Storyboard;
+                board.Begin();
+            }
+            else
+            {
+                Storyboard board = this.FindResource("CloseMenu") as Storyboard;
+                board.Begin();
+            }
+            hamClosed = !hamClosed;
+        }
+        private void Users_Open(object sender, RoutedEventArgs e)
+        {
+            Content.Content = new UsersPage(mDbActions, mViewer, mCapture);
+        }
+
+        private void Items_Open(object sender, RoutedEventArgs e)
+        {
+            Content.Content = new ItemsPage(mDbActions, mViewer, mCapture);
+        }
+
+        private void Log_Open(object sender, RoutedEventArgs e)
+        {
+            Content.Content = new LogPage(mDbActions, mViewer, mCapture);
+        }
+        /*
         private void Init()
         {
            
@@ -243,8 +273,7 @@ namespace materialApp
 
         public void ModalUserAddInit(object sender, RoutedEventArgs e)
         {
-            DialogHost.IsOpen = true;
-           
+            DialogHost.IsOpen = true;  
         }
 
         public void ModalBack(object sender, RoutedEventArgs e)
@@ -594,35 +623,8 @@ namespace materialApp
         ///</summary>
 
 		*/
-		private void Open_Hamburger(object sender, RoutedEventArgs e)
-        {
-            if (hamClosed)
-            {
-                Storyboard board = this.FindResource("OpenMenu") as Storyboard;
-                board.Begin();
-            }
-            else
-            {
-                Storyboard board = this.FindResource("CloseMenu") as Storyboard;
-                board.Begin();
-            }
-            hamClosed = !hamClosed;
-        }
-        private void Users_Open(object sender, RoutedEventArgs e)
-        {
-			Content.Content = new UsersPage(mDbActions);
-        }
 
-        private void Items_Open(object sender, RoutedEventArgs e)
-        {
-			Content.Content = new ItemsPage(mDbActions);
-        }
-
-        private void Log_Open(object sender, RoutedEventArgs e)
-        {
-			Content.Content = new LogPage(mDbActions);
-        }
-		/*
+        /*
         ///<summary>
         ///   ####################################    COMMON   ####################################     
         ///</summary>

@@ -18,7 +18,7 @@
 				<ComboBox x:Name="SecondNameItemCmb" SelectionChanged="SearchItems" HorizontalAlignment="Left" Margin="0,20,0,0" VerticalAlignment="Top" Width="150"/>
 				<ComboBox x:Name="ItemNameCmb" SelectionChanged="SearchItems" HorizontalAlignment="Left" Margin="75,20,0,0" VerticalAlignment="Top" Width="150"/>
 			</DockPanel>
-			<DataGrid  x:Name="itemsDataGrid" TextBlock.TextAlignment="Center" TextBlock.FontSize="16" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False" VirtualizingPanel.IsVirtualizing="False" HorizontalAlignment="Left" RowDetailsVisibilityMode="Collapsed" Background="#E1F5FE" IsReadOnly="True" Margin="0,50,0,20" VerticalAlignment="Top" Grid.ColumnSpan="2">
+            <DataGrid  x:Name="itemsDataGrid" Loaded="Datagrid_Cmb_Update" TextBlock.TextAlignment="Center" TextBlock.FontSize="16" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False" VirtualizingPanel.IsVirtualizing="False" HorizontalAlignment="Left" RowDetailsVisibilityMode="Collapsed" Background="#E1F5FE" IsReadOnly="True" Margin="0,50,0,20" VerticalAlignment="Top" Grid.ColumnSpan="2">
 				<DataGrid.Resources>
 					<Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
 						<Setter Property="Background" Value="#81D4FA" />

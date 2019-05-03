@@ -18,7 +18,7 @@
 				<ComboBox x:Name="Year_numbersLogCmb" SelectionChanged="SearchLogs" HorizontalAlignment="Left" Margin="0, 20 ,0,0" VerticalAlignment="Top" Width="150"/>
 				<ComboBox x:Name="TypeCmb" SelectionChanged ="SearchLogs" HorizontalAlignment="Left" Margin="0, 20,0,0" VerticalAlignment="Top" Width="150"/>
 			</DockPanel>
-			<DataGrid x:Name="logDataGrid" HorizontalAlignment="Center" TextBlock.FontSize="16"
+            <DataGrid x:Name="logDataGrid" Loaded="Datagrid_Cmb_Update" HorizontalAlignment="Center" TextBlock.FontSize="16"
                                   CanUserReorderColumns="False" TextBlock.TextAlignment="Center" VirtualizingPanel.IsVirtualizing="False" CanUserResizeColumns="False" CanUserSortColumns="False"  Background="#E1F5FE" IsReadOnly="True" Margin="0, 50, 0,0" VerticalAlignment="Top" Grid.Column="2">
 				<DataGrid.Resources>
 					<Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">

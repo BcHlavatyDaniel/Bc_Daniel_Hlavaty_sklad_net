@@ -82,8 +82,8 @@
 
 
 			</StackPanel>
-
-			<TextBox x:Name="text_edit_err" Grid.Row="4" FontSize="16" Grid.ColumnSpan="3" Style="{StaticResource MaterialDesignSubheadingTextBlock}"/>
+            <TextBlock x:Name="text_edit_err" Grid.Row="4" FontSize="16" Grid.ColumnSpan="3" Style="{StaticResource MaterialDesignSubheadingTextBlock}"/>
+            <!-- <TextBox x:Name="text_edit_err" Grid.Row="4" FontSize="16" Grid.ColumnSpan="3" Style="{StaticResource MaterialDesignSubheadingTextBlock}"/> -->
 			<StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="3">
 				<Button x:Name="BtnSave" Click="Save" Margin="0,0,20,0" Width="100" Height="40" Content="Ulozit"/>
 				<Button x:Name="BtnCancel" Click="Close" Width="100" Height="40" Content="Zatvorit"/>
