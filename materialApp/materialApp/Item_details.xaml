@@ -58,7 +58,7 @@
 			</Grid.ColumnDefinitions>
 
 			<StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Orientation="Horizontal">
-				<TextBlock Text="{Binding User.IdName}" FontSize="18" Style="{StaticResource MaterialDesignSubheadingTextBlock}" Margin="20,0,20,0"/>
+				<TextBlock Text="{Binding User.IdName}" FontSize="18" Style="{StaticResource MaterialDesignSubheadingTextBlock}" Margin="20,0,20,0"/> 
 				<TextBlock Text="{Binding User.Name}" FontSize="18" Style="{StaticResource MaterialDesignSubheadingTextBlock}" />
 			</StackPanel>
 
@@ -76,30 +76,27 @@
 
 			</StackPanel>
 
-			<materialDesign:PackIcon x:Name="icon_edit_err" Height="240" Width="240" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center"  Grid.Row="3" Margin="12,96,12,95"/>
-			<Image x:Name="image1" Grid.Column="3" Grid.Row="3"/>
+			<materialDesign:PackIcon x:Name="icon_edit_err" Height="24" Width="24" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Bottom"  Grid.Row="3" Margin="12,96,12,12"/>
+			<Image x:Name="image1" Grid.Column="3" Grid.Row="3" Margin="0,0,0,100"/>
 			<StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10" Grid.Row="3">
 
-				<Button x:Name="BtnAddPhotoPath" Click="AddPhotoPath" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}" Width="75" Height="75" ToolTip="Pridaj foto z pc" Margin="0,0,20,0">
+				<Button x:Name="BtnAddPhotoPath" Click="AddPhotoPath" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}" Width="75" Height="75" ToolTip="Pridaj foto z pc" Margin="0,0,50,0">
 					<materialDesign:PackIcon Kind="InsertPhoto" Height="24" Width="24" />
 				</Button>
 
-				<Button x:Name="BtnAddWebCamPhoto"  Click="TakeAPic" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}" Width="75" Height="75" ToolTip="Pridaj foto webkamerou">
-					<materialDesign:PackIcon Kind="Camera" Height="24" Width="24" />
-				</Button>
+                <Button x:Name="BtnAddWebCamPhoto"  Click="TakeAPic" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}" Width="75" Height="75" ToolTip="Pridaj foto webkamerou">
+                    <materialDesign:PackIcon Kind="Camera" Height="24" Width="24" />
+                </Button>
 
-
-
-			</StackPanel>
-			<TextBlock x:Name="text_edit_err" Grid.Row="4" FontSize="16" Grid.ColumnSpan="3" Style="{StaticResource MaterialDesignSubheadingTextBlock}"/>
+            </StackPanel>
+			<TextBlock x:Name="text_edit_err" Grid.Row="4" FontSize="16" Grid.ColumnSpan="3" HorizontalAlignment="Center" Style="{StaticResource MaterialDesignSubheadingTextBlock}"/>
 			<!-- <TextBox x:Name="text_edit_err" Grid.Row="4" FontSize="16" Grid.ColumnSpan="3" Style="{StaticResource MaterialDesignSubheadingTextBlock}"/> -->
-			<StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="3">
-				<Button x:Name="BtnSave" Click="Save" Margin="0,0,20,0" Width="100" Height="40" Content="Ulozit"/>
-				<Button x:Name="BtnCancel" Click="Close" Width="100" Height="40" Content="Zatvorit"/>
-			</StackPanel>
+            <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="3">
+                <Button x:Name="BtnSave" Click="Save" Margin="0,0,20,0" Width="100" Height="40" Content="Ulozit"/>
+                <Button x:Name="BtnCancel" Click="Close" Width="100" Height="40" Content="Zatvorit"/>
+            </StackPanel>
 
-
-		</Grid>
+        </Grid>
 	</Grid>
 </Window>
 

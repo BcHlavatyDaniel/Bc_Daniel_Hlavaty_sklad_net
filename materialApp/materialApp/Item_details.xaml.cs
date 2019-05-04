@@ -54,18 +54,11 @@ namespace materialApp
             mCapture = cap;
 
 			User = new User();
-			User.Id = user_id;
+            User.IdYear = int.Parse(user_id.Substring(0, 2));
+            User.IdNumber = int.Parse(user_id.Substring(3, 3));
 			User.FName = f_name;
 			User.SName = s_name;
 
-			/*
-            cmbChangeItemState.Items.Add("Nepredany"); //0 
-            cmbChangeItemState.Items.Add("Predany karta"); //1
-            cmbChangeItemState.Items.Add("Predany Hotovost"); //2
-            cmbChangeItemState.Items.Add("Vrateny"); //3
-            cmbChangeItemState.Items.Add("Zaplateny Karta"); //4
-            cmbChangeItemState.Items.Add("Zaplateny Hotovost"); //5
-			*/
             LoadItem(id, user_id);
             icon_edit_err.Visibility = Visibility.Hidden;
             text_edit_err.Text = "";
@@ -74,32 +67,9 @@ namespace materialApp
         private void LoadItem(string id, string userId)
         {
             Item = mDbActions.LoadSpecificItem2(id);
-			Item.UserId = userId;
-			/*
-            DataRow row = mDbActions.LoadSpecificItem(Item.Id).Tables[0].Rows[0];
-            text_description.Text = row["description"].ToString();
-            text_price.Text = row["price"].ToString();
-            text_size.Text = row["size"].ToString();
-            text_name.Text = row["name"].ToString();
+            User.IdYear = int.Parse(userId.Substring(0, 2));
+            User.IdNumber = int.Parse(userId.Substring(3, 3));
 
-            if (row["archived"].ToString() == "True")
-            {
-                mCurrArch = true;
-                archiveBox.IsChecked = true;
-            }
-            else
-            {
-                mCurrArch = false;
-                archiveBox.IsChecked = false;
-            }
-            int type;
-            int.TryParse(row["stav"].ToString(), out type);
-            Item.State = type;
-
-            Item.State = type;
-			*/
-
-            //if file does not exist locally, download it
             if (Item.Photo != "")
             {
                 if (!File.Exists("~/../../../imageres/" + Item.Photo))
@@ -197,8 +167,6 @@ namespace materialApp
 
         private void Save(object sender, RoutedEventArgs e)
         {
-            
-
 			Item item = Item.Copy();
 
             if (mLastUnsuccessStruct != null)
@@ -206,22 +174,6 @@ namespace materialApp
                 if (item.Compare(Item)) return;
             }
             if (item.Compare(mLastSuccessStruct)) return;
-
-			/*
-			// todo spravit cez NUMBER TEXT BOX Proste aby sa dali zadavat len cisla
-            double num;
-            if (!double.TryParse(text_price.Text, out num))
-            {
-                icon_edit_err.Visibility = Visibility.Visible;
-                text_edit_err.Foreground = Brushes.Red;
-                text_edit_err.Text = "Cena musi byt cislo!";
-                icon_edit_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
-
-				mLastUnsuccessStruct = Item.Copy();
-                return;
-            }
-			//end todo
-			*/
 
             string changeString = "";
             int logType = 0;
@@ -342,10 +294,7 @@ namespace materialApp
                 icon_edit_err.Visibility = Visibility.Visible;
 
 				mLastSuccessStruct = Item.Copy();
-
-                Item.State = Item.State;
 				
-
                 ClearOptions();
                 LoadItem(Item.Id.ToString(), Item.UserId.ToString());
             }
@@ -354,39 +303,44 @@ namespace materialApp
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-			Item compStruct = Item.Copy();
-
+            Item item = Item.Copy();
             bool showPopup = false;
-
-            if (mLastUnsuccessStruct == null)
-            {
-                if (!mLastSuccessStruct.Compare(compStruct))
-                {
-                    showPopup = true;
-                    e.Cancel = true;
-                }
-            }
-            else
-            {
-                if (!mLastSuccessStruct.Compare(compStruct) && (!mLastUnsuccessStruct.Compare(compStruct)))
-                {
-                    showPopup = true;
-                    e.Cancel = true;
-                }
-            }
-
-            if (Item.State != Item.State)
+            if (!mLastSuccessStruct.Compare(item))
             {
                 showPopup = true;
                 e.Cancel = true;
             }
+            //   if (compStruct.Name == )
 
-            if (Item.Archived)
-            {
-                showPopup = true;
-                e.Cancel = true;
-            }
-            
+            /*          if (mLastUnsuccessStruct == null)
+                      {
+                          if (!mLastSuccessStruct.Compare(compStruct))
+                          {
+                              showPopup = true;
+                              e.Cancel = true;
+                          }
+                      }
+                      else
+                      {
+                          if (!mLastSuccessStruct.Compare(compStruct) && (!mLastUnsuccessStruct.Compare(compStruct)))
+                          {
+                              showPopup = true;
+                              e.Cancel = true;
+                          }
+                      }*/
+
+            /*     if (Item.State != Item.State)
+                 {
+                     showPopup = true;
+                     e.Cancel = true;
+                 }
+
+                 if (Item.Archived)
+                 {
+                     showPopup = true;
+                     e.Cancel = true;
+                 }
+                */
             if (showPopup)
             {
                 HideGrid.Visibility = Visibility.Hidden;

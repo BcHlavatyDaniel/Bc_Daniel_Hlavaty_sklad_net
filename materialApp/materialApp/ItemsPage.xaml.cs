@@ -188,7 +188,7 @@ namespace materialApp
                 if (row == null) continue;
                 switch (mButtonList.ElementAt(counter))
                 {
-                    case (int)mState.Esold_cash:
+                    case (int)mState.Esold_card:
                         {
                             cell = CommonActions.GetGridCell(row, 0);
                             cell.Background = System.Windows.Media.Brushes.LimeGreen;
@@ -210,7 +210,7 @@ namespace materialApp
                             cell.Background = System.Windows.Media.Brushes.LimeGreen;
                             break;
                         }
-                    case (int)mState.Esold_card:
+                    case (int)mState.Esold_cash:
                         {
                             cell = CommonActions.GetGridCell(row, 0);
                             cell.Background = System.Windows.Media.Brushes.LightYellow;
@@ -254,7 +254,7 @@ namespace materialApp
                             cell.Background = System.Windows.Media.Brushes.LightGray;
                             break;
                         }
-                    case (int)mState.Epaid_cash:
+                    case (int)mState.Epaid_card:
                         {
                             cell = CommonActions.GetGridCell(row, 0);
                             cell.Background = System.Windows.Media.Brushes.Green;
@@ -276,7 +276,7 @@ namespace materialApp
                             cell.Background = System.Windows.Media.Brushes.Green;
                             break;
                         }
-                    case (int)mState.Epaid_card:
+                    case (int)mState.Epaid_cash:
                         {
                             cell = CommonActions.GetGridCell(row, 0);
                             cell.Background = System.Windows.Media.Brushes.Yellow;
@@ -347,21 +347,11 @@ namespace materialApp
 		private void Item_Open(object sender, RoutedEventArgs e)
 		{
             DataRowView datView = ((DataRowView)itemsDataGrid.SelectedItem);
-            DataSet userRow = mDbActions.LoadSpecificUser(datView.Row.ItemArray[0].ToString().Substring(0, 2), datView.Row.ItemArray[0].ToString().Substring(3, 3));
-            EditUserStruct userStruct = new EditUserStruct
-            {
-                keyy = datView.Row.ItemArray[0].ToString().Substring(0, 2),
-                keyn = datView.Row.ItemArray[0].ToString().Substring(3, 3),
-                f_name = userRow.Tables[0].Rows[0]["first_name"].ToString(),
-                s_name = userRow.Tables[0].Rows[0]["second_name"].ToString(),
-                address = userRow.Tables[0].Rows[0]["address"].ToString(),
-                tel = userRow.Tables[0].Rows[0]["telephone"].ToString()
-            };
+            Item_details mItemDWindow = new Item_details(datView.Row.ItemArray[3].ToString(), datView.Row.ItemArray[2].ToString(), datView.Row.ItemArray[1].ToString(), datView.Row.ItemArray[0].ToString(), mViewer, mCapture);
 
-            User_details mUserDWindow = new User_details(userStruct, mViewer, mCapture);
-            mUserDWindow.Owner = Window.GetWindow(this);// this;
-            mUserDWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            mUserDWindow.ShowDialog();
+            mItemDWindow.Owner = Window.GetWindow(this);// this;
+            mItemDWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            mItemDWindow.ShowDialog();
             if (!ResetCmbs())
                 LoadItemsGrid(mDbActions.LoadAllItems(), mDbActions.LoadAllUsers());
         }
