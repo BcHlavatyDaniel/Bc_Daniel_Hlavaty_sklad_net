@@ -24,23 +24,17 @@ using DatabaseProj;
 
 namespace materialApp
 {
-    /// <summary>
-    /// Interaction logic for Item_details.xaml
-    /// </summary>
-    public partial class Item_details : Window
+	/// <summary>
+	/// Interaction logic for Item_details.xaml
+	/// </summary>
+	public partial class Item_details : Window
     {
         DbActions mDbActions;
-        CommonActions mCommonActions;
-        string mId;
-        string mUserId;
-        string mPhotoPath = "";
-        bool mCloseWin;
-        int mCurrState = 0;
-        bool mCurrArch = false;
-        enum mState { Einit_state, Esold_card, Esold_cash, Ereturned, Epaid_card, Epaid_cash, Earchived }
-
-        EditItemStruct mLastSuccessStruct;
-        EditItemStruct mLastUnsuccessStruct;
+		public Item Item { get; set; }
+		public User User { get; set; }
+		bool mCloseWin;
+        Item mLastSuccessStruct;
+        Item mLastUnsuccessStruct;
 
         ImageViewer mViewer;
         VideoCapture mCapture;
@@ -48,36 +42,41 @@ namespace materialApp
         public Item_details(string id, string f_name, string s_name, string user_id, ImageViewer view, VideoCapture cap)
         {
             InitializeComponent();
+			DataContext = this;
             Init( id, f_name, s_name, user_id, view, cap);
         }
 
         private void Init(string id, string f_name, string s_name, string user_id, ImageViewer view, VideoCapture cap)
         {
             mDbActions = new DbActions();
-            mCommonActions = new CommonActions();
 
             mViewer = view;
             mCapture = cap;
 
-            text_first_name.Text = f_name;
-            text_second_name.Text = s_name;
-            text_user_id.Text = user_id;
-            mUserId = user_id;
-            mId = id;
+			User = new User();
+			User.Id = user_id;
+			User.FName = f_name;
+			User.SName = s_name;
+
+			/*
             cmbChangeItemState.Items.Add("Nepredany"); //0 
             cmbChangeItemState.Items.Add("Predany karta"); //1
             cmbChangeItemState.Items.Add("Predany Hotovost"); //2
             cmbChangeItemState.Items.Add("Vrateny"); //3
             cmbChangeItemState.Items.Add("Zaplateny Karta"); //4
             cmbChangeItemState.Items.Add("Zaplateny Hotovost"); //5
-            LoadItem();
+			*/
+            LoadItem(id, user_id);
             icon_edit_err.Visibility = Visibility.Hidden;
             text_edit_err.Text = "";
         }
 
-        private void LoadItem()
+        private void LoadItem(string id, string userId)
         {
-            DataRow row = mDbActions.LoadSpecificItem(mId).Tables[0].Rows[0];
+            Item = mDbActions.LoadSpecificItem2(id);
+			Item.UserId = userId;
+			/*
+            DataRow row = mDbActions.LoadSpecificItem(Item.Id).Tables[0].Rows[0];
             text_description.Text = row["description"].ToString();
             text_price.Text = row["price"].ToString();
             text_size.Text = row["size"].ToString();
@@ -93,26 +92,27 @@ namespace materialApp
                 mCurrArch = false;
                 archiveBox.IsChecked = false;
             }
-
             int type;
             int.TryParse(row["stav"].ToString(), out type);
-            cmbChangeItemState.SelectedIndex = type;
+            Item.State = type;
 
-            mCurrState = type;
+            Item.State = type;
+			*/
 
             //if file does not exist locally, download it
-            mPhotoPath = row["photo"].ToString();
-            if (mPhotoPath != "")
+            if (Item.Photo != "")
             {
-                if (!File.Exists("~/../../../imageres/" + mPhotoPath))
+                if (!File.Exists("~/../../../imageres/" + Item.Photo))
                 {
-                    Ftp_Download(mPhotoPath);
+                    Ftp_Download(Item.Photo);
                 }
-                string uri = System.IO.Path.GetFullPath("../../imageres/" + mPhotoPath);
+                string uri = System.IO.Path.GetFullPath("../../imageres/" + Item.Photo);
                 image1.Source = new BitmapImage(new Uri(uri, UriKind.RelativeOrAbsolute));
             }
 
 
+			mLastSuccessStruct = Item.Copy();
+				/*
             mLastSuccessStruct = new EditItemStruct
             {
                 description = row["description"].ToString(),
@@ -121,6 +121,7 @@ namespace materialApp
                 size = row["size"].ToString(),
                 price = row["price"].ToString(),
             };
+			*/
         }
 
         private void TakeAPic(object sender, RoutedEventArgs e)
@@ -156,8 +157,8 @@ namespace materialApp
             }
             File.Copy(getImage, saveImage);
 
-            mPhotoPath = System.IO.Path.GetFullPath("../../imageres/" + imgName);
-            image1.Source = new BitmapImage(new Uri(mPhotoPath, UriKind.RelativeOrAbsolute));
+            Item.Photo = System.IO.Path.GetFullPath("../../imageres/" + imgName);
+            image1.Source = new BitmapImage(new Uri(Item.Photo, UriKind.RelativeOrAbsolute));
             /*  DirectoryInfo di = new DirectoryInfo("~/../../../imageres/");
               FileInfo[] currFiles = di.GetFiles("*.png");
 
@@ -174,7 +175,7 @@ namespace materialApp
 
               string saveImage = "~/../../../imageres/" + imgName;
               File.Copy(getImage, saveImage);
-              mPhotoPath = "C://Users/Daniel/source/repos/materialApp/materialApp/imageres/" + imgName;   //TO DO this directory path to config
+              Item.Photo = "C://Users/Daniel/source/repos/materialApp/materialApp/imageres/" + imgName;   //TO DO this directory path to config
               */                                                                                            // image1.Source = new BitmapImage(new Uri(photo_path, UriKind.RelativeOrAbsolute));
         }
 
@@ -189,31 +190,26 @@ namespace materialApp
 
             if (result == true)
             {
-                mPhotoPath = dlg.FileName;
-                image1.Source = new BitmapImage(new Uri(mPhotoPath, UriKind.RelativeOrAbsolute));
+                Item.Photo = dlg.FileName;
+                image1.Source = new BitmapImage(new Uri(Item.Photo, UriKind.RelativeOrAbsolute));
             }
         }
 
         private void Save(object sender, RoutedEventArgs e)
         {
             
-            double num;
 
-            EditItemStruct itemStruct = new EditItemStruct
-            {
-                description = text_description.Text,
-                price = text_price.Text,
-                size = text_size.Text,
-                name = text_name.Text,
-                photo = mPhotoPath
-            };
+			Item item = Item.Copy();
 
             if (mLastUnsuccessStruct != null)
             {
-                if (CompareItemStruct(itemStruct, mLastUnsuccessStruct) && mCurrArch == archiveBox.IsChecked && mCurrState == cmbChangeItemState.SelectedIndex) return;
+                if (item.Compare(Item)) return;
             }
-            if (CompareItemStruct(itemStruct, mLastSuccessStruct) && mCurrArch == archiveBox.IsChecked && mCurrState == cmbChangeItemState.SelectedIndex) return;
+            if (item.Compare(mLastSuccessStruct)) return;
 
+			/*
+			// todo spravit cez NUMBER TEXT BOX Proste aby sa dali zadavat len cisla
+            double num;
             if (!double.TryParse(text_price.Text, out num))
             {
                 icon_edit_err.Visibility = Visibility.Visible;
@@ -221,90 +217,85 @@ namespace materialApp
                 text_edit_err.Text = "Cena musi byt cislo!";
                 icon_edit_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
 
-                mLastUnsuccessStruct = new EditItemStruct
-                {
-                    description = text_description.Text,
-                    photo = mPhotoPath,
-                    name = text_name.Text,
-                    size = text_size.Text,
-                    price = text_price.Text
-                };
-
+				mLastUnsuccessStruct = Item.Copy();
                 return;
             }
+			//end todo
+			*/
 
             string changeString = "";
             int logType = 0;
 
-            if (archiveBox.IsChecked != mCurrArch)
+            if (Item.Archived)
             {
-                mDbActions.UpdateSpecificItem(mId, 6, archiveBox.IsChecked.ToString());
-                if (archiveBox.IsChecked == true) changeString = "Tovar archivovany";
+                mDbActions.UpdateSpecificItem(Item.Id.ToString(), 6, Item.Archived.ToString());
+                if (Item.Archived) changeString = "Tovar archivovany";
                 else changeString = "Tovar odarchivovany";
                 logType = 2;
-                mDbActions.AddLog(mId, mUserId, logType, changeString);
+                mDbActions.AddLog(Item.Id.ToString(), Item.UserId.ToString(), logType, changeString);
             }
-            if (cmbChangeItemState.SelectedIndex != mCurrState)
+			// todo takto to chces?
+            if (mLastSuccessStruct.State != Item.State)
             {
-                mDbActions.UpdateSpecificItem(mId, 5, cmbChangeItemState.SelectedIndex.ToString());
+                mDbActions.UpdateSpecificItem(Item.Id.ToString(), 5, Item.State.ToString());
                 changeString = "Zmena stavu z ";   
-                if (mCurrState == 0)
+                if (Item.State == 0)
                 {
                     changeString += "nepredany";
-                } else if (mCurrState == 1)
+                } else if (Item.State == 1)
                 {
                     changeString += "predany hotovostou";
-                } else if (mCurrState == 2)
+                } else if (Item.State == 2)
                 {
                     changeString += "predany kartou";
-                } else if (mCurrState == 3)
+                } else if (Item.State == 3)
                 {
                     changeString += "vrateny";
-                } else if (mCurrState == 4)
+                } else if (Item.State == 4)
                 {
                     changeString += "zaplateny hotovostou";
-                } else if (mCurrState == 5)
+                } else if (Item.State == 5)
                 {
                     changeString += "zaplateny kartou";
                 }
                 changeString += " na ";
-                if (cmbChangeItemState.SelectedIndex == 0)
+                if (Item.State == 0)
                 {
                     changeString += "nepredany";
                 }
-                else if (cmbChangeItemState.SelectedIndex == 1)
+                else if (Item.State == 1)
                 {
                     changeString += "predany hotovostou";
                 }
-                else if (cmbChangeItemState.SelectedIndex == 2)
+                else if (Item.State == 2)
                 {
                     changeString += "predany kartou";
                 }
-                else if (cmbChangeItemState.SelectedIndex == 3)
+                else if (Item.State == 3)
                 {
                     changeString += "vrateny";
                 }
-                else if (cmbChangeItemState.SelectedIndex == 4)
+                else if (Item.State == 4)
                 {
                     changeString += "zaplateny hotovostou";
                 }
-                else if (cmbChangeItemState.SelectedIndex == 5)
+                else if (Item.State == 5)
                 {
                     changeString += "zaplateny kartou";
                 }
 
                 logType = 1;
-                mDbActions.AddLog(mId, mUserId, logType, changeString);
+                mDbActions.AddLog(Item.Id.ToString(), Item.UserId.ToString(), logType, changeString);
             }
-            if (mPhotoPath != mLastSuccessStruct.photo)
+            if (Item.Photo != mLastSuccessStruct.Photo)
             {
                 //photoPath to ftp, + fpt link to photoPath 
-                Ftp_Upload(mPhotoPath);
-                string[] split = mPhotoPath.Split('/');
+                Ftp_Upload(Item.Photo);
+                string[] split = Item.Photo.Split('/');
                 string fileName;
                 if (split.Length == 1)
                 {
-                    split = mPhotoPath.Split('\\');
+                    split = Item.Photo.Split('\\');
                     fileName = split[split.Length - 1];
                 }
                 else
@@ -312,80 +303,64 @@ namespace materialApp
                     fileName = split[split.Length - 1];
                 }
 
-                mDbActions.UpdateSpecificItem(mId, 4, fileName);
+                mDbActions.UpdateSpecificItem(Item.Id.ToString(), 4, fileName);
                 changeString = "Zmena obrazku.";
                 logType = 3;
-                mDbActions.AddLog(mId, mUserId, logType, changeString);
+                mDbActions.AddLog(Item.Id.ToString(), Item.UserId.ToString(), logType, changeString);
             }
-            if (text_name.Text != mLastSuccessStruct.name)
+            if (Item.Name != mLastSuccessStruct.Name)
             {
-                mDbActions.UpdateSpecificItem(mId, 3, text_name.Text);
-                changeString = "Zmena nazvu tovaru z " + mLastSuccessStruct.name + " na " + text_name.Text;
+                mDbActions.UpdateSpecificItem(Item.Id.ToString(), 3, Item.Name);
+                changeString = "Zmena nazvu tovaru z " + mLastSuccessStruct.Name + " na " + Item.Name.ToString();
                 logType = 3;
-                mDbActions.AddLog(mId, mUserId, logType, changeString);
+                mDbActions.AddLog(Item.Id.ToString(), Item.UserId.ToString(), logType, changeString);
             }
-            if (text_price.Text != mLastSuccessStruct.price)
+            if (item.Price != mLastSuccessStruct.Price)
             {
-                mDbActions.UpdateSpecificItem(mId, 2, text_price.Text);
-                changeString = "Zmena ceny tovaru z " + mLastSuccessStruct.price + " na " + text_price.Text;
+                mDbActions.UpdateSpecificItem(Item.Id.ToString(), 2, Item.Price.ToString());
+                changeString = "Zmena ceny tovaru z " + mLastSuccessStruct.Price + " na " + Item.Price;
                 logType = 0;
-                mDbActions.AddLog(mId, mUserId, logType, changeString);
+                mDbActions.AddLog(Item.Id.ToString(), Item.UserId.ToString(), logType, changeString);
             }
-            if (text_size.Text != mLastSuccessStruct.size)
+            if (item.Size != mLastSuccessStruct.Size)
             {
-                mDbActions.UpdateSpecificItem(mId, 1, text_size.Text);
-                changeString = "Zmena velkosti tovaru z " + mLastSuccessStruct.size + " na " + text_size.Text;
+                mDbActions.UpdateSpecificItem(Item.Id.ToString(), 1, Item.Size.ToString());
+                changeString = "Zmena velkosti tovaru z " + mLastSuccessStruct.Size + " na " + Item.Size.ToString();
                 logType = 3;
-                mDbActions.AddLog(mId, mUserId, logType, changeString);
+                mDbActions.AddLog(Item.Id.ToString(), Item.UserId.ToString(), logType, changeString);
             }
-            if (text_description.Text != mLastSuccessStruct.description)
+            if (item.Description != mLastSuccessStruct.Description)
             {
-                mDbActions.UpdateSpecificItem(mId, 0, text_description.Text);
-                changeString = "Zmena popisu z " + mLastSuccessStruct.description + " na " + text_description.Text;
+                mDbActions.UpdateSpecificItem(Item.Id.ToString(), 0, Item.Description.ToString());
+                changeString = "Zmena popisu z " + mLastSuccessStruct.Description + " na " + Item.Description.ToString();
                 logType = 3;
-                mDbActions.AddLog(mId, mUserId, logType, changeString);
+                mDbActions.AddLog(Item.Id.ToString(), Item.UserId.ToString(), logType, changeString);
             }
 
             if (changeString != "")
             {
                 icon_edit_err.Visibility = Visibility.Visible;
 
-                mLastSuccessStruct = new EditItemStruct
-                {
-                    description = text_description.Text,
-                    photo = mPhotoPath,
-                    name = text_name.Text,
-                    size = text_size.Text,
-                    price = text_price.Text
-                };
+				mLastSuccessStruct = Item.Copy();
 
-                mCurrState = cmbChangeItemState.SelectedIndex;
-
-                if (archiveBox.IsChecked == true) mCurrArch = true;
-                else mCurrArch = false;
+                Item.State = Item.State;
+				
 
                 ClearOptions();
-                LoadItem();
+                LoadItem(Item.Id.ToString(), Item.UserId.ToString());
             }
 
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            EditItemStruct compStruct = new EditItemStruct
-            {
-                name = text_name.Text,
-                size = text_size.Text,
-                price = text_price.Text,
-                description = text_description.Text,
-                photo = mPhotoPath
-            };
+			Item compStruct = Item.Copy();
 
             bool showPopup = false;
 
             if (mLastUnsuccessStruct == null)
             {
-                if (!CompareItemStruct(mLastSuccessStruct, compStruct))
+                if (!mLastSuccessStruct.Compare(compStruct))
                 {
                     showPopup = true;
                     e.Cancel = true;
@@ -393,20 +368,20 @@ namespace materialApp
             }
             else
             {
-                if (!CompareItemStruct(mLastSuccessStruct, compStruct) && (!CompareItemStruct(mLastUnsuccessStruct, compStruct)))
+                if (!mLastSuccessStruct.Compare(compStruct) && (!mLastUnsuccessStruct.Compare(compStruct)))
                 {
                     showPopup = true;
                     e.Cancel = true;
                 }
             }
 
-            if (cmbChangeItemState.SelectedIndex != mCurrState)
+            if (Item.State != Item.State)
             {
                 showPopup = true;
                 e.Cancel = true;
             }
 
-            if (archiveBox.IsChecked != mCurrArch)
+            if (Item.Archived)
             {
                 showPopup = true;
                 e.Cancel = true;
@@ -474,14 +449,7 @@ namespace materialApp
             else
             {
                 OnClosePopup.IsOpen = false;    //TO DO isnt closing 
-                mLastSuccessStruct.name = text_name.Text;
-                mLastSuccessStruct.description = text_description.Text;
-                mLastSuccessStruct.size = text_size.Text;
-                mLastSuccessStruct.price = text_price.Text;
-                mLastSuccessStruct.photo = mPhotoPath;
-                mCurrState = cmbChangeItemState.SelectedIndex;
-                if (archiveBox.IsChecked == true) mCurrArch = true;
-                else mCurrArch = false;
+				mLastSuccessStruct = Item.Copy();
 
                 this.Close();
             }
@@ -554,31 +522,6 @@ namespace materialApp
             client.DownloadFile("ftp://dokelu.kst.fri.uniza.sk/" + imgName, "~/../../../imageres/" + imgName);
         }
 
-        private bool CompareItemStruct(EditItemStruct first, EditItemStruct second)
-        {
-            if (first.name != second.name)
-            {
-                return false;
-            }
-            if (first.description != second.description)
-            {
-                return false;
-            }
-            if (first.size != second.size)
-            {
-                return false;
-            }
-            if (first.price != second.price)
-            {
-                return false;
-            }
-            if (first.photo != second.photo)
-            {
-                return false;
-            }
-
-            return true;
-        }
 
     }
 }

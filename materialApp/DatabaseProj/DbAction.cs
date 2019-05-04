@@ -568,6 +568,24 @@ namespace DatabaseProj
             }
         }
 
+        public Item LoadSpecificItem2(string key)
+		{
+			DataRow row = LoadSpecificItem(key).Tables[0].Rows[0];
+			Item i = new Item
+			{
+				Description = row["description"].ToString(),
+				Price = Double.Parse(row["price"].ToString()),
+				Size = row["size"].ToString(),
+				Name = row["name"].ToString(),
+				Archived = row["archived"].ToString() == "True",
+				State = int.Parse(row["stav"].ToString()),
+				Id = int.Parse(row["id"].ToString()),
+				UserNumber = int.Parse(row["user_numbers"].ToString()),
+				UserYear = int.Parse(row["user_year"].ToString()),
+				Photo = row["photo"].ToString()
+			};
+			return i;
+		}
         public DataSet LoadSpecificItem(string key)
         {
             MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);

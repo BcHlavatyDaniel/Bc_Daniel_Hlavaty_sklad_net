@@ -5,15 +5,34 @@ using System.Threading.Tasks;
 
 namespace DatabaseProj
 {
-    public class UserTable
+    public class User
     {
-        private DatabaseContext context;
-
-        private int id_year { get; set; }
-        private int id_numbers { get; set; }
-        private string f_name { get; set; }
-        private string s_name { get; set; }
-        private string address { get; set; }
-        private int phone { get; set; }
+		public string Name
+		{
+			get
+			{
+				return $"{FName} {SName}";
+			}
+		}
+		public string IdName
+		{
+			get
+			{
+				return $"{IdYear}-{IdNumber}";
+			}
+			set
+			{
+				string[] x = value.Split('-');
+				IdYear = int.Parse(x[0]);
+				IdNumber = int.Parse(x[1]);
+			}
+		}
+        public string Id { get; set; }
+        public int IdYear { get; set; }
+        public int IdNumber { get; set; }
+        public string FName { get; set; }
+        public string SName { get; set; }
+        public string Address { get; set; }
+        public int Phone { get; set; }
     }
 }

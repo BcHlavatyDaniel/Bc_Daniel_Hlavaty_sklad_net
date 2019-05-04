@@ -5,6 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:materialApp"
+        xmlns:DBProj="clr-namespace:DatabaseProj;assembly=DatabaseProj"
+		xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
@@ -13,6 +15,14 @@
         FontFamily="{DynamicResource MaterialDesignFont}"
         Closing="Window_Closing"
         Title="Detail tovaru" Height="550" Width="500">
+	<Window.Resources>
+		<ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues"
+                        ObjectType="{x:Type sys:Enum}">
+			<ObjectDataProvider.MethodParameters>
+				<x:Type TypeName="DBProj:MState"/>
+			</ObjectDataProvider.MethodParameters>
+		</ObjectDataProvider>
+	</Window.Resources>
 	<Grid Background="WhiteSmoke">
 		<Popup Name="OnClosePopup"
                    Placement="Center"
@@ -48,22 +58,21 @@
 			</Grid.ColumnDefinitions>
 
 			<StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Orientation="Horizontal">
-				<TextBlock x:Name="text_user_id" FontSize="18" Style="{StaticResource MaterialDesignSubheadingTextBlock}" Margin="20,0,20,0"/>
-				<TextBlock x:Name="text_first_name" FontSize="18" Style="{StaticResource MaterialDesignSubheadingTextBlock}" />
-				<TextBlock x:Name="text_second_name" FontSize="18" Style="{StaticResource MaterialDesignSubheadingTextBlock}" Margin="20,0,0,0"/>
+				<TextBlock Text="{Binding User.IdName}" FontSize="18" Style="{StaticResource MaterialDesignSubheadingTextBlock}" Margin="20,0,20,0"/>
+				<TextBlock Text="{Binding User.Name}" FontSize="18" Style="{StaticResource MaterialDesignSubheadingTextBlock}" />
 			</StackPanel>
 
 			<Canvas Background="Black" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" />
 
 			<StackPanel Grid.Column="1" Grid.Row="3">
-				<TextBox  x:Name="text_name" FontSize="16" VerticalAlignment="Top" Margin="0, 0 ,0, 0" materialDesign:HintAssist.Hint="Nazov" Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
-				<TextBox  x:Name="text_size" FontSize="16" VerticalAlignment="Top" Margin="0, 0 , 0, 0" materialDesign:HintAssist.Hint="Velkost" Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
-				<TextBox  x:Name="text_description" FontSize="16" VerticalAlignment="Top" Margin="0, 0 ,0, 0" materialDesign:HintAssist.Hint="Popis" Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
-				<TextBox  x:Name="text_price" TextChanged="PreviewTextInput" FontSize="16" materialDesign:HintAssist.Hint="Cena" Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
+				<TextBox  Text="{Binding Item.Name}" FontSize="16" VerticalAlignment="Top" Margin="0, 0 ,0, 0" materialDesign:HintAssist.Hint="Nazov" Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
+				<TextBox  Text="{Binding Item.Size}" FontSize="16" VerticalAlignment="Top" Margin="0, 0 , 0, 0" materialDesign:HintAssist.Hint="Velkost" Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
+				<TextBox  Text="{Binding Item.Description}" FontSize="16" VerticalAlignment="Top" Margin="0, 0 ,0, 0" materialDesign:HintAssist.Hint="Popis" Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+				<TextBox  Text="{Binding Item.Price}" TextChanged="PreviewTextInput" FontSize="16" materialDesign:HintAssist.Hint="Cena" Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
 
-				<CheckBox x:Name="archiveBox"  FontSize="16" Content="Archivovane"/>
+				<CheckBox IsChecked="{Binding Item.Archived}"  FontSize="16" Content="Archivovane"/>
 
-				<ComboBox x:Name="cmbChangeItemState" FontSize="16" materialDesign:HintAssist.Hint="Stav" Style="{StaticResource MaterialDesignFloatingHintComboBox}"/>
+				<ComboBox SelectedIndex="{Binding Item.State}" ItemsSource="{Binding Source={StaticResource dataFromEnum}}" FontSize="16" materialDesign:HintAssist.Hint="Stav" Style="{StaticResource MaterialDesignFloatingHintComboBox}"/>
 
 			</StackPanel>
 
@@ -82,8 +91,8 @@
 
 
 			</StackPanel>
-            <TextBlock x:Name="text_edit_err" Grid.Row="4" FontSize="16" Grid.ColumnSpan="3" Style="{StaticResource MaterialDesignSubheadingTextBlock}"/>
-            <!-- <TextBox x:Name="text_edit_err" Grid.Row="4" FontSize="16" Grid.ColumnSpan="3" Style="{StaticResource MaterialDesignSubheadingTextBlock}"/> -->
+			<TextBlock x:Name="text_edit_err" Grid.Row="4" FontSize="16" Grid.ColumnSpan="3" Style="{StaticResource MaterialDesignSubheadingTextBlock}"/>
+			<!-- <TextBox x:Name="text_edit_err" Grid.Row="4" FontSize="16" Grid.ColumnSpan="3" Style="{StaticResource MaterialDesignSubheadingTextBlock}"/> -->
 			<StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="3">
 				<Button x:Name="BtnSave" Click="Save" Margin="0,0,20,0" Width="100" Height="40" Content="Ulozit"/>
 				<Button x:Name="BtnCancel" Click="Close" Width="100" Height="40" Content="Zatvorit"/>
