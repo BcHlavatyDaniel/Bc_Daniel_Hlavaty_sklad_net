@@ -14,12 +14,13 @@
 		<Grid Margin="150,85,0,0">
 			<DatePicker x:Name="picker" SelectedDateChanged="SearchLogs"  HorizontalAlignment="Left" VerticalAlignment="Top" materialDesign:HintAssist.Hint="Den" Margin="750,0,0,0"></DatePicker>
             <DockPanel>
-				<ComboBox x:Name="Item_idLogCmb" SelectionChanged="SearchLogs" HorizontalAlignment="Left" Margin="0, 20,0,0" VerticalAlignment="Top" Width="150"/>
-				<ComboBox x:Name="Year_numbersLogCmb" SelectionChanged="SearchLogs" HorizontalAlignment="Left" Margin="0, 20 ,0,0" VerticalAlignment="Top" Width="150"/>
-				<ComboBox x:Name="TypeCmb" SelectionChanged ="SearchLogs" HorizontalAlignment="Left" Margin="0, 20,0,0" VerticalAlignment="Top" Width="150"/>
+				<ComboBox x:Name="Item_idLogCmb" ItemsSource="{Binding Source=itemCmbList}" SelectionChanged="SearchLogs" HorizontalAlignment="Left" Margin="0, 20,0,0" VerticalAlignment="Top" Width="150"/>
+				<ComboBox x:Name="Year_numbersLogCmb" ItemsSource="{Binding Source=nameCmbList}" SelectionChanged="SearchLogs" HorizontalAlignment="Left" Margin="0, 20 ,0,0" VerticalAlignment="Top" Width="150"/>
+				<ComboBox x:Name="TypeCmb" ItemsSource="{Binding Source=typCmbList}" SelectionChanged ="SearchLogs" HorizontalAlignment="Left" Margin="0, 20,0,0" VerticalAlignment="Top" Width="150"/>
 			</DockPanel>
-            <DataGrid x:Name="logDataGrid" Loaded="Datagrid_Cmb_Update" TextBlock.FontSize="16" HorizontalAlignment="Left"
-                                  CanUserReorderColumns="False" TextBlock.TextAlignment="Center" VirtualizingPanel.IsVirtualizing="False" CanUserResizeColumns="False" CanUserSortColumns="False"  Background="#E1F5FE" IsReadOnly="True" Margin="0, 50, 0,0" VerticalAlignment="Top" Grid.Column="2">
+            <!--Loaded="Datagrid_Cmb_Update"-->
+            <DataGrid x:Name="logDataGrid" AutoGenerateColumns="False" ItemsSource="{Binding Source=itemList}" TextBlock.FontSize="16" HorizontalAlignment="Left"
+                                  CanUserReorderColumns="False" TextBlock.TextAlignment="Center" CanUserResizeColumns="False" CanUserSortColumns="False"  Background="#E1F5FE" IsReadOnly="True" Margin="0, 50, 0,0" VerticalAlignment="Top" Grid.Column="2">
 				<DataGrid.Resources>
 					<Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
 						<Setter Property="Background" Value="#81D4FA" />
@@ -36,7 +37,12 @@
 					</Style>
 				</DataGrid.Resources>
 				<DataGrid.Columns>
-					<DataGridTemplateColumn Header="Detail">
+                    <DataGridTextColumn Header="Id tovar" Width="150" Binding="{Binding id_tovar}"/>
+                    <DataGridTextColumn Header="Id uzivatela" Width="150" Binding="{Binding id_uzivatela}"/>
+                    <DataGridTextColumn Header="Typ" Width="150" Binding="{Binding typ_zmeny}"/>
+                    <DataGridTextColumn Header="Popis" Width="650" Binding="{Binding popis}"/>
+                    <DataGridTextColumn Header="Cas" Width="250" Binding="{Binding time}"/>
+                    <DataGridTemplateColumn Header="Detail" Width="150">
 						<DataGridTemplateColumn.CellTemplate>
 							<DataTemplate>
 								<DockPanel>
