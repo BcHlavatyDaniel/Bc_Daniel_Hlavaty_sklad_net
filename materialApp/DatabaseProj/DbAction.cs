@@ -120,6 +120,83 @@ namespace DatabaseProj
             return data;
         }
 
+        public Item LoadSpecificItem2(string key)
+        {
+            DataRow row = LoadSpecificItem(key).Tables[0].Rows[0];
+            Item i = new Item
+            {
+                Description = row["description"].ToString(),
+                Price = Double.Parse(row["price"].ToString()),
+                Size = row["size"].ToString(),
+                Name = row["name"].ToString(),
+                Archived = row["archived"].ToString() == "True",
+                State = int.Parse(row["stav"].ToString()),
+                Id = int.Parse(row["id"].ToString()),
+                UserNumber = int.Parse(row["user_numbers"].ToString()),
+                UserYear = int.Parse(row["user_year"].ToString()),
+                Photo = row["photo"].ToString()
+            };
+            return i;
+        }
+        public DataSet LoadSpecificItem(string key)
+        {
+            MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);
+            mSql.Open();
+            DataSet data;
+
+            try
+            {
+                MySqlCommand cmd = mSql.CreateCommand();
+                cmd.CommandText = "SELECT * FROM item WHERE id = @id";
+                cmd.Parameters.AddWithValue("@id", key);
+                MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                data = new DataSet();
+                adapter.Fill(data);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                if (mSql.State == ConnectionState.Open) mSql.Close();
+            }
+
+            return data;
+        }
+
+        public void UpdateUser2(User oldUser)
+        {
+            MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);
+            mSql.Open();
+
+            try
+            {
+                MySqlCommand cmd = mSql.CreateCommand();
+                cmd.CommandText = "UPDATE user SET first_name = @f_name, second_name = @s_name, address = @address, telephone = @tel WHERE year = @keyy AND _numbers = @keyn";
+                cmd.Parameters.AddWithValue("@s_name",oldUser.SName);
+                cmd.Parameters.AddWithValue("@f_name",oldUser.FName);
+                cmd.Parameters.AddWithValue("@address",oldUser.Address);
+                cmd.Parameters.AddWithValue("@tel",oldUser.Phone);
+                cmd.Parameters.AddWithValue("@keyy", oldUser.IdYear);
+                cmd.Parameters.AddWithValue("@keyn", oldUser.IdNumber);
+                cmd.ExecuteNonQuery();
+
+             /*   cmd = mSql.CreateCommand();
+                cmd.CommandText = "SELECT * from user WHERE year = @keyy AND _numbers = @keyn";
+                cmd.Parameters.AddWithValue("@keyy", oldUser.IdYear);
+                cmd.Parameters.AddWithValue("@keyn", oldUser.IdNumber);*/ //vlastneee nie
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                if (mSql.State == ConnectionState.Open) mSql.Close();
+            }
+        }
+
         public void UpdateUser(EditUserStruct userStruct)
         {
             MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);
@@ -568,50 +645,6 @@ namespace DatabaseProj
             }
         }
 
-        public Item LoadSpecificItem2(string key)
-		{
-			DataRow row = LoadSpecificItem(key).Tables[0].Rows[0];
-			Item i = new Item
-			{
-				Description = row["description"].ToString(),
-				Price = Double.Parse(row["price"].ToString()),
-				Size = row["size"].ToString(),
-				Name = row["name"].ToString(),
-				Archived = row["archived"].ToString() == "True",
-				State = int.Parse(row["stav"].ToString()),
-				Id = int.Parse(row["id"].ToString()),
-				UserNumber = int.Parse(row["user_numbers"].ToString()),
-				UserYear = int.Parse(row["user_year"].ToString()),
-				Photo = row["photo"].ToString()
-			};
-			return i;
-		}
-        public DataSet LoadSpecificItem(string key)
-        {
-            MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);
-            mSql.Open();
-            DataSet data;
-
-            try
-            {
-                MySqlCommand cmd = mSql.CreateCommand();
-                cmd.CommandText = "SELECT * FROM item WHERE id = @id";
-                cmd.Parameters.AddWithValue("@id", key);
-                MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
-                data = new DataSet();
-                adapter.Fill(data);
-            }
-            catch(Exception)
-            {
-                throw;
-            }
-            finally
-            {
-                if (mSql.State == ConnectionState.Open) mSql.Close();
-            }
-
-            return data;
-        }
 
 
         public DataSet SearchForItemsByName(string name, string year, string number)
