@@ -17,5 +17,6 @@ namespace DatabaseProj
         public string price { get; set; }
         public string size { get; set; }
         public string state { get; set; }
+        public string photo { get; set; }
     }
 }

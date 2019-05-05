@@ -124,7 +124,8 @@ namespace DatabaseProj
                     item_name = row["name"].ToString(),
                     price = row["price"].ToString(),
                     size = row["size"].ToString(),
-                    state = stav
+                    state = stav,
+                    photo = row["photo"].ToString()
                 });
             }
 
