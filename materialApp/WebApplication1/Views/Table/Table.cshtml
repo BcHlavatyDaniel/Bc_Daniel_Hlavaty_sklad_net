@@ -1,147 +1,46 @@
 ﻿@model IEnumerable<DatabaseProj.PrehladTable>
-
 @{
     ViewData["Title"] = "TableView";
 }
 
 <div class="text-center">
     <h1 class="display-4">Prehlad</h1>
-
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-
     <link href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet" />
     <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <input type="text" id="filter" style="margin-bottom:20px" />
+    <div>
 
-    <div class="container">
-        <input type="text" id="filter" style="margin-bottom:20px"/>
-        <div id="content">
-            <table id="datatable" class="table table-hover table-bordered">
-                <thead>
-                    <tr>
-                        <th>id zakaznik</th>
-                        <th>Prve meno</th>
-                        <th>Druhe meno</th>
-                        <th>id tovar</th>
-                        <th>Nazov</th>
-                        <th>Cena</th>
-                        <th>Velkost</th>
-                        <th>stav</th>
-                        <th>foto</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
+        @for (int i = 0; i < Model.Count(); i += 2)
+        {
+            <div>
+                @for (int k = 0; k < 2; k++)
+                {
+                    @if (Model.ElementAt(i + k) != null)
                     {
-                        <tr id="@("but"+item.id_item)">
-                            <td>
-                                @Html.DisplayFor(modelItem => item.id_user)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.f_name)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.s_name)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.id_item)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.item_name)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.price)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.size)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.state)
-                            </td>
-                            <td>
-                                <input type="button" id="@("in"+item.id_item)" onclick="openclose(@item.id_item)" value="Otvor" />
-                            </td>
-                        </tr>
+                        <div class=d-inline-block style="border-style:solid;background-color:#d3e4ff">
+                            <div style="width:50%;float:left"> 
+                                <h5 style="width:200px;margin-bottom:20px">
+                                    <u>
+                                        @Model.ElementAt(i + k).item_name
+                                    </u>
+                                </h5>
+                                <p style="width:200px">
+                                    @(String.Format("{0} {1}", "Velkost: ", Model.ElementAt(i + k).size))
+                                </p>
+                                <p style="width:200px">
+                                    @(String.Format("{0} {1}", "Cena: ", Model.ElementAt(i + k).price))
+                                </p>
+                            </div>
+                            <div style="width:50%;float:right">
+                                <!-- (String.Format("{0}{1}", "resources/", Model.ElementAt(i +k).photo)) -->
+                                <img src="~/resources/animal-wallpaper-03.jpg" style="max-height:200px;max-width:200px" />
+                            </div>
+                        </div>
                     }
-                </tbody>
-            </table>
-        </div>
+                }
+            </div>
+        }
     </div>
 </div>
 
-
-<script>
-    var table;
-    $(document).ready(function () {
-        table = $("#datatable").DataTable({
-            info: false,
-            paging: false,
-            "sDom": 'ltipr',
-            "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                switch (aData[7]) {
-                    case 'Predane karta':
-                        $(nRow).css('background-color', 'limeGreen')
-                        break;
-                    case 'Predane hotovost':
-                        $(nRow).css('background-color', 'lightyellow')
-                        break;
-                    case 'Vratene':
-                        $(nRow).css('background-color', 'lightgrey')
-                        break;
-                    case 'Zaplatene karta':
-                        $(nRow).css('background-color', 'green')
-                        break;
-                    case 'Zaplatene hotovost':
-                        $(nRow).css('background-color', 'yellow')
-                        break;
-                }
-            }
-        });
-    });
-
-    $("#filter").keyup(function () {
-        table.search(this.value).draw();
-    });    
-
-    function format(path) {
-        var image = "<img src='" + path + "'/>" //tu vytvori novy riadok v tabulke, z nacitanou fotkou
-        return "<table style=margin-left:auto;margin-right:auto>" + "<tr>" +
-            "<td>Foto:</td>" +
-            "<td>" + image + "</td>" +
-            "</tr>" +
-            "</table>";
-    }
-
-    function noImage() {
-        return "<table style=margin-left:auto;margin-right:auto>" + "<tr>" +
-            "<td>Foto:</td>" +
-            "<td>" + "bez obrazku" + "</td>" +
-            "</tr>" +
-            "</table>";
-    }
-
-    function openclose(num) {
-        $.ajax({
-            type: "POST",
-            url: '@Url.Action("LoadImage","Table")', //tu vola prislusny kontroler
-            dataType: 'json',
-            data: {datat: num},
-            success: function (response) {
-                tr = $("#but" + num);
-                row = table.row(tr);
-
-                if (row.child.isShown()) {
-                    $("#in" + num).val('Otvor');
-                    row.child.hide();
-                    tr.removeClass('shown');
-                }
-                else {
-                    $("#in" + num).val('Zatvor');
-                    if (response == "No image") row.child(noImage).show();
-                    else row.child(format(response)).show();
-                    tr.addClass('shown');
-                }
-            },
-        });
-    }
-
-</script>
