@@ -1,6 +1,4 @@
-﻿//using Syncfusion.Pdf;
-//using Syncfusion.Pdf.Graphics;
-using System;
+﻿using System;
 using Spire.Pdf;
 using Spire.Pdf.Graphics;
 using System.ComponentModel;
@@ -363,5 +361,3 @@ namespace materialApp
 
     }
 }
-
-

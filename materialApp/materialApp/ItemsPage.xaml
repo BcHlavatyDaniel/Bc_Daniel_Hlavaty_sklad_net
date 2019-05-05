@@ -8,17 +8,32 @@
         mc:Ignorable="d">
 	<!-- Height="1000" Width="1200"-->
 	<Grid Background="WhiteSmoke">
-		<DockPanel HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0">
-			<TextBlock TextAlignment="Center" FontSize="52" Style="{StaticResource MaterialDesignHeadlineTextBlock}" Text="Zoznam Tovaru"></TextBlock>
-		</DockPanel>
-		<Grid Margin="150,85,0,0">
-			<DockPanel>
-				<ComboBox x:Name="Year_numbersItemCmb" SelectionChanged="SearchItems" HorizontalAlignment="Left" Margin="0,20,0,0" VerticalAlignment="Top" Width="75"/>
-				<ComboBox x:Name="FirstNameItemCmb" SelectionChanged="SearchItems" HorizontalAlignment="Left" Margin="0,20,0,0" VerticalAlignment="Top" Width="150"/>
-				<ComboBox x:Name="SecondNameItemCmb" SelectionChanged="SearchItems" HorizontalAlignment="Left" Margin="0,20,0,0" VerticalAlignment="Top" Width="150"/>
-				<ComboBox x:Name="ItemNameCmb" SelectionChanged="SearchItems" HorizontalAlignment="Left" Margin="75,20,0,0" VerticalAlignment="Top" Width="150"/>
-			</DockPanel>
-            <DataGrid  x:Name="itemsDataGrid" Loaded="Datagrid_Cmb_Update" TextBlock.TextAlignment="Center" TextBlock.FontSize="16" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False" VirtualizingPanel.IsVirtualizing="False" HorizontalAlignment="Left" RowDetailsVisibilityMode="Collapsed" Background="#E1F5FE" IsReadOnly="True" Margin="0,50,0,20" VerticalAlignment="Top" Grid.ColumnSpan="2">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="60"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="10"/>
+        </Grid.ColumnDefinitions>
+
+	    <TextBlock Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" FontSize="52" Style="{StaticResource MaterialDesignHeadlineTextBlock}" Text="Zoznam Tovaru"></TextBlock>
+
+        <DockPanel Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center">
+            <ComboBox x:Name="Year_numbersItemCmb" SelectionChanged="SearchItems" Width="75"/>
+            <ComboBox x:Name="FirstNameItemCmb" SelectionChanged="SearchItems" Width="150"/>
+            <ComboBox x:Name="SecondNameItemCmb" SelectionChanged="SearchItems" Width="150"/>
+            <TextBox Width="75" materialDesign:TextFieldAssist.DecorationVisibility="Hidden" BorderThickness="0" IsReadOnly="True"/>
+            <ComboBox x:Name="ItemNameCmb" SelectionChanged="SearchItems" Width="150"/>
+            <TextBox Width="910" materialDesign:TextFieldAssist.DecorationVisibility="Hidden" BorderThickness="0" IsReadOnly="True"/>
+        </DockPanel>
+        
+        <Grid HorizontalAlignment="Center" Grid.Column="1" Grid.Row="3">
+            <DataGrid  x:Name="itemsDataGrid" Loaded="Datagrid_Cmb_Update" TextBlock.TextAlignment="Center" TextBlock.FontSize="16" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False" VirtualizingPanel.IsVirtualizing="False" HorizontalAlignment="Center" RowDetailsVisibilityMode="Collapsed" Background="#E1F5FE" IsReadOnly="True" VerticalAlignment="Top">
 				<DataGrid.Resources>
 					<Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
 						<Setter Property="Background" Value="#81D4FA" />
@@ -41,25 +56,20 @@
 						<Setter Property="Background" Value="#dbedfc"></Setter>
 					</Style>
 				</DataGrid.CellStyle>
-				<DataGrid.Columns>
-					<DataGridTemplateColumn Header="Detaily">
-						<DataGridTemplateColumn.CellTemplate>
-							<DataTemplate>
-								<DockPanel>
-									<!--  <Button Name="btnDesc" Content="Popis" Click="Open_Description"/> -->
-									<Button x:Name="btnOpenTovar" Content="Tovar" Click="Item_Open" />
-									<Button x:Name="btnOpenUser" Content="Zakaznik" Click="Profile_Item_Open"/>
-								</DockPanel>
-							</DataTemplate>
-						</DataGridTemplateColumn.CellTemplate>
-					</DataGridTemplateColumn>
-				</DataGrid.Columns>
-				<!-- <DataGrid.RowDetailsTemplate >
-                                <DataTemplate >
-                                    <TextBox  x:Name="Descrip" Height="30"  LostFocus="Save_Description" TextAlignment="Center"></TextBox>
-                                </DataTemplate>
-                            </DataGrid.RowDetailsTemplate> -->
-			</DataGrid>
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Detaily">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <DockPanel>
+                                    <!--  <Button Name="btnDesc" Content="Popis" Click="Open_Description"/> -->
+                                    <Button x:Name="btnOpenTovar" Content="Tovar" Click="Item_Open" />
+                                    <Button x:Name="btnOpenUser" Content="Zakaznik" Click="Profile_Item_Open"/>
+                                </DockPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
 		</Grid>
 	</Grid>
 </Page>

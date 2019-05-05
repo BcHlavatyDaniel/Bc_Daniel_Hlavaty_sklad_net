@@ -40,14 +40,20 @@ namespace materialApp
         CommonActions mCommonActions;
         VideoCapture mCapture;
         ImageViewer mViewer;
-        List<LogTableItem> itemList = new List<LogTableItem>();
-        List<string> nameCmbList = new List<string>(); //Chapem ze toto je napicu riesenie, ale ked tam chcem aj ten empty item, rychlejsie zbuchatelne..
-        List<string> itemCmbList = new List<string>();
-        List<string> typCmbList = new List<string>();
+       // List<LogTableItem> ItemList = new List<LogTableItem>();
+        public List<LogTableItem> ItemList { get; set; }
+
+        public List<string> nameCmbList { get; set; } = new List<string>(); //Chapem ze toto je napicu riesenie, ale ked tam chcem aj ten empty item, rychlejsie zbuchatelne..
+        public List<string> itemCmbList { get; set; } = new List<string>();
+        public List<string> typCmbList { get; set; } = new List<string>();
+        int selectedName { get; set; }
+        int selectedItem { get; set; }
+        int selectedType { get; set; }
 
         public LogPage(DbActions mDbActions, ImageViewer view, VideoCapture capture)
         {
             InitializeComponent();
+            DataContext = this;
 			this.mDbActions = mDbActions;
             Init(view, capture);
         }
@@ -55,6 +61,13 @@ namespace materialApp
         private void Init(ImageViewer view, VideoCapture capture)
         {
             mCommonActions = new CommonActions();
+            ItemList = new List<LogTableItem>();
+            nameCmbList = new List<string>();
+            itemCmbList = new List<string>();
+            typCmbList = new List<string>();
+            selectedItem = 0;
+            selectedName = 0;
+            selectedType = 0;
             DataSet logData = mDbActions.LoadAllLogs();
             LoadLogGrid(logData);
             nameCmbList.Insert(0, "");
@@ -62,10 +75,10 @@ namespace materialApp
             typCmbList.Insert(0, "");
             mCapture = capture;
             mViewer = view;
-            logDataGrid.ItemsSource = itemList;
-            Item_idLogCmb.ItemsSource = itemCmbList;
-            Year_numbersLogCmb.ItemsSource = nameCmbList;
-            TypeCmb.ItemsSource = typCmbList;
+
+         //   Item_idLogCmb.ItemsSource = itemCmbList;
+         //   Year_numbersLogCmb.ItemsSource = nameCmbList;
+         //   TypeCmb.ItemsSource = typCmbList;
         }
 
         private void LoadLogGrid(DataSet data)
@@ -75,11 +88,10 @@ namespace materialApp
             data.Tables[0].Columns["user_id"].ColumnName = "id uzivatel";
             data.Tables[0].Columns["type"].ColumnName = "typ zmeny";
             data.Tables[0].Columns["change_text"].ColumnName = "popis zmeny";
-
-            itemList.Clear();
+            ItemList.Clear();
             foreach (DataRow row in data.Tables[0].Rows)
             {
-                itemList.Add(new LogTableItem
+                ItemList.Add(new LogTableItem
                 {
                     id_tovar = row["id tovar"].ToString(),
                     id_uzivatela = row["id uzivatel"].ToString(),
@@ -88,7 +100,7 @@ namespace materialApp
                     time = row["time"].ToString(),
                 });
             }
-            logDataGrid.Items.Refresh();
+            logDataGrid.Items.Refresh();//TOTO JE NONO !!!!!!!!!!!!
             logDataGrid.UpdateLayout();
             UpdateCmbox_items(data);
         }
@@ -116,39 +128,14 @@ namespace materialApp
             mItemDWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             mItemDWindow.ShowDialog();
             picker.Text = "";
-            ResetCmbs(2);
             LoadLogGrid(mDbActions.LoadAllLogs());
-        }
-
-        private bool ResetCmbs(int type)
-        {
-            bool changed = false;
-            if (type == 2)
-            {
-                if (Item_idLogCmb.SelectedIndex != 0)
-                {
-                    changed = true;
-                    Item_idLogCmb.SelectedIndex = 0;
-                }
-                if (Year_numbersLogCmb.SelectedIndex != 0)
-                {
-                    changed = true;
-                    Year_numbersLogCmb.SelectedIndex = 0;
-                }
-                if (TypeCmb.SelectedIndex != 0)
-                {
-                    changed = true;
-                    TypeCmb.SelectedIndex = 0;
-                }
-            }
-            return changed;
         }
 
         private void SearchLogs(object sender, RoutedEventArgs e)
 		{
-            string item_id = "";
-            string user_id = "";
-            string type = "";
+      //      string item_id = "";
+      //      string user_id = "";
+      //      string type = "";
             DateTime day = new DateTime();
             bool pickerEmpty = true;
 
@@ -158,7 +145,7 @@ namespace materialApp
                 pickerEmpty = false;
             }
 
-            if (Item_idLogCmb.SelectedIndex != -1)
+     /*       if (Item_idLogCmb.SelectedIndex != -1)
             {
                 item_id = Item_idLogCmb.SelectedItem.ToString();
             }
@@ -169,15 +156,16 @@ namespace materialApp
             if (TypeCmb.SelectedIndex != -1)
             {
                 type = TypeCmb.SelectedItem.ToString();
-            }
+            }*/
 
-            if (pickerEmpty && item_id == "" && user_id == "" && type == "")
+        //    if (pickerEmpty && item_id == "" && user_id == "" && type == "")
+            if (pickerEmpty && selectedItem == 0 && selectedName == 0 && selectedType == 0)
             {
                 LoadLogGrid(mDbActions.LoadAllLogs());
                 return;
             }
-
-            LoadLogGrid(mDbActions.SearchForLogs(item_id, user_id, type, day));
+          //  LoadLogGrid(mDbActions.SearchForLogs(selectedItem, selectedName, selectedType, day));
+//            LoadLogGrid(mDbActions.SearchForLogs(item_id, user_id, type, day)); //miesto tohoto remove tie ktore nesedia
         }
     }
 }

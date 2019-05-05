@@ -8,19 +8,38 @@
         mc:Ignorable="d"
         Title="Log">
 	<Grid Background="WhiteSmoke">
-		<DockPanel HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0">
-			<TextBlock TextAlignment="Center" FontSize="52" Style="{StaticResource MaterialDesignHeadlineTextBlock}" Text="Zaznamy"></TextBlock>
-		</DockPanel>
-		<Grid Margin="150,85,0,0">
-			<DatePicker x:Name="picker" SelectedDateChanged="SearchLogs"  HorizontalAlignment="Left" VerticalAlignment="Top" materialDesign:HintAssist.Hint="Den" Margin="750,0,0,0"></DatePicker>
-            <DockPanel>
-				<ComboBox x:Name="Item_idLogCmb" ItemsSource="{Binding Source=itemCmbList}" SelectionChanged="SearchLogs" HorizontalAlignment="Left" Margin="0, 20,0,0" VerticalAlignment="Top" Width="150"/>
-				<ComboBox x:Name="Year_numbersLogCmb" ItemsSource="{Binding Source=nameCmbList}" SelectionChanged="SearchLogs" HorizontalAlignment="Left" Margin="0, 20 ,0,0" VerticalAlignment="Top" Width="150"/>
-				<ComboBox x:Name="TypeCmb" ItemsSource="{Binding Source=typCmbList}" SelectionChanged ="SearchLogs" HorizontalAlignment="Left" Margin="0, 20,0,0" VerticalAlignment="Top" Width="150"/>
-			</DockPanel>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="60"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="10"/>
+        </Grid.ColumnDefinitions>
+        
+        <TextBlock TextAlignment="Center" Grid.Row="1" Grid.Column="1" FontSize="52" Style="{StaticResource MaterialDesignHeadlineTextBlock}" Text="Zaznamy"></TextBlock>
+        <DatePicker x:Name="picker" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" SelectedDateChanged="SearchLogs" materialDesign:HintAssist.Hint="Den"></DatePicker>
+
+        <DockPanel Grid.Row="3" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Top">
+            <ComboBox SelectedIndex="{Binding selectedItem}" ItemsSource="{Binding itemCmbList}" Width="150"/>
+            <ComboBox SelectedIndex="{Binding selectedName}" ItemsSource="{Binding nameCmbList}" Width="150"/>
+            <ComboBox SelectedIndex="{Binding selectedType}" ItemsSource="{Binding typCmbList}" Width="150"/>
+            <TextBox Width="1065" materialDesign:TextFieldAssist.DecorationVisibility="Hidden" BorderThickness="0" IsReadOnly="True" />
+        </DockPanel>
+
+        <Grid Grid.Row="4" Grid.Column="1" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Top">
+            <!-- x:Name="Item_idLogCmb"-->
+            <!-- x:Name="Year_numbersLogCmb"-->
+            <!--x:Name="TypeCmb"-->
             <!--Loaded="Datagrid_Cmb_Update"-->
-            <DataGrid x:Name="logDataGrid" AutoGenerateColumns="False" ItemsSource="{Binding Source=itemList}" TextBlock.FontSize="16" HorizontalAlignment="Left"
-                                  CanUserReorderColumns="False" TextBlock.TextAlignment="Center" CanUserResizeColumns="False" CanUserSortColumns="False"  Background="#E1F5FE" IsReadOnly="True" Margin="0, 50, 0,0" VerticalAlignment="Top" Grid.Column="2">
+            <!---->
+            <DataGrid AutoGenerateColumns="False" x:Name="logDataGrid" ItemsSource="{Binding ItemList}" TextBlock.FontSize="16" HorizontalAlignment="Center"
+                                  CanUserReorderColumns="False" TextBlock.TextAlignment="Center" CanUserResizeColumns="False" CanUserSortColumns="False"  Background="#E1F5FE" IsReadOnly="True" VerticalAlignment="Top">
 				<DataGrid.Resources>
 					<Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
 						<Setter Property="Background" Value="#81D4FA" />

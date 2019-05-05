@@ -36,6 +36,9 @@ namespace materialApp
     /// </summary>
     public partial class User_details : Window
     {
+        public Item Item { get; set; }
+        public User User { get; set; }
+
         DbActions mDbActions;
         CommonActions mCommonActions;
         string mYear_key;
@@ -49,16 +52,16 @@ namespace materialApp
         bool mArchived = false;
         enum mState { Einit_state, Esold_card, Esold_cash, Ereturned, Epaid_card, Epaid_cash, Earchived };
 
-
         ImageViewer mViewer;
         VideoCapture mCapture;
 
-        EditUserStruct mLastSuccesfulUser;
-        EditUserStruct mLastUnsuccesfulUser;
+        User mLastSuccesfulUser;
+        User mLastUnsuccesfulUser;
 
         public User_details(EditUserStruct userStruct, ImageViewer view, VideoCapture cap)
         {
             InitializeComponent();
+            DataContext = this;
             Init(userStruct, view, cap);
         }
 
@@ -76,18 +79,21 @@ namespace materialApp
 
             mYear_key = userStruct.keyy;
             mNumber_key = userStruct.keyn;
-            text_user_id.Text = mYear_key + "-" + mNumber_key;
-            text_first_name.Text = userStruct.f_name;
-            text_second_name.Text = userStruct.s_name;
-            text_address.Text = userStruct.address;
-            text_tel_number.Text = userStruct.tel;
 
-            mLastSuccesfulUser = new EditUserStruct
+            User = new User();
+            User.IdYear = int.Parse(mYear_key);
+            User.IdNumber = int.Parse(mNumber_key);
+            User.FName = userStruct.f_name;
+            User.SName = userStruct.s_name;
+            User.Address = userStruct.address;
+            User.Phone = int.Parse(userStruct.tel);
+
+            mLastSuccesfulUser = new User
             {
-                f_name = userStruct.f_name,
-                s_name = userStruct.s_name,
-                tel = userStruct.tel,
-                address = userStruct.address
+                FName = userStruct.f_name,
+                SName = userStruct.s_name,
+                Phone = int.Parse(userStruct.tel),
+                Address = userStruct.address
             };
 
             DataSet data = mDbActions.SearchForItemsByUserkeys(mYear_key, mNumber_key);
@@ -98,6 +104,7 @@ namespace materialApp
 
         private void Print(object sender, RoutedEventArgs e)
         {
+
             PdfDocument pdf = new PdfDocument();
             if (File.Exists("~/../../../imageres/zmluva.pdf"))
                 pdf.LoadFromFile("~/../../../imageres/zmluva.pdf");
@@ -113,10 +120,10 @@ namespace materialApp
             PdfFont fontSmall = new PdfFont(PdfFontFamily.Courier, 10f);
 
             DataRowView datView = (DataRowView)dataGrid.SelectedItem;
-            page.Canvas.DrawString(text_first_name.Text, font, PdfBrushes.Black, new System.Drawing.PointF(40, 80f));
-            page.Canvas.DrawString(text_second_name.Text, font, PdfBrushes.Black, new System.Drawing.PointF(160, 80f));
-            if (text_address.Text.Length > 25) page.Canvas.DrawString(text_address.Text, fontSmall, PdfBrushes.Black, new System.Drawing.PointF(300, 85f));
-            else page.Canvas.DrawString(text_address.Text, font, PdfBrushes.Black, new System.Drawing.PointF(300, 80f));
+            page.Canvas.DrawString(/*text_first_name.Text*/User.FName, font, PdfBrushes.Black, new System.Drawing.PointF(40, 80f));
+            page.Canvas.DrawString(/*text_second_name.Text*/User.SName, font, PdfBrushes.Black, new System.Drawing.PointF(160, 80f));
+            if (/*text_address.Text.Length*/User.Address.Length > 25) page.Canvas.DrawString(/*text_address.Text*/User.Address, fontSmall, PdfBrushes.Black, new System.Drawing.PointF(300, 85f));
+            else page.Canvas.DrawString(/*text_address.Text*/User.Address, font, PdfBrushes.Black, new System.Drawing.PointF(300, 80f));
             page.Canvas.DrawString(mYear_key + "-" + mNumber_key, font, PdfBrushes.Black, new System.Drawing.PointF(520, 80f));
             //    page.Canvas.DrawString(datView.Row.ItemArray[0].ToString(), font, PdfBrushes.Black, new System.Drawing.PointF(400, 130f));
             var itemSource = dataGrid.ItemsSource as IEnumerable;
@@ -159,51 +166,37 @@ namespace materialApp
 
         private void Save(object sender, RoutedEventArgs e)
         {
+            User user = User.Copy();
 
             bool err = false;
             icon_edit_err.Visibility = Visibility.Visible;
 
-            if (text_first_name.Text == "")
+           // if (text_first_name.Text == "")
+            if (user.FName == "")
             {
                 text_edit_err.Foreground = Brushes.Red;
                 icon_edit_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
                 text_edit_err.Text = "Dopln meno!";
                 err = true;
             }
-            if (text_second_name.Text == "")
+            //if (text_second_name.Text == "")
+            if (user.SName == "")
             {
                 text_edit_err.Foreground = Brushes.Red;
                 icon_edit_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
                 text_edit_err.Text = "Dopln priezvisko";
                 err = true;
             }
-            if (text_tel_number.Text == "")
+
+            if (user.Address == "")
             {
                 text_edit_err.Foreground = Brushes.Red;
                 icon_edit_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
-                text_edit_err.Text = "Dopln tel. cislo";
+                text_edit_err.Text = "Dopln adresu";
                 err = true;
-            }
+            };
 
-            if (text_address.Text == "")
-            {
-                text_edit_err.Foreground = Brushes.Red;
-                icon_edit_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
-                text_address.Text = "Dopln adresu";
-                err = true;
-            }
-
-            int num;
-            if (!int.TryParse(text_tel_number.Text, out num))
-            {
-                text_edit_err.Foreground = Brushes.Red;
-                icon_edit_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Error;
-                text_edit_err.Text = "Zly format tel. cisla";
-                err = true;
-            }
-
-            if (mLastSuccesfulUser.f_name == text_first_name.Text && mLastSuccesfulUser.s_name == text_second_name.Text
-                && mLastSuccesfulUser.address == text_address.Text && mLastSuccesfulUser.tel == text_tel_number.Text)
+            if (mLastSuccesfulUser.Compare(user))
             {
                 icon_edit_err.Visibility = Visibility.Hidden;
                 return;
@@ -211,32 +204,12 @@ namespace materialApp
 
             if (err)
             {
-                mLastUnsuccesfulUser = new EditUserStruct
-                {
-                    f_name = text_first_name.Text,
-                    s_name = text_second_name.Text,
-                    address = text_address.Text,
-                    tel = text_tel_number.Text
-                };
+                mLastUnsuccesfulUser = user.Copy();
                 return;
             }
 
-            EditUserStruct userStruct = new EditUserStruct
-            {
-                keyy = mYear_key,
-                keyn = mNumber_key,
-                f_name = text_first_name.Text,
-                s_name = text_second_name.Text,
-                address = text_address.Text,
-                tel = text_tel_number.Text
-            };
-
-            mDbActions.UpdateUser(userStruct);
-
-            mLastSuccesfulUser.f_name = text_first_name.Text;
-            mLastSuccesfulUser.s_name = text_second_name.Text;
-            mLastSuccesfulUser.address = text_address.Text;
-            mLastSuccesfulUser.tel = text_tel_number.Text;
+            mDbActions.UpdateUser2(user);
+            mLastSuccesfulUser = User.Copy();
 
             text_edit_err.Text = "Uspesne zmenene udaje.";
             icon_edit_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Done;
@@ -245,20 +218,13 @@ namespace materialApp
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
-
-            EditUserStruct compStruct = new EditUserStruct
-            {
-                f_name = text_first_name.Text,
-                s_name = text_second_name.Text,
-                address = text_address.Text,
-                tel = text_tel_number.Text
-            };
+            User compStruct = User.Copy();
 
             bool showPopup = false;
 
             if (mLastUnsuccesfulUser == null)
             {
-                if (!CompareUserStruct(mLastSuccesfulUser, compStruct))
+                if (!mLastSuccesfulUser.Compare(compStruct))
                 {
                     showPopup = true;
                     e.Cancel = true;
@@ -266,7 +232,7 @@ namespace materialApp
             }
             else
             {
-                if (!CompareUserStruct(mLastSuccesfulUser, compStruct) && (!CompareUserStruct(mLastUnsuccesfulUser, compStruct)))
+                if ((!mLastSuccesfulUser.Compare(compStruct)) && (!mLastUnsuccesfulUser.Compare(compStruct)))
                 {
                     showPopup = true;
                     e.Cancel = true;
@@ -302,6 +268,8 @@ namespace materialApp
 
         private void Close_Popup(object sender, RoutedEventArgs e)
         {
+            User user = User.Copy();
+
             Button caller = (Button)sender;
             if (caller.Name == "PopupSave")
             {
@@ -332,11 +300,7 @@ namespace materialApp
             else
             {
                 OnClosePopup.IsOpen = false;
-                mLastSuccesfulUser.f_name = text_first_name.Text;
-                mLastSuccesfulUser.s_name = text_second_name.Text;
-                mLastSuccesfulUser.address = text_address.Text;
-                mLastSuccesfulUser.tel = text_tel_number.Text;
-
+                mLastSuccesfulUser = user.Copy();
                 this.Close();
             }
 
@@ -370,7 +334,8 @@ namespace materialApp
 
             string userId = mYear_key + "-" + mNumber_key;
 
-            Item_details mItemDWindow = new Item_details(datView.Row.ItemArray[0].ToString(), text_first_name.Text, text_second_name.Text, userId, mViewer, mCapture);
+            //Item_details mItemDWindow = new Item_details(datView.Row.ItemArray[0].ToString(), text_first_name.Text, text_second_name.Text, userId, mViewer, mCapture);
+            Item_details mItemDWindow = new Item_details(datView.Row.ItemArray[0].ToString(), User.FName, User.SName, userId, mViewer, mCapture);
             mItemDWindow.Owner = this;
             mItemDWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             mItemDWindow.ShowDialog();

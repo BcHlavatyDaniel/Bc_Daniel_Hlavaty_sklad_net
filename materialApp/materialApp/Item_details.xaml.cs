@@ -34,7 +34,6 @@ namespace materialApp
 		public User User { get; set; }
 		bool mCloseWin;
         Item mLastSuccessStruct;
-        Item mLastUnsuccessStruct;
 
         ImageViewer mViewer;
         VideoCapture mCapture;
@@ -82,16 +81,6 @@ namespace materialApp
 
 
 			mLastSuccessStruct = Item.Copy();
-				/*
-            mLastSuccessStruct = new EditItemStruct
-            {
-                description = row["description"].ToString(),
-                photo = row["photo"].ToString(),
-                name = row["name"].ToString() ,
-                size = row["size"].ToString(),
-                price = row["price"].ToString(),
-            };
-			*/
         }
 
         private void TakeAPic(object sender, RoutedEventArgs e)
@@ -169,10 +158,10 @@ namespace materialApp
         {
 			Item item = Item.Copy();
 
-            if (mLastUnsuccessStruct != null)
-            {
-                if (item.Compare(Item)) return;
-            }
+          //  if (mLastUnsuccessStruct != null)
+          //  {
+          //      if (item.Compare(Item)) return;
+          //  }
             if (item.Compare(mLastSuccessStruct)) return;
 
             string changeString = "";
@@ -310,37 +299,7 @@ namespace materialApp
                 showPopup = true;
                 e.Cancel = true;
             }
-            //   if (compStruct.Name == )
 
-            /*          if (mLastUnsuccessStruct == null)
-                      {
-                          if (!mLastSuccessStruct.Compare(compStruct))
-                          {
-                              showPopup = true;
-                              e.Cancel = true;
-                          }
-                      }
-                      else
-                      {
-                          if (!mLastSuccessStruct.Compare(compStruct) && (!mLastUnsuccessStruct.Compare(compStruct)))
-                          {
-                              showPopup = true;
-                              e.Cancel = true;
-                          }
-                      }*/
-
-            /*     if (Item.State != Item.State)
-                 {
-                     showPopup = true;
-                     e.Cancel = true;
-                 }
-
-                 if (Item.Archived)
-                 {
-                     showPopup = true;
-                     e.Cancel = true;
-                 }
-                */
             if (showPopup)
             {
                 HideGrid.Visibility = Visibility.Hidden;

@@ -348,7 +348,6 @@ namespace materialApp
 		{
             DataRowView datView = ((DataRowView)itemsDataGrid.SelectedItem);
             Item_details mItemDWindow = new Item_details(datView.Row.ItemArray[3].ToString(), datView.Row.ItemArray[2].ToString(), datView.Row.ItemArray[1].ToString(), datView.Row.ItemArray[0].ToString(), mViewer, mCapture);
-
             mItemDWindow.Owner = Window.GetWindow(this);// this;
             mItemDWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             mItemDWindow.ShowDialog();
