@@ -18,7 +18,7 @@
                 {
                     @if (Model.ElementAt(i + k) != null)
                     {
-                        <div class=d-inline-block style="border-style:solid;background-color:#d3e4ff">
+                        <div class=d-inline-block style="border-style:solid;background-color:#d3e4ff;width:400px;height:200px">
                             <div style="width:50%;float:left"> 
                                 <h5 style="width:200px;margin-bottom:20px">
                                     <u>
@@ -32,9 +32,9 @@
                                     @(String.Format("{0} {1}", "Cena: ", Model.ElementAt(i + k).price))
                                 </p>
                             </div>
-                            <div style="width:50%;float:right">
-                                <!-- (String.Format("{0}{1}", "resources/", Model.ElementAt(i +k).photo)) -->
-                                <img src="~/resources/animal-wallpaper-03.jpg" style="max-height:200px;max-width:200px" />
+                            <div style="width:50%;float:right;text-align:center">
+                                <img src=@(String.Format("{0}{1}", "resources/", Model.ElementAt(i +k).photo)) style="max-height:180px;max-width:180px"/> 
+                            <!--    <img src="~/resources/animal-wallpaper-03.jpg" style="max-height:200px;max-width:200px" /> -->
                             </div>
                         </div>
                     }
