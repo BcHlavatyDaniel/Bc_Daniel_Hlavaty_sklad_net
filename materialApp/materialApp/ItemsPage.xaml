@@ -6,8 +6,7 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:materialApp"
         mc:Ignorable="d">
-	<!-- Height="1000" Width="1200"-->
-	<Grid Background="WhiteSmoke">
+    <Grid Background="WhiteSmoke">
         <Grid.RowDefinitions>
             <RowDefinition Height="10"/>
             <RowDefinition Height="60"/>
@@ -21,49 +20,55 @@
             <ColumnDefinition Width="10"/>
         </Grid.ColumnDefinitions>
 
-	    <TextBlock Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" FontSize="52" Style="{StaticResource MaterialDesignHeadlineTextBlock}" Text="Zoznam Tovaru"></TextBlock>
-
+        <TextBlock Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" FontSize="52" Style="{StaticResource MaterialDesignHeadlineTextBlock}" Text="Zoznam Tovaru"></TextBlock>
         <DockPanel Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center">
-            <ComboBox x:Name="Year_numbersItemCmb" SelectionChanged="SearchItems" Width="75"/>
-            <ComboBox x:Name="FirstNameItemCmb" SelectionChanged="SearchItems" Width="150"/>
-            <ComboBox x:Name="SecondNameItemCmb" SelectionChanged="SearchItems" Width="150"/>
+            <ComboBox ItemsSource="{Binding idCmbList}" SelectedIndex="{Binding selectedId}" SelectionChanged="SearchItems" Width="80"/>
+            <ComboBox ItemsSource="{Binding fNameCmbList}" SelectedIndex="{Binding selectedFName}" SelectionChanged="SearchItems" Width="150"/>
+            <ComboBox ItemsSource="{Binding sNameCmbList}" SelectedIndex="{Binding selectedSName}" SelectionChanged="SearchItems" Width="150"/>
             <TextBox Width="75" materialDesign:TextFieldAssist.DecorationVisibility="Hidden" BorderThickness="0" IsReadOnly="True"/>
-            <ComboBox x:Name="ItemNameCmb" SelectionChanged="SearchItems" Width="150"/>
+            <ComboBox ItemsSource="{Binding iNameCmbList}" SelectedIndex="{Binding selectedIName}" SelectionChanged="SearchItems" Width="150"/>
             <TextBox Width="910" materialDesign:TextFieldAssist.DecorationVisibility="Hidden" BorderThickness="0" IsReadOnly="True"/>
         </DockPanel>
         
         <Grid HorizontalAlignment="Center" Grid.Column="1" Grid.Row="3">
-            <DataGrid  x:Name="itemsDataGrid" Loaded="Datagrid_Cmb_Update" TextBlock.TextAlignment="Center" TextBlock.FontSize="16" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False" VirtualizingPanel.IsVirtualizing="False" HorizontalAlignment="Center" RowDetailsVisibilityMode="Collapsed" Background="#E1F5FE" IsReadOnly="True" VerticalAlignment="Top">
-				<DataGrid.Resources>
-					<Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
-						<Setter Property="Background" Value="#81D4FA" />
-						<Setter Property="FontSize" Value="16"/>
-						<Setter Property="HorizontalContentAlignment" Value="Center"/>
-					</Style>
-					<Style BasedOn="{StaticResource {x:Type DataGridCell}}" TargetType="{x:Type DataGridCell}">
-						<Style.Triggers>
-							<Trigger Property="DataGridCell.IsSelected" Value="True">
-								<Setter Property="Background" Value="#dbedfc"/>
-								<Setter Property="BorderBrush" Value="#01579B"></Setter>
-							</Trigger>
-						</Style.Triggers>
-					</Style>
-				</DataGrid.Resources>
-				<DataGrid.CellStyle>
+            <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding ItemList}" x:Name="itemsDataGrid" TextBlock.TextAlignment="Center" TextBlock.FontSize="16" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False" HorizontalAlignment="Center" RowDetailsVisibilityMode="Collapsed" Background="#E1F5FE" IsReadOnly="True" VerticalAlignment="Top">
+                <DataGrid.Resources>
+                    <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
+                        <Setter Property="Background" Value="#81D4FA" />
+                        <Setter Property="FontSize" Value="16"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    </Style>
+                    <Style BasedOn="{StaticResource {x:Type DataGridCell}}" TargetType="{x:Type DataGridCell}">
+                        <Style.Triggers>
+                            <Trigger Property="DataGridCell.IsSelected" Value="True">
+                                <Setter Property="BorderBrush" Value="#01579B"></Setter>
+                                <Setter Property="Background" Value="{Binding Color}"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.Resources>
+                <DataGrid.CellStyle>
 					<Style BasedOn="{StaticResource {x:Type DataGridCell}}" TargetType="{x:Type DataGridCell}">
 						<Setter Property="BorderThickness" Value="0.3"></Setter>
-						<Setter Property="BorderBrush" Value="#01579B"></Setter>
-						<Setter Property="Background" Value="#dbedfc"></Setter>
-					</Style>
+                        <Setter Property="BorderBrush" Value="#01579B"></Setter>
+                        <Setter Property="Background" Value="{Binding Color}"/> 
+                    </Style>
 				</DataGrid.CellStyle>
                 <DataGrid.Columns>
-                    <DataGridTemplateColumn Header="Detaily">
+                    <DataGridTextColumn Header="Rok-id" Binding="{Binding UserId}" Width="80"/>
+                    <DataGridTextColumn Header="Prve meno" Binding="{Binding UserFName}" Width="150"/>
+                    <DataGridTextColumn Header="Druhe meno" Binding="{Binding UserSName}" Width="150"/>
+                    <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="75"/>
+                    <DataGridTextColumn Header="Nazov" Binding="{Binding Name}" Width="150"/>
+                    <DataGridTextColumn Header="Velkost" Binding="{Binding Size}" Width="150"/>
+                    <DataGridTextColumn Header="Cena" Binding="{Binding Price}" Width="150"/>
+                    <DataGridTextColumn Header="Popis" Binding="{Binding Description}" Width="400"/>
+                    <DataGridTemplateColumn Header="Detaily" Width="200">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <DockPanel>
-                                    <!--  <Button Name="btnDesc" Content="Popis" Click="Open_Description"/> -->
-                                    <Button x:Name="btnOpenTovar" Content="Tovar" Click="Item_Open" />
-                                    <Button x:Name="btnOpenUser" Content="Zakaznik" Click="Profile_Item_Open"/>
+                                    <Button Content="Tovar" Click="Item_Open" />
+                                    <Button Content="Zakaznik" Click="Profile_Item_Open"/>
                                 </DockPanel>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>

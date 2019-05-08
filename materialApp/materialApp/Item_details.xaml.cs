@@ -1,22 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using System.Collections;
 using System.Data;
-using MySql.Data.MySqlClient;
+using System.ComponentModel;
 using Emgu.CV;
 using Emgu.CV.UI;
-using Emgu.CV.Structure;
 using System.IO;
 using System.Net;
 using WinSCP;
@@ -27,7 +18,7 @@ namespace materialApp
 	/// <summary>
 	/// Interaction logic for Item_details.xaml
 	/// </summary>
-	public partial class Item_details : Window
+	public partial class Item_details : Window, INotifyPropertyChanged
     {
         DbActions mDbActions;
 		public Item Item { get; set; }
@@ -37,6 +28,16 @@ namespace materialApp
 
         ImageViewer mViewer;
         VideoCapture mCapture;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void NotifyPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
 
         public Item_details(string id, string f_name, string s_name, string user_id, ImageViewer view, VideoCapture cap)
         {
@@ -59,8 +60,8 @@ namespace materialApp
 			User.SName = s_name;
 
             LoadItem(id, user_id);
-            icon_edit_err.Visibility = Visibility.Hidden;
-            text_edit_err.Text = "";
+            User.Edit_Text = "";
+            User.Icon_Visibility = "Hidden";
         }
 
         private void LoadItem(string id, string userId)
@@ -87,7 +88,6 @@ namespace materialApp
         {
             mViewer.Image = mCapture.QueryFrame(); //TO DO if throws err
             mViewer.Image.Save("webImage0.png"); // -> odtialto ho skopcit do imageres, nazov +id
-            //find available name
 
             SessionOptions sesOptions = new SessionOptions
             {
@@ -99,7 +99,6 @@ namespace materialApp
             Session ses = new Session();
             ses.Open(sesOptions);
 
-            //if file exists, until it does not. choose that name.
             string imgName = "webImage0.png";
             int id = 0;
             while(ses.FileExists(imgName))
@@ -117,25 +116,7 @@ namespace materialApp
             File.Copy(getImage, saveImage);
 
             Item.Photo = System.IO.Path.GetFullPath("../../imageres/" + imgName);
-            image1.Source = new BitmapImage(new Uri(Item.Photo, UriKind.RelativeOrAbsolute));
-            /*  DirectoryInfo di = new DirectoryInfo("~/../../../imageres/");
-              FileInfo[] currFiles = di.GetFiles("*.png");
-
-              string imgName = "webImage0.png";
-              int id = 0;
-              while (File.Exists("~/../../../imageres/" + imgName))
-              {
-                  imgName = new String(imgName.Where(c => c != '-' && (c < '0' || c > '9')).ToArray());
-                  id++;
-                  imgName = imgName.Insert(8, id.ToString());
-              }
-
-              string getImage = "webImage0.png";
-
-              string saveImage = "~/../../../imageres/" + imgName;
-              File.Copy(getImage, saveImage);
-              Item.Photo = "C://Users/Daniel/source/repos/materialApp/materialApp/imageres/" + imgName;   //TO DO this directory path to config
-              */                                                                                            // image1.Source = new BitmapImage(new Uri(photo_path, UriKind.RelativeOrAbsolute));
+            image1.Source = new BitmapImage(new Uri(Item.Photo, UriKind.RelativeOrAbsolute));                                                                                         // image1.Source = new BitmapImage(new Uri(photo_path, UriKind.RelativeOrAbsolute));
         }
 
         private void AddPhotoPath(object sender, RoutedEventArgs s)
@@ -157,17 +138,12 @@ namespace materialApp
         private void Save(object sender, RoutedEventArgs e)
         {
 			Item item = Item.Copy();
-
-          //  if (mLastUnsuccessStruct != null)
-          //  {
-          //      if (item.Compare(Item)) return;
-          //  }
             if (item.Compare(mLastSuccessStruct)) return;
 
             string changeString = "";
             int logType = 0;
 
-            if (Item.Archived)
+            if (mLastSuccessStruct.Archived != Item.Archived)
             {
                 mDbActions.UpdateSpecificItem(Item.Id.ToString(), 6, Item.Archived.ToString());
                 if (Item.Archived) changeString = "Tovar archivovany";
@@ -175,7 +151,7 @@ namespace materialApp
                 logType = 2;
                 mDbActions.AddLog(Item.Id.ToString(), Item.UserId.ToString(), logType, changeString);
             }
-			// todo takto to chces?
+			// todo takto to chces? ...som sa ta na to pytal osobne.. 
             if (mLastSuccessStruct.State != Item.State)
             {
                 mDbActions.UpdateSpecificItem(Item.Id.ToString(), 5, Item.State.ToString());
@@ -230,7 +206,6 @@ namespace materialApp
             }
             if (Item.Photo != mLastSuccessStruct.Photo)
             {
-                //photoPath to ftp, + fpt link to photoPath 
                 Ftp_Upload(Item.Photo);
                 string[] split = Item.Photo.Split('/');
                 string fileName;
@@ -280,10 +255,8 @@ namespace materialApp
 
             if (changeString != "")
             {
-                icon_edit_err.Visibility = Visibility.Visible;
-
-				mLastSuccessStruct = Item.Copy();
-				
+                User.Icon_Visibility = "Visible";
+				mLastSuccessStruct = Item.Copy();				
                 ClearOptions();
                 LoadItem(Item.Id.ToString(), Item.UserId.ToString());
             }
@@ -304,9 +277,7 @@ namespace materialApp
             {
                 HideGrid.Visibility = Visibility.Hidden;
                 OnClosePopup.IsOpen = true;
-            }
-
-            
+            }       
         }
 
         private void Close_from_Popup(object sender, RoutedEventArgs e)
@@ -327,7 +298,6 @@ namespace materialApp
                 OnClosePopup.IsOpen = true;
                 HideGrid.Visibility = Visibility.Visible;
             }
-
         }
 
         private void Close_Popup(object sender, RoutedEventArgs e)
@@ -336,7 +306,7 @@ namespace materialApp
             if (caller.Name == "PopupSave")
             {
                 Save(sender, e);
-                if (icon_edit_err.Kind == MaterialDesignThemes.Wpf.PackIconKind.Error)
+              if (User.Kind == "Error")
                 {
                     text_popupSline.Text = "";
                     text_popupFline.Text = "";
@@ -400,9 +370,9 @@ namespace materialApp
 
         private void ClearOptions()
         {
-            text_edit_err.Text = "Uspesne zmenene";
-            text_edit_err.Foreground = Brushes.Green;
-            icon_edit_err.Kind = MaterialDesignThemes.Wpf.PackIconKind.Done;
+            User.Edit_Text = "Uspesne zmenene";
+            User.Color = "Green";
+            User.Kind = "Done";
         }
 
         private void Ftp_Upload(string path)
@@ -430,11 +400,7 @@ namespace materialApp
         {
             WebClient client = new WebClient();
             client.Credentials = new NetworkCredential("test", "test");
-            //string[] split = path.Split('/');
-            //string fileName = split[split.Length - 1];
             client.DownloadFile("ftp://dokelu.kst.fri.uniza.sk/" + imgName, "~/../../../imageres/" + imgName);
         }
-
-
     }
 }

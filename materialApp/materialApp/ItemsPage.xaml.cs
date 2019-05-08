@@ -1,35 +1,13 @@
-﻿//using Syncfusion.Pdf;
-//using Syncfusion.Pdf.Graphics;
-using DatabaseProj;
+﻿using DatabaseProj;
 using System.Windows;
 using System.Windows.Controls;
 using System;
-using Spire.Pdf;
-using Spire.Pdf.Graphics;
-using System.ComponentModel;
-using System.Drawing;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Controls.Primitives;
-using System.Windows.Threading;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Collections;
 using System.Data;
-using MySql.Data.MySqlClient;
 using Emgu.CV;
 using Emgu.CV.UI;
-using Emgu.CV.Structure;
-using System.IO;
-using System.Net;
+using System.ComponentModel;
 
 namespace materialApp
 {
@@ -38,38 +16,107 @@ namespace materialApp
 	/// </summary>
 	/// 
 
-	public partial class ItemsPage : Page
+	public partial class ItemsPage : Page, INotifyPropertyChanged
 	{
         CommonActions mCommonActions;
         private DbActions mDbActions;
-        List<int> mButtonList;
         enum mState { Einit_state, Esold_card, Esold_cash, Ereturned, Epaid_card, Epaid_cash, Earchived };
         VideoCapture mCapture;
         ImageViewer mViewer;
+        public List<Item> ItemList { get; set; }
+
+        public List<string> idCmbList { get; set; } = new List<string>();
+        public List<string> fNameCmbList { get; set; } = new List<string>();
+        public List<string> sNameCmbList { get; set; } = new List<string>();
+        public List<string> iNameCmbList { get; set; } = new List<string>();
+
+        private int mSelectedId;
+        public int selectedId
+        {
+            get
+            {
+                return mSelectedId;
+            }
+            set
+            {
+                mSelectedId = value;
+                NotifyPropertyChanged("selectedId");
+            }
+        }
+        private int mSelectedFName;
+        public int selectedFName
+        {
+            get
+            {
+                return mSelectedFName;
+            }
+            set
+            {
+                mSelectedFName = value;
+                NotifyPropertyChanged("selectedFName");
+            }
+        }
+        private int mSelectedSName;
+        public int selectedSName
+        {
+            get
+            {
+                return mSelectedSName;
+            }
+            set
+            {
+                mSelectedSName = value;
+                NotifyPropertyChanged("selectedSName");
+            }
+        }
+        private int mSelectedIName;
+        public int selectedIName
+        {
+            get
+            {
+                return mSelectedIName;
+            }
+            set
+            {
+                mSelectedIName = value;
+                NotifyPropertyChanged("selectedIName");
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void NotifyPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
 
         public ItemsPage(DbActions mDbActions, ImageViewer view, VideoCapture capture)
         {
             InitializeComponent();
 			this.mDbActions = mDbActions;
+            DataContext = this;
             Init(view, capture);
-            FirstNameItemCmb.Items.Insert(0, "");
-            SecondNameItemCmb.Items.Insert(0, "");
-            Year_numbersItemCmb.Items.Insert(0, "");
-            ItemNameCmb.Items.Insert(0, "");
         }
 
         private void Init(ImageViewer view, VideoCapture capture)
         {
             mCommonActions = new CommonActions();
+            ItemList = new List<Item>();
             mCapture = capture;
             mViewer = view;
             DataSet itData = mDbActions.LoadAllItems();
             LoadItemsGrid(itData, mDbActions.LoadAllUsers());
+            idCmbList.Insert(0, "");
+            fNameCmbList.Insert(0, "");
+            sNameCmbList.Insert(0, "");
+            iNameCmbList.Insert(0, "");
         }
 
         private void LoadItemsGrid(DataSet allItems, DataSet allUsers)
         {
-            itemsDataGrid.ItemsSource = null;
             allItems.Tables[0].Columns.Add("rok-id", typeof(string));
             allItems.Tables[0].Columns.Add("Prve meno", typeof(string));
             allItems.Tables[0].Columns.Add("Druhe meno", typeof(string));
@@ -88,9 +135,8 @@ namespace materialApp
                             row["Druhe meno"] = uRow["second_name"].ToString();
                             break;
                         }
-
                     }
-                } //remove missing
+                }
                 if (row["Prve meno"].ToString() == "")
                 {
                     row.Delete();
@@ -98,358 +144,143 @@ namespace materialApp
             }
             allItems.AcceptChanges();
 
-            mButtonList = new List<int>();
-            int add;
-
+            ItemList.Clear();
+            string curState = "";
             foreach (DataRow row in allItems.Tables[0].Rows)
             {
+                if (!idCmbList.Contains(row["rok-id"].ToString()))
+                    idCmbList.Add(row["rok-id"].ToString());
+                if (!fNameCmbList.Contains(row["Prve meno"].ToString()))
+                    fNameCmbList.Add(row["Prve meno"].ToString());
+                if (!sNameCmbList.Contains(row["Druhe meno"].ToString()))
+                    sNameCmbList.Add(row["Druhe meno"].ToString());
+                if (!iNameCmbList.Contains(row["name"].ToString()))
+                    iNameCmbList.Add(row["name"].ToString());
 
                 if (row["archived"].ToString() == "True")
                 {
-                    mButtonList.Add((int)mState.Earchived);
-                }
+                    curState = "OrangeRed";
+                } 
                 else
                 {
-                    int.TryParse(row["stav"].ToString(), out add);
-                    mButtonList.Add(add);
+                    switch (int.Parse(row["stav"].ToString()))
+                    {
+                        case 1:
+                            {
+                                curState = "LimeGreen";
+                                break;
+                            }
+                        case 2:
+                            {
+                                curState = "LightYellow";
+                                break;
+                            }
+                        case 3:
+                            {
+                                curState = "LightGray";
+                                break;
+                            }
+                        case 4:
+                            {
+                                curState = "Green";
+                                break;
+                            }
+                        case 5:
+                            {
+                                curState = "Yellow";
+                                break;
+                            }
+                    }
                 }
-            }
-
-            allItems.Tables[0].Columns.Remove("stav");
-            allItems.Tables[0].Columns.Remove("archived");
-            allItems.Tables[0].Columns.Remove("user_year");
-            allItems.Tables[0].Columns.Remove("user_numbers");
-            allItems.Tables[0].Columns.Remove("photo");
-            allItems.Tables[0].Columns["name"].ColumnName = "Nazov";
-            allItems.Tables[0].Columns["size"].ColumnName = "Velkost";
-            allItems.Tables[0].Columns["price"].ColumnName = "Cena";
-            allItems.Tables[0].Columns["description"].ColumnName = "Popis";
-            allItems.Tables[0].Columns["rok-id"].SetOrdinal(0);
-            allItems.Tables[0].Columns["Prve meno"].SetOrdinal(1);
-            allItems.Tables[0].Columns["Druhe meno"].SetOrdinal(2);
-
-            foreach (DataRow row in allUsers.Tables[0].Rows)
-            {
-                if (!FirstNameItemCmb.Items.Contains(row["first_name"].ToString()))
-                    FirstNameItemCmb.Items.Add(row["first_name"].ToString());
-                if (!SecondNameItemCmb.Items.Contains(row["second_name"].ToString()))
-                    SecondNameItemCmb.Items.Add(row["second_name"].ToString());
-                if (!Year_numbersItemCmb.Items.Contains(row["year"].ToString()+"-" + row["_numbers"].ToString()))
-                    Year_numbersItemCmb.Items.Add(row["year"].ToString() + "-" + row["_numbers"].ToString());
-            }
-
-            foreach (DataRow row in allItems.Tables[0].Rows)
-            {
-                if (!ItemNameCmb.Items.Contains(row["Nazov"].ToString()))
-                    ItemNameCmb.Items.Add(row["Nazov"].ToString());
-            }
-
-            itemsDataGrid.ItemsSource = allItems.Tables[0].DefaultView;
-            itemsDataGrid.Items.Refresh();
-            itemsDataGrid.UpdateLayout();
-
-            if (itemsDataGrid.Columns.Count > 4)
-            {
-                itemsDataGrid.Columns[0].Width = 200; //actWidth / 7.5; //200;
-                itemsDataGrid.Columns[1].Width = 75; //actWidth / 20; //75;
-                itemsDataGrid.Columns[2].Width = 150; //actWidth / 10; //150;
-                itemsDataGrid.Columns[3].Width = 150; //actWidth / 10; //150;
-                itemsDataGrid.Columns[4].Width = 75; //actWidth / 20; //75;
-                itemsDataGrid.Columns[5].Width = 150; //actWidth / 10; //150;
-                itemsDataGrid.Columns[6].Width = 100; //actWidth / 15;//100;
-                itemsDataGrid.Columns[7].Width = 100; //actWidth / 15;//100;
-                itemsDataGrid.Columns[8].Width = 500; //actWidth / 3; //500;
-            }
-            doColors();
-        }
-
-        private void doColors()
-        {
-            if (itemsDataGrid.Columns.Count > 4)
-            {
-                itemsDataGrid.Columns[0].Width = 200; //actWidth / 7.5; //200;
-                itemsDataGrid.Columns[1].Width = 75; //actWidth / 20; //75;
-                itemsDataGrid.Columns[2].Width = 150; //actWidth / 10; //150;
-                itemsDataGrid.Columns[3].Width = 150; //actWidth / 10; //150;
-                itemsDataGrid.Columns[4].Width = 75; //actWidth / 20; //75;
-                itemsDataGrid.Columns[5].Width = 150; //actWidth / 10; //150;
-                itemsDataGrid.Columns[6].Width = 100; //actWidth / 15;//100;
-                itemsDataGrid.Columns[7].Width = 100; //actWidth / 15;//100;
-                itemsDataGrid.Columns[8].Width = 500; //actWidth / 3; //500;
-            }
-            DataGridRow gridRow = (DataGridRow)itemsDataGrid.ItemContainerGenerator.ContainerFromIndex(0);
-            if (gridRow == null) return;
-            itemsDataGrid.Columns[0].DisplayIndex = itemsDataGrid.Columns.Count - 1;
-            DataGridCell cell;
-            int counter = 0;
-            foreach (var item in itemsDataGrid.Items)
-            {
-                DataGridRow row = (DataGridRow)itemsDataGrid.ItemContainerGenerator.ContainerFromItem(item);
-                if (row == null) continue;
-                switch (mButtonList.ElementAt(counter))
+                ItemList.Add(new Item
                 {
-                    case (int)mState.Esold_card:
-                        {
-                            cell = CommonActions.GetGridCell(row, 0);
-                            cell.Background = System.Windows.Media.Brushes.LimeGreen;
-                            cell = CommonActions.GetGridCell(row, 1);
-                            cell.Background = System.Windows.Media.Brushes.LimeGreen;
-                            cell = CommonActions.GetGridCell(row, 2);
-                            cell.Background = System.Windows.Media.Brushes.LimeGreen;
-                            cell = CommonActions.GetGridCell(row, 3);
-                            cell.Background = System.Windows.Media.Brushes.LimeGreen;
-                            cell = CommonActions.GetGridCell(row, 4);
-                            cell.Background = System.Windows.Media.Brushes.LimeGreen;
-                            cell = CommonActions.GetGridCell(row, 5);
-                            cell.Background = System.Windows.Media.Brushes.LimeGreen;
-                            cell = CommonActions.GetGridCell(row, 6);
-                            cell.Background = System.Windows.Media.Brushes.LimeGreen;
-                            cell = CommonActions.GetGridCell(row, 7);
-                            cell.Background = System.Windows.Media.Brushes.LimeGreen;
-                            cell = CommonActions.GetGridCell(row, 8);
-                            cell.Background = System.Windows.Media.Brushes.LimeGreen;
-                            break;
-                        }
-                    case (int)mState.Esold_cash:
-                        {
-                            cell = CommonActions.GetGridCell(row, 0);
-                            cell.Background = System.Windows.Media.Brushes.LightYellow;
-                            cell = CommonActions.GetGridCell(row, 1);
-                            cell.Background = System.Windows.Media.Brushes.LightYellow;
-                            cell = CommonActions.GetGridCell(row, 2);
-                            cell.Background = System.Windows.Media.Brushes.LightYellow;
-                            cell = CommonActions.GetGridCell(row, 3);
-                            cell.Background = System.Windows.Media.Brushes.LightYellow;
-                            cell = CommonActions.GetGridCell(row, 4);
-                            cell.Background = System.Windows.Media.Brushes.LightYellow;
-                            cell = CommonActions.GetGridCell(row, 5);
-                            cell.Background = System.Windows.Media.Brushes.LightYellow;
-                            cell = CommonActions.GetGridCell(row, 6);
-                            cell.Background = System.Windows.Media.Brushes.LightYellow;
-                            cell = CommonActions.GetGridCell(row, 7);
-                            cell.Background = System.Windows.Media.Brushes.LightYellow;
-                            cell = CommonActions.GetGridCell(row, 8);
-                            cell.Background = System.Windows.Media.Brushes.LightYellow;
-                            break;
-                        }
-                    case (int)mState.Ereturned:
-                        {
-                            cell = CommonActions.GetGridCell(row, 0);
-                            cell.Background = System.Windows.Media.Brushes.LightGray;
-                            cell = CommonActions.GetGridCell(row, 1);
-                            cell.Background = System.Windows.Media.Brushes.LightGray;
-                            cell = CommonActions.GetGridCell(row, 2);
-                            cell.Background = System.Windows.Media.Brushes.LightGray;
-                            cell = CommonActions.GetGridCell(row, 3);
-                            cell.Background = System.Windows.Media.Brushes.LightGray;
-                            cell = CommonActions.GetGridCell(row, 4);
-                            cell.Background = System.Windows.Media.Brushes.LightGray;
-                            cell = CommonActions.GetGridCell(row, 5);
-                            cell.Background = System.Windows.Media.Brushes.LightGray;
-                            cell = CommonActions.GetGridCell(row, 6);
-                            cell.Background = System.Windows.Media.Brushes.LightGray;
-                            cell = CommonActions.GetGridCell(row, 7);
-                            cell.Background = System.Windows.Media.Brushes.LightGray;
-                            cell = CommonActions.GetGridCell(row, 8);
-                            cell.Background = System.Windows.Media.Brushes.LightGray;
-                            break;
-                        }
-                    case (int)mState.Epaid_card:
-                        {
-                            cell = CommonActions.GetGridCell(row, 0);
-                            cell.Background = System.Windows.Media.Brushes.Green;
-                            cell = CommonActions.GetGridCell(row, 1);
-                            cell.Background = System.Windows.Media.Brushes.Green;
-                            cell = CommonActions.GetGridCell(row, 2);
-                            cell.Background = System.Windows.Media.Brushes.Green;
-                            cell = CommonActions.GetGridCell(row, 3);
-                            cell.Background = System.Windows.Media.Brushes.Green;
-                            cell = CommonActions.GetGridCell(row, 4);
-                            cell.Background = System.Windows.Media.Brushes.Green;
-                            cell = CommonActions.GetGridCell(row, 5);
-                            cell.Background = System.Windows.Media.Brushes.Green;
-                            cell = CommonActions.GetGridCell(row, 6);
-                            cell.Background = System.Windows.Media.Brushes.Green;
-                            cell = CommonActions.GetGridCell(row, 7);
-                            cell.Background = System.Windows.Media.Brushes.Green;
-                            cell = CommonActions.GetGridCell(row, 8);
-                            cell.Background = System.Windows.Media.Brushes.Green;
-                            break;
-                        }
-                    case (int)mState.Epaid_cash:
-                        {
-                            cell = CommonActions.GetGridCell(row, 0);
-                            cell.Background = System.Windows.Media.Brushes.Yellow;
-                            cell = CommonActions.GetGridCell(row, 1);
-                            cell.Background = System.Windows.Media.Brushes.Yellow;
-                            cell = CommonActions.GetGridCell(row, 2);
-                            cell.Background = System.Windows.Media.Brushes.Yellow;
-                            cell = CommonActions.GetGridCell(row, 3);
-                            cell.Background = System.Windows.Media.Brushes.Yellow;
-                            cell = CommonActions.GetGridCell(row, 4);
-                            cell.Background = System.Windows.Media.Brushes.Yellow;
-                            cell = CommonActions.GetGridCell(row, 5);
-                            cell.Background = System.Windows.Media.Brushes.Yellow;
-                            cell = CommonActions.GetGridCell(row, 6);
-                            cell.Background = System.Windows.Media.Brushes.Yellow;
-                            cell = CommonActions.GetGridCell(row, 7);
-                            cell.Background = System.Windows.Media.Brushes.Yellow;
-                            cell = CommonActions.GetGridCell(row, 8);
-                            cell.Background = System.Windows.Media.Brushes.Yellow;
-                            break;
-                        }
-                    case (int)mState.Earchived:
-                        {
-                            cell = CommonActions.GetGridCell(row, 0);
-                            cell.Background = System.Windows.Media.Brushes.OrangeRed;
-                            cell = CommonActions.GetGridCell(row, 1);
-                            cell.Background = System.Windows.Media.Brushes.OrangeRed;
-                            cell = CommonActions.GetGridCell(row, 2);
-                            cell.Background = System.Windows.Media.Brushes.OrangeRed;
-                            cell = CommonActions.GetGridCell(row, 3);
-                            cell.Background = System.Windows.Media.Brushes.OrangeRed;
-                            cell = CommonActions.GetGridCell(row, 4);
-                            cell.Background = System.Windows.Media.Brushes.OrangeRed;
-                            cell = CommonActions.GetGridCell(row, 5);
-                            cell.Background = System.Windows.Media.Brushes.OrangeRed;
-                            cell = CommonActions.GetGridCell(row, 6);
-                            cell.Background = System.Windows.Media.Brushes.OrangeRed;
-                            cell = CommonActions.GetGridCell(row, 7);
-                            cell.Background = System.Windows.Media.Brushes.OrangeRed;
-                            cell = CommonActions.GetGridCell(row, 8);
-                            cell.Background = System.Windows.Media.Brushes.OrangeRed;
-                            break;
-                        }
-                }
-                counter++;
+                    UserId = row["rok-id"].ToString(),
+                    UserFName = row["Prve meno"].ToString(),
+                    UserSName = row["Druhe meno"].ToString(),
+                    Id = int.Parse(row["id"].ToString()),
+                    Name = row["name"].ToString(),
+                    Size = row["size"].ToString(),
+                    Price = Double.Parse(row["price"].ToString()),
+                    Description = row["description"].ToString(),
+                    Color = curState
+                });
             }
-        }
-
-        private void Datagrid_Cmb_Update(object sender, RoutedEventArgs e)
-        {
             itemsDataGrid.Items.Refresh();
             itemsDataGrid.UpdateLayout();
-            if (itemsDataGrid.Columns.Count > 4)
-            {
-                itemsDataGrid.Columns[0].Width = 200; //actWidth / 7.5; //200;
-                itemsDataGrid.Columns[1].Width = 75; //actWidth / 20; //75;
-                itemsDataGrid.Columns[2].Width = 150; //actWidth / 10; //150;
-                itemsDataGrid.Columns[3].Width = 150; //actWidth / 10; //150;
-                itemsDataGrid.Columns[4].Width = 75; //actWidth / 20; //75;
-                itemsDataGrid.Columns[5].Width = 150; //actWidth / 10; //150;
-                itemsDataGrid.Columns[6].Width = 100; //actWidth / 15;//100;
-                itemsDataGrid.Columns[7].Width = 100; //actWidth / 15;//100;
-                itemsDataGrid.Columns[8].Width = 500; //actWidth / 3; //500;
-            }
-            doColors();
         }
 
 		private void Item_Open(object sender, RoutedEventArgs e)
 		{
-            DataRowView datView = ((DataRowView)itemsDataGrid.SelectedItem);
-            Item_details mItemDWindow = new Item_details(datView.Row.ItemArray[3].ToString(), datView.Row.ItemArray[2].ToString(), datView.Row.ItemArray[1].ToString(), datView.Row.ItemArray[0].ToString(), mViewer, mCapture);
-            mItemDWindow.Owner = Window.GetWindow(this);// this;
+            Item currItem = ((Item)itemsDataGrid.SelectedItem);
+            Item_details mItemDWindow = new Item_details(currItem.Id.ToString(),currItem.UserFName, currItem.UserSName, currItem.UserId, mViewer, mCapture); 
+            mItemDWindow.Owner = Window.GetWindow(this);
             mItemDWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             mItemDWindow.ShowDialog();
-            if (!ResetCmbs())
-                LoadItemsGrid(mDbActions.LoadAllItems(), mDbActions.LoadAllUsers());
+            ResetCmbs();
+            LoadItemsGrid(mDbActions.LoadAllItems(), mDbActions.LoadAllUsers());
         }
 		private void Profile_Item_Open(object sender, RoutedEventArgs e)
 		{
-            DataRowView datView = ((DataRowView)itemsDataGrid.SelectedItem);
-            DataSet userRow = mDbActions.LoadSpecificUser(datView.Row.ItemArray[0].ToString().Substring(0, 2), datView.Row.ItemArray[0].ToString().Substring(3, 3));
-            EditUserStruct userStruct = new EditUserStruct
+            Item currItem = ((Item)itemsDataGrid.SelectedItem);
+            DataSet userRow = mDbActions.LoadSpecificUser(currItem.UserYear.ToString(), currItem.UserNumber.ToString());
+
+            User userStruct = new User
             {
-                keyy = datView.Row.ItemArray[0].ToString().Substring(0, 2),
-                keyn = datView.Row.ItemArray[0].ToString().Substring(3, 3),
-                f_name = userRow.Tables[0].Rows[0]["first_name"].ToString(),
-                s_name = userRow.Tables[0].Rows[0]["second_name"].ToString(),
-                address = userRow.Tables[0].Rows[0]["address"].ToString(),
-                tel = userRow.Tables[0].Rows[0]["telephone"].ToString()
+                IdYear = currItem.UserYear,
+                IdNumber = currItem.UserNumber,
+                FName = userRow.Tables[0].Rows[0]["first_name"].ToString(),
+                SName = userRow.Tables[0].Rows[0]["second_name"].ToString(),
+                Address = userRow.Tables[0].Rows[0]["address"].ToString(),
+                Phone = int.Parse(userRow.Tables[0].Rows[0]["telephone"].ToString())
             };
 
             User_details mUserDWindow = new User_details(userStruct, mViewer, mCapture);
-            mUserDWindow.Owner = Window.GetWindow(this);// this;
+            mUserDWindow.Owner = Window.GetWindow(this);
             mUserDWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             mUserDWindow.ShowDialog();
-            if (!ResetCmbs())
-                LoadItemsGrid(mDbActions.LoadAllItems(), mDbActions.LoadAllUsers());
+            ResetCmbs();
+            LoadItemsGrid(mDbActions.LoadAllItems(), mDbActions.LoadAllUsers());
         }
 
-        private bool ResetCmbs()
+        private void ResetCmbs()
         {
-            bool changed = false;
-            if (Year_numbersItemCmb.SelectedIndex != 0)
-            {
-                changed = true;
-                Year_numbersItemCmb.SelectedIndex = 0;
-            }
-            if (FirstNameItemCmb.SelectedIndex != 0)
-            {
-                changed = true;
-                FirstNameItemCmb.SelectedIndex = 0;
-            }
-            if (SecondNameItemCmb.SelectedIndex != 0)
-            {
-                changed = true;
-                SecondNameItemCmb.SelectedIndex = 0;
-            }
-            if (ItemNameCmb.SelectedIndex != 0)
-            {
-                changed = true;
-                ItemNameCmb.SelectedIndex = 0;
-            }
-            return changed;
+            selectedFName = 0;
+            selectedId = 0;
+            selectedIName = 0;
+            selectedSName = 0;
         }
 
 		private void SearchItems(object sender, RoutedEventArgs e)
 		{
-            string fName = "";
-            string sName = "";
-            string keyy = "";
-            string keyn = "";
-            string name = "";
-
-            if (FirstNameItemCmb.SelectedIndex != -1)
-            {
-                fName = FirstNameItemCmb.SelectedItem.ToString();
-            }
-            if (SecondNameItemCmb.SelectedIndex != -1)
-            {
-                sName = SecondNameItemCmb.SelectedItem.ToString();
-            }
-            if (ItemNameCmb.SelectedIndex != -1)
-            {
-                name = ItemNameCmb.SelectedItem.ToString();
-            }
-
-            if (Year_numbersItemCmb.SelectedIndex != -1)
-            {
-                if (Year_numbersItemCmb.SelectedItem.ToString() != "")
-                {
-                    keyy = Year_numbersItemCmb.SelectedItem.ToString().Substring(0, 2);
-                    keyn = Year_numbersItemCmb.SelectedItem.ToString().Substring(3, 3);
-                }
-            }
-
-            if (fName == "" && sName == "" && keyy == "" && name == "")
+            if (selectedFName == 0 && selectedId == 0 && selectedIName == 0 && selectedSName == 0)
             {
                 LoadItemsGrid(mDbActions.LoadAllItems(), mDbActions.LoadAllUsers());
                 return;
             }
 
-            EditUserStruct userStruct = new EditUserStruct
+            string year;
+            string number;
+            if (selectedId == 0)
             {
-                s_name = sName,
-                f_name = fName,
-                keyy = keyy,
-                keyn = keyn,
-                address = name 
+                year = "";
+                number = "";
+            } else
+            {
+                year = idCmbList.ElementAt(selectedId).Substring(0, 2);
+                number = idCmbList.ElementAt(selectedId).Substring(3, 3);
+            }
+
+            User userStruct = new User
+            {
+                SName = sNameCmbList.ElementAt(selectedSName),
+                FName = fNameCmbList.ElementAt(selectedFName),
+                IdYear = int.Parse(year),
+                IdNumber = int.Parse(number),
+                Address = iNameCmbList.ElementAt(selectedIName)
             };
 
             DataSet userData = new DataSet();
             DataSet data = mDbActions.SearchForItems(userStruct, ref userData);
-            // mDbActions.LoadAllUsers()
             LoadItemsGrid(data, userData);
         }
 	}

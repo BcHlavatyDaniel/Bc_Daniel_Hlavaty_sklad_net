@@ -26,18 +26,13 @@
         <DatePicker x:Name="picker" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" SelectedDateChanged="SearchLogs" materialDesign:HintAssist.Hint="Den"></DatePicker>
 
         <DockPanel Grid.Row="3" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Top">
-            <ComboBox SelectedIndex="{Binding selectedItem}" ItemsSource="{Binding itemCmbList}" Width="150"/>
-            <ComboBox SelectedIndex="{Binding selectedName}" ItemsSource="{Binding nameCmbList}" Width="150"/>
-            <ComboBox SelectedIndex="{Binding selectedType}" ItemsSource="{Binding typCmbList}" Width="150"/>
+            <ComboBox ItemsSource="{Binding itemCmbList}" SelectionChanged="SearchLogs" SelectedIndex="{Binding selectedItem}" Width="150"/>
+            <ComboBox ItemsSource="{Binding nameCmbList}" SelectionChanged="SearchLogs" SelectedIndex="{Binding selectedName}" Width="150"/>
+            <ComboBox ItemsSource="{Binding typCmbList}" SelectionChanged="SearchLogs" SelectedIndex="{Binding selectedType}" Width="150"/>
             <TextBox Width="1065" materialDesign:TextFieldAssist.DecorationVisibility="Hidden" BorderThickness="0" IsReadOnly="True" />
         </DockPanel>
 
         <Grid Grid.Row="4" Grid.Column="1" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Top">
-            <!-- x:Name="Item_idLogCmb"-->
-            <!-- x:Name="Year_numbersLogCmb"-->
-            <!--x:Name="TypeCmb"-->
-            <!--Loaded="Datagrid_Cmb_Update"-->
-            <!---->
             <DataGrid AutoGenerateColumns="False" x:Name="logDataGrid" ItemsSource="{Binding ItemList}" TextBlock.FontSize="16" HorizontalAlignment="Center"
                                   CanUserReorderColumns="False" TextBlock.TextAlignment="Center" CanUserResizeColumns="False" CanUserSortColumns="False"  Background="#E1F5FE" IsReadOnly="True" VerticalAlignment="Top">
 				<DataGrid.Resources>
@@ -57,7 +52,7 @@
 				</DataGrid.Resources>
 				<DataGrid.Columns>
                     <DataGridTextColumn Header="Id tovar" Width="150" Binding="{Binding id_tovar}"/>
-                    <DataGridTextColumn Header="Id uzivatela" Width="150" Binding="{Binding id_uzivatela}"/>
+                    <DataGridTextColumn Header="Id zakaznik" Width="150" Binding="{Binding id_uzivatela}"/>
                     <DataGridTextColumn Header="Typ" Width="150" Binding="{Binding typ_zmeny}"/>
                     <DataGridTextColumn Header="Popis" Width="650" Binding="{Binding popis}"/>
                     <DataGridTextColumn Header="Cas" Width="250" Binding="{Binding time}"/>
@@ -65,7 +60,7 @@
 						<DataGridTemplateColumn.CellTemplate>
 							<DataTemplate>
 								<DockPanel>
-									<Button x:Name="btnOpenTovarLog" Content="Tovar" Click="Item_Log_Open"/>
+									<Button Content="Tovar" Click="Item_Log_Open"/>
 								</DockPanel>
 							</DataTemplate>
 						</DataGridTemplateColumn.CellTemplate>
