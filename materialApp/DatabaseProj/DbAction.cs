@@ -38,7 +38,7 @@ namespace DatabaseProj
             return data;
         }
 
-        public void AddUser(EditUserStruct userStruct)
+        public void AddUser(User userStruct)
         {
             string year = DateTime.Now.Year.ToString().Substring(2, 2);
 
@@ -73,10 +73,10 @@ namespace DatabaseProj
                 cmd.CommandText = "INSERT INTO user (year, _numbers, first_name, second_name, address, telephone, created_at) VALUES (@year, @num, @fname, @sname, @address, @tel, @date)";
                 cmd.Parameters.AddWithValue("@year", year);
                 cmd.Parameters.AddWithValue("@num", pickId);
-                cmd.Parameters.AddWithValue("@fname", userStruct.f_name);
-                cmd.Parameters.AddWithValue("@sname", userStruct.s_name);
-                cmd.Parameters.AddWithValue("@address", userStruct.address);
-                cmd.Parameters.AddWithValue("@tel", userStruct.tel);
+                cmd.Parameters.AddWithValue("@fname", userStruct.FName);
+                cmd.Parameters.AddWithValue("@sname", userStruct.SName);
+                cmd.Parameters.AddWithValue("@address", userStruct.Address);
+                cmd.Parameters.AddWithValue("@tel", userStruct.Id);
                 cmd.Parameters.AddWithValue("@date", DateTime.Now);
                 cmd.ExecuteNonQuery();
 
@@ -181,11 +181,6 @@ namespace DatabaseProj
                 cmd.Parameters.AddWithValue("@keyy", oldUser.IdYear);
                 cmd.Parameters.AddWithValue("@keyn", oldUser.IdNumber);
                 cmd.ExecuteNonQuery();
-
-             /*   cmd = mSql.CreateCommand();
-                cmd.CommandText = "SELECT * from user WHERE year = @keyy AND _numbers = @keyn";
-                cmd.Parameters.AddWithValue("@keyy", oldUser.IdYear);
-                cmd.Parameters.AddWithValue("@keyn", oldUser.IdNumber);*/ //vlastneee nie
             }
             catch (Exception)
             {
@@ -197,35 +192,7 @@ namespace DatabaseProj
             }
         }
 
-        public void UpdateUser(EditUserStruct userStruct)
-        {
-            MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);
-            mSql.Open();
-
-            try
-            {
-                MySqlCommand cmd = mSql.CreateCommand();
-                cmd.CommandText = "UPDATE user SET first_name = @f_name, second_name = @s_name, address = @address, telephone = @tel WHERE year = @keyy AND _numbers = @keyn";
-                cmd.Parameters.AddWithValue("@s_name", userStruct.s_name);
-                cmd.Parameters.AddWithValue("@f_name", userStruct.f_name);
-                cmd.Parameters.AddWithValue("@address", userStruct.address);
-                cmd.Parameters.AddWithValue("@tel", userStruct.tel);
-                cmd.Parameters.AddWithValue("@keyy", userStruct.keyy);
-                cmd.Parameters.AddWithValue("@keyn", userStruct.keyn);
-                cmd.ExecuteNonQuery();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            finally
-            {
-                if (mSql.State == ConnectionState.Open) mSql.Close();
-            }
-
-        }
-
-        public DataSet SearchForUserNames(EditUserStruct userStruct)
+        public DataSet SearchForUserNames(User userStruct)
         {
             MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);
             mSql.Open();
@@ -235,39 +202,39 @@ namespace DatabaseProj
             {
                 MySqlCommand cmd = mSql.CreateCommand();
                 cmd.CommandText = "Select * from user WHERE ";
-                if (userStruct.f_name != "")
+                if (userStruct.FName != "")
                 {
                     counter++;
                     cmd.CommandText += "first_name = @fname ";
-                    cmd.Parameters.AddWithValue("@fname", userStruct.f_name);
+                    cmd.Parameters.AddWithValue("@fname", userStruct.FName);
                 }
-                if (userStruct.s_name != "")
+                if (userStruct.SName != "")
                 {
                     if (counter != 0) cmd.CommandText += "AND ";
                     cmd.CommandText += "second_name = @sname ";
-                    cmd.Parameters.AddWithValue("@sname", userStruct.s_name);
+                    cmd.Parameters.AddWithValue("@sname", userStruct.SName);
                     counter++;
                 }
-                if (userStruct.address != "")
+                if (userStruct.Address != "")
                 {
                     if (counter != 0) cmd.CommandText += "AND ";
                     cmd.CommandText += "address = @address ";
-                    cmd.Parameters.AddWithValue("@address", userStruct.address);
+                    cmd.Parameters.AddWithValue("@address", userStruct.Address);
                     counter++;
                 }
-                if (userStruct.tel != "")
+                if (userStruct.Phone != 0)
                 {
                     if (counter != 0) cmd.CommandText += "AND ";
                     cmd.CommandText += "telephone = @phone ";
-                    cmd.Parameters.AddWithValue("@phone", userStruct.tel);
+                    cmd.Parameters.AddWithValue("@phone", userStruct.Phone);
                     counter++;
                 }
-                if (userStruct.keyy != "")
+                if (userStruct.IdYear != 0)
                 {
                     if (counter != 0) cmd.CommandText += "AND ";
                     cmd.CommandText += "year = @year AND _numbers = @numbers";
-                    cmd.Parameters.AddWithValue("@year", userStruct.keyy);
-                    cmd.Parameters.AddWithValue("@numbers", userStruct.keyn);
+                    cmd.Parameters.AddWithValue("@year", userStruct.IdYear);
+                    cmd.Parameters.AddWithValue("@numbers", userStruct.IdNumber);
                     counter++;
                 }
 
@@ -292,55 +259,6 @@ namespace DatabaseProj
         ///         ITEM
         ///</summary>
         ///
-        public string LoadSaveSpecificItemDescription(string id, bool val, string desc)
-        {
-            MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);
-            mSql.Open();
-
-            string ret = "";
-            if (val) //save
-            {
-                try
-                {
-                    MySqlCommand cmd = mSql.CreateCommand();
-                    cmd.CommandText = "UPDATE item SET description = @desc WHERE id = @id";
-                    cmd.Parameters.AddWithValue("@desc", desc);
-                    cmd.Parameters.AddWithValue("@id", id);
-                    cmd.ExecuteNonQuery();
-                }
-                catch(Exception)
-                {
-                    throw;
-                }
-                finally
-                {
-                    if (mSql.State == ConnectionState.Open) mSql.Close();
-                }
-            }
-            else //get
-            {
-                
-                try
-                {
-                    DataSet data = new DataSet();
-                    MySqlCommand cmd = mSql.CreateCommand();
-                    cmd.CommandText = "Select * from item where id = @id";
-                    cmd.Parameters.AddWithValue("@id", id);
-                    MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
-                    adapter.Fill(data);
-                    ret = data.Tables[0].Rows[0]["description"].ToString();
-                }
-                catch(Exception)
-                {
-                    throw;
-                }
-                finally
-                {
-                    if (mSql.State == ConnectionState.Open) mSql.Close();
-                }
-            }
-            return ret;
-        }
 
         public void UpdateSpecificItem(string id, int type, string newVal)
         {
@@ -405,7 +323,7 @@ namespace DatabaseProj
             }
         }
 
-        public bool LoadSpecificItemPaidType(string id) //zistit ci ide zo stavu 1 alebo 2
+        public bool LoadSpecificItemPaidType(string id) 
         {
             MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);
             mSql.Open();
@@ -465,7 +383,7 @@ namespace DatabaseProj
 
 
 
-        public DataSet SearchForItems(EditUserStruct userStruct, ref DataSet userSet) 
+        public DataSet SearchForItems(User userStruct, ref DataSet userSet) 
         {
             MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);
             mSql.Open();
@@ -475,31 +393,31 @@ namespace DatabaseProj
             {
                 MySqlCommand cmd = mSql.CreateCommand();
                 cmd.CommandText = "SELECT * from user WHERE";
-                if (userStruct.keyy != "")
+                if (userStruct.IdYear != 0)
                 {
                     cmd.CommandText += " year = @year AND _numbers = @numbers";
-                    cmd.Parameters.AddWithValue("@year", userStruct.keyy);
-                    cmd.Parameters.AddWithValue("@numbers", userStruct.keyn);
+                    cmd.Parameters.AddWithValue("@year", userStruct.IdYear);
+                    cmd.Parameters.AddWithValue("@numbers", userStruct.IdNumber);
                     count++;
                 }
-                if (userStruct.f_name != "")
+                if (userStruct.FName != "")
                 {
                     if (count > 0)
                     {
                         cmd.CommandText += " AND";
                     }
                     cmd.CommandText += " first_name = @fname";
-                    cmd.Parameters.AddWithValue("@fname", userStruct.f_name);
+                    cmd.Parameters.AddWithValue("@fname", userStruct.FName); 
                     count++;
                 }
-                if (userStruct.s_name != "")
+                if (userStruct.SName != "")
                 {
                     if (count > 0)
                     {
                         cmd.CommandText += " AND";
                     }
                     cmd.CommandText += " second_name = @sname";
-                    cmd.Parameters.AddWithValue("@sname", userStruct.s_name);
+                    cmd.Parameters.AddWithValue("@sname", userStruct.SName);
                     count++;
                 }
                 if (count > 0)
@@ -507,7 +425,6 @@ namespace DatabaseProj
                     MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
                     userSet = new DataSet();
                     adapter.Fill(userSet);
-                    //list ids
                     List<string> validIds = new List<string>();
                     foreach (DataRow row in userSet.Tables[0].Rows)
                     {
@@ -523,7 +440,6 @@ namespace DatabaseProj
                         return data;
                     }
 
-                    //select all items where validIds = itemkeys
                     cmd = mSql.CreateCommand();
                     cmd.CommandText = "SELECT * from item WHERE";
                     count = 0;
@@ -539,14 +455,14 @@ namespace DatabaseProj
                         count++;
                     }
 
-                    if (userStruct.address != "")
+                    if (userStruct.Address != "")
                     {
                         if (count != 0)
                         {
                             cmd.CommandText += " AND";
                         }
                         cmd.CommandText += " name = @name";
-                        cmd.Parameters.AddWithValue("@name", userStruct.address);
+                        cmd.Parameters.AddWithValue("@name", userStruct.Address);
                         adapter = new MySqlDataAdapter(cmd);
                         data = new DataSet();
                         adapter.Fill(data);
@@ -555,8 +471,6 @@ namespace DatabaseProj
                     {
                         data = LoadAllItems();
                     }
-                    
-                    //where name = name if name is set
                 }
                 else
                 {
@@ -564,7 +478,7 @@ namespace DatabaseProj
 
                     cmd = mSql.CreateCommand();
                     cmd.CommandText += "SELECT * from item WHERE name = @name";
-                    cmd.Parameters.AddWithValue("@name", userStruct.address);
+                    cmd.Parameters.AddWithValue("@name", userStruct.Address);
                     MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
                     adapter = new MySqlDataAdapter(cmd);
                     adapter.Fill(data);
@@ -582,28 +496,27 @@ namespace DatabaseProj
             return data;
         }
 
-
-        public void AddItem(EditItemStruct itemStruct)
+        public void AddItem(Item item)
         {
             MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);
             mSql.Open();
+            if (item.Photo == "") item.Photo = "";
             try
             {
                 MySqlCommand cmd = mSql.CreateCommand();
                 cmd.CommandText = "INSERT INTO item(user_year, user_numbers, name, description, size, price, photo, stav, archived) VALUES (@user_year, @user_numbers, @name, @description, @size, @price, @photo, @stav, @archived)";
-                cmd.Parameters.AddWithValue("@user_year", itemStruct.keyy);
-                cmd.Parameters.AddWithValue("@user_numbers", itemStruct.keyn);
-                cmd.Parameters.AddWithValue("@description", itemStruct.description);
-                cmd.Parameters.AddWithValue("@size", itemStruct.size);
-                cmd.Parameters.AddWithValue("@price", itemStruct.price);
-                cmd.Parameters.AddWithValue("@name", itemStruct.name);
-                cmd.Parameters.AddWithValue("@photo", itemStruct.photo);
+                cmd.Parameters.AddWithValue("@user_year", item.UserYear);
+                cmd.Parameters.AddWithValue("@user_numbers", item.UserNumber);
+                cmd.Parameters.AddWithValue("@description", item.Description);
+                cmd.Parameters.AddWithValue("@size", item.Size);
+                cmd.Parameters.AddWithValue("@price", item.Price);
+                cmd.Parameters.AddWithValue("@name", item.Name);
+                cmd.Parameters.AddWithValue("@photo", item.Photo);
                 cmd.Parameters.AddWithValue("@stav", 0);
                 cmd.Parameters.AddWithValue("@archived", 0);
-              //  cmd.Parameters.AddWithValue("@created_at", DateTime.Now);
                 cmd.ExecuteNonQuery();
             }
-            catch(Exception)
+            catch (Exception)
             {
                 throw;
             }
@@ -612,40 +525,6 @@ namespace DatabaseProj
                 if (mSql.State == ConnectionState.Open) mSql.Close();
             }
         }
-
-        public void UpdateItem(EditItemStruct itemStruct)
-        {
-            MySqlConnection mSql = new MySqlConnection(Settings.ConnectionString);
-            mSql.Open();
-
-            try
-            {
-                MySqlCommand cmd = mSql.CreateCommand();
-                cmd.CommandText = "UPDATE item SET description = @desc, size = @size, price = @price, name = @name";
-                cmd.Parameters.AddWithValue("@desc", itemStruct.description);
-                cmd.Parameters.AddWithValue("@size", itemStruct.size);
-                cmd.Parameters.AddWithValue("@price", itemStruct.price);
-                cmd.Parameters.AddWithValue("@name", itemStruct.name);
-                if (itemStruct.photo != "")
-                {
-                    cmd.CommandText += ", photo = @photo";
-                    cmd.Parameters.AddWithValue("@photo", itemStruct.photo);
-                }
-                cmd.CommandText += " WHERE id = @id";
-                cmd.Parameters.AddWithValue("@id", itemStruct.id);
-                cmd.ExecuteNonQuery();
-            }
-            catch(Exception)
-            {
-                throw;
-            }
-            finally
-            {
-                if (mSql.State == ConnectionState.Open) mSql.Close();
-            }
-        }
-
-
 
         public DataSet SearchForItemsByName(string name, string year, string number)
         {
