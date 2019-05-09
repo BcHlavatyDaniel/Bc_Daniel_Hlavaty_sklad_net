@@ -39,9 +39,9 @@ namespace DatabaseProj
             return res;
         }
 
-        public List <PrehladTable> GetPrehladTable()
+        public PrehladTable GetPrehladTable(string search)
         {
-            List<PrehladTable> retData = new List<PrehladTable>();
+            List<prehlad> retData = new List<prehlad>();
             DataSet userData;
             DataSet itemData;
             MySqlDataAdapter adapter;
@@ -64,11 +64,11 @@ namespace DatabaseProj
             itemData.Tables[0].Columns.Add("Prve meno", typeof(string));
             itemData.Tables[0].Columns.Add("Druhe meno", typeof(string));
 
-            for (int i = itemData.Tables[0].Rows.Count -1; i >= 0; i--)
+            for (int i = itemData.Tables[0].Rows.Count - 1; i >= 0; i--)
             {
                 DataRow row = itemData.Tables[0].Rows[i];
                 row["rok-id"] = row["user_year"] + "-" + row["user_numbers"];
-                foreach(DataRow uRow in userData.Tables[0].Rows)
+                foreach (DataRow uRow in userData.Tables[0].Rows)
                 {
                     if (row["user_year"].ToString() == uRow["year"].ToString())
                     {
@@ -87,35 +87,26 @@ namespace DatabaseProj
             }
             itemData.AcceptChanges();
 
-            string stav;
+            if (search == null) search = "";
+            if (search != "")
+            {
+                for (int i = itemData.Tables[0].Rows.Count - 1; i >= 0; i--)
+                {
+                    DataRow row = itemData.Tables[0].Rows[i];
+                    if (row["name"].ToString().Contains(search)) continue;
+                    if (row["price"].ToString().Contains(search)) continue;
+                    if (row["size"].ToString().Contains(search)) continue;
+                    row.Delete();
+                }
+                itemData.AcceptChanges();
+            }
+
+            string curPhoto;
             foreach (DataRow row in itemData.Tables[0].Rows)
             {
-                if (row["stav"].ToString() == "0")
-                {
-                    stav = "Skladom";
-                }
-                else if (row["stav"].ToString() == "1")
-                {
-                    stav = "Predane karta";
-                }
-                else if (row["stav"].ToString() == "2")
-                {
-                    stav = "Predane hotovost";
-                }
-                else if (row["stav"].ToString() == "3")
-                {
-                    stav = "Vratene";
-                }
-                else if (row["stav"].ToString() == "4")
-                {
-                    stav = "Zaplatene karta";
-                }
-                else 
-                {
-                    stav = "Zaplatene hotovost";
-                }
-
-                retData.Add(new PrehladTable()
+                if (row["photo"].ToString() == "") curPhoto = "unavailable.png";
+                else curPhoto = row["photo"].ToString();
+                retData.Add(new prehlad()
                 {
                     id_item = row["id"].ToString(),
                     id_user = row["rok-id"].ToString(),
@@ -124,13 +115,15 @@ namespace DatabaseProj
                     item_name = row["name"].ToString(),
                     price = row["price"].ToString(),
                     size = row["size"].ToString(),
-                    state = stav,
-                    photo = row["photo"].ToString()
+                    photo = curPhoto
                 });
             }
 
-            return retData;
-           
+            PrehladTable prehTable = new PrehladTable();
+            prehTable.mPrehladTable = retData;
+            prehTable.mSearchText = search;
+            return prehTable;
+
         }
     }
 }
