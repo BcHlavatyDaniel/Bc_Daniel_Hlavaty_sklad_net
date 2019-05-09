@@ -1,4 +1,4 @@
-﻿@model IEnumerable<DatabaseProj.PrehladTable>
+﻿@model DatabaseProj.PrehladTable
 @{
     ViewData["Title"] = "TableView";
 }
@@ -8,37 +8,44 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <link href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet" />
     <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-    <input type="text" id="filter" style="margin-bottom:20px" />
-    <div>
 
-        @for (int i = 0; i < Model.Count(); i += 2)
+    @using (Html.BeginForm("Search", "Table", FormMethod.Post))
+    {
+        @Html.TextBoxFor(model => Model.mSearchText, new { Style = "margin-bottom:20px;" })
+        <input type="submit" class="btn-primary" value="Hladaj" id="searchBtn" />
+    }
+
+    <div>
+        @for (int i = 0; i < Model.mPrehladTable.Count(); i += 3)
         {
-            <div>
-                @for (int k = 0; k < 2; k++)
+            int count = Model.mPrehladTable.Count() - i;
+            <div class="row">
+                @for (int k = 0; k < 3; k++)
                 {
-                    @if (Model.ElementAt(i + k) != null)
+                    <div class=col-4>
+                    @if (Model.mPrehladTable.Count() > i + k)
                     {
-                        <div class=d-inline-block style="border-style:solid;background-color:#d3e4ff;width:400px;height:200px">
-                            <div style="width:50%;float:left"> 
-                                <h5 style="width:200px;margin-bottom:20px">
-                                    <u>
-                                        @Model.ElementAt(i + k).item_name
-                                    </u>
-                                </h5>
-                                <p style="width:200px">
-                                    @(String.Format("{0} {1}", "Velkost: ", Model.ElementAt(i + k).size))
-                                </p>
-                                <p style="width:200px">
-                                    @(String.Format("{0} {1}", "Cena: ", Model.ElementAt(i + k).price))
-                                </p>
-                            </div>
-                            <div style="width:50%;float:right;text-align:center">
-                                <img src=@(String.Format("{0}{1}", "resources/", Model.ElementAt(i +k).photo)) style="max-height:180px;max-width:180px"/> 
-                            <!--    <img src="~/resources/animal-wallpaper-03.jpg" style="max-height:200px;max-width:200px" /> -->
+                        <div class=card  style="margin-bottom:10px">
+                            <div class="row">
+                                <div class="col-6">
+                                    <h5 class="card-title" style="margin-top:15px;margin-left:10px;border-bottom:1px solid black;">
+                                        @Model.mPrehladTable.ElementAt(i + k).item_name
+                                    </h5>
+                                    <p class="card-text">
+                                        @(String.Format("{0} {1}", "Velkost: ", Model.mPrehladTable.ElementAt(i + k).size))
+                                    </p>
+                                    <p class="card-text">
+                                        @(String.Format("{0} {1}", "Cena: ", Model.mPrehladTable.ElementAt(i + k).price))
+                                    </p>
+                                </div>
+                                <div class="col-6">
+                                    <img src=@(String.Format("{0}{1}", "resources/", Model.mPrehladTable.ElementAt(i + k).photo)) class="img-fluid" />
+                                </div>
                             </div>
                         </div>
                     }
-                }
+                    </div>
+                    }
             </div>
         }
     </div>
