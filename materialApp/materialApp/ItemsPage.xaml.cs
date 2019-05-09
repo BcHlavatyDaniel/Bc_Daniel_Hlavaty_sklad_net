@@ -18,7 +18,6 @@ namespace materialApp
 
 	public partial class ItemsPage : Page, INotifyPropertyChanged
 	{
-        CommonActions mCommonActions;
         private DbActions mDbActions;
         enum mState { Einit_state, Esold_card, Esold_cash, Ereturned, Epaid_card, Epaid_cash, Earchived };
         VideoCapture mCapture;
@@ -103,7 +102,6 @@ namespace materialApp
 
         private void Init(ImageViewer view, VideoCapture capture)
         {
-            mCommonActions = new CommonActions();
             ItemList = new List<Item>();
             mCapture = capture;
             mViewer = view;

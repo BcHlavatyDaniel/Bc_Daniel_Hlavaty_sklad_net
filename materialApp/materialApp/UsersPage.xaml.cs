@@ -14,7 +14,6 @@ namespace materialApp
     public partial class UsersPage : Page, INotifyPropertyChanged
     {
         private DbActions mDbActions;
-        CommonActions mCommonActions;
         VideoCapture mCapture;
         ImageViewer mViewer;
         public List<User> UserList { get; set; }
@@ -113,7 +112,6 @@ namespace materialApp
 
         private void Init(ImageViewer view, VideoCapture capture)
         {
-            mCommonActions = new CommonActions();
             UserList = new List<User>();
             mUser = new User();
             DataSet data = mDbActions.LoadAllUsers();

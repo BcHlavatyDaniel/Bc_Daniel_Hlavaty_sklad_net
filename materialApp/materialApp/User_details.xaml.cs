@@ -26,7 +26,6 @@ namespace materialApp
     public partial class User_details : Window, INotifyPropertyChanged
     {
         DbActions mDbActions;
-        CommonActions mCommonActions;
         string mYear_key;
         string mNumber_key;
         string mPhoto_path = "";
@@ -86,7 +85,6 @@ namespace materialApp
             mCapture = cap;
 
             mDbActions = new DbActions();
-            mCommonActions = new CommonActions();
 
             mYear_key = userStruct.IdYear.ToString();
             mNumber_key = userStruct.IdNumber.ToString();
@@ -598,7 +596,6 @@ namespace materialApp
 
             dataGrid.Items.Refresh();
             dataGrid.UpdateLayout();
-           // UpdateButtons();
         }
 
         private new void PreviewTextInput(object sender, RoutedEventArgs e)
@@ -635,7 +632,7 @@ namespace materialApp
             NewItem.Add_Text = "";
             NewItem.Description = "";
             NewItem.Name = "";
-            NewItem.UserFName = ""; //price
+            NewItem.UserFName = ""; 
             NewItem.Size = "";
             NewItem.Photo = "";
             NewItem.Kind = "Done";
@@ -650,7 +647,7 @@ namespace materialApp
 
         private void TakeAPic(object sender, RoutedEventArgs e)
         {
-            mViewer.Image = mCapture.QueryFrame(); //TO DO if throws err
+            mViewer.Image = mCapture.QueryFrame(); 
             mViewer.Image.Save("webImage0.png");
 
             SessionOptions sesOptions = new SessionOptions
@@ -744,7 +741,7 @@ namespace materialApp
             }
 
             if (err) return;
-            Ftp_Upload(mPhoto_path); //TO DO if not empty
+            Ftp_Upload(mPhoto_path); 
             string[] split = mPhoto_path.Split('/');
             string fileName;
             if (split.Length == 1)

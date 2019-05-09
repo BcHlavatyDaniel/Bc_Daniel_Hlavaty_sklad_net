@@ -1,17 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.ComponentModel;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Spire.Pdf;
 using System.Drawing.Printing;
 using System.Management;
@@ -29,9 +18,7 @@ namespace materialApp
             InitializeComponent();
             mPdf = pdf;
             string path = System.IO.Directory.GetCurrentDirectory();
-          //  path = path.Substring(path.Length - 11);
             path += "\\doesitwork.pdf";
-            //  pdfShow.Source = new Uri(path, UriKind.Absolute);
             pdfShow.Navigate(new Uri(path, UriKind.Absolute));
         }
 
@@ -46,13 +33,11 @@ namespace materialApp
                 {
                     printerName = printer["Name"].ToString();
                     string availability = printer["Availability"].ToString();
-                    //ak je available zober ho not sure ako to bude vyzerat tho :D :D
                 }
             }
             else
             {
                 mPdf.PrintSettings.PrinterName = printerName;
-                //if virtual -> pdf.PrintSettings.PrintToFile("PrintToXps.xps");
                 mPdf.Print();
             }
             AsyncClose();

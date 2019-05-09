@@ -116,7 +116,7 @@ namespace materialApp
             File.Copy(getImage, saveImage);
 
             Item.Photo = System.IO.Path.GetFullPath("../../imageres/" + imgName);
-            image1.Source = new BitmapImage(new Uri(Item.Photo, UriKind.RelativeOrAbsolute));                                                                                         // image1.Source = new BitmapImage(new Uri(photo_path, UriKind.RelativeOrAbsolute));
+            image1.Source = new BitmapImage(new Uri(Item.Photo, UriKind.RelativeOrAbsolute));                                                                                         
         }
 
         private void AddPhotoPath(object sender, RoutedEventArgs s)
@@ -151,7 +151,6 @@ namespace materialApp
                 logType = 2;
                 mDbActions.AddLog(Item.Id.ToString(), Item.UserId.ToString(), logType, changeString);
             }
-			// todo takto to chces? ...som sa ta na to pytal osobne.. 
             if (mLastSuccessStruct.State != Item.State)
             {
                 mDbActions.UpdateSpecificItem(Item.Id.ToString(), 5, Item.State.ToString());
